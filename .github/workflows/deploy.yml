@@ -92,7 +92,7 @@ jobs:
           path: _site/docs
 
       - name: Upload Site Artifact
-        uses: actions/upload-pages-artifact
+        uses: actions/upload-pages-artifact@v1
 
   # Deploy job
   deploy-combined-webgl:
