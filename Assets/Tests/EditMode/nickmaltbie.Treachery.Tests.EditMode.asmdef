@@ -1,0 +1,21 @@
+{
+    "name": "nickmaltbie.Treachery.Tests.EditMode",
+    "rootNamespace": "nickmaltbie.Treachery.Tests.EditMode",
+    "references": [
+        "nickmaltbie.Treachery"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

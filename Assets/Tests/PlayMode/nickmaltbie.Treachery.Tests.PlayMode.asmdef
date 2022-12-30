@@ -1,0 +1,19 @@
+{
+    "name": "nickmaltbie.Treachery.Tests.PlayMode",
+    "rootNamespace": "nickmaltbie.Treachery.Tests.PlayMode",
+    "references": [
+        "nickmaltbie.Treachery"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
