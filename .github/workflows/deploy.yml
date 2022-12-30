@@ -92,6 +92,8 @@ jobs:
 
       - name: Upload Site Artifact
         uses: actions/upload-pages-artifact@v1
+        with:
+          name: github-pages
 
   # Deploy job
   deploy-combined-webgl:
@@ -120,7 +122,7 @@ jobs:
     name: Cleanup the build artifacts after deploying site.
     runs-on: ubuntu-latest
     if: always()
-    needs: [combine-and-deploy-artifact]
+    needs: [deploy-combined-webgl]
 
     steps:
       - name: Cleanup temp build artifacts
@@ -129,3 +131,4 @@ jobs:
           name: |
             temp_build_treachery_webgl
             temp_build_docs_webgl
+            github-pages
