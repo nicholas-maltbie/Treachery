@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: temp_build_treachery_webgl
-          path: Builds/${{ env.PROJECT_NAME }}
+          path: Builds/${{ env.PROJECT_NAME }}-WebGL
 
   # Build the documentation
   build-docs:
