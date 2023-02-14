@@ -1,7 +1,18 @@
 {
     "name": "nickmaltbie.Treachery",
     "rootNamespace": "nickmaltbie.Treachery",
-    "references": [],
+    "references": [
+        "WebSocket Transport for Netcode for GameObjects",
+        "Unity.Netcode.Components",
+        "Unity.Netcode.Runtime",
+        "nickmaltbie.NetworkStateMachineUnity",
+        "nickmaltbie.ScreenManager",
+        "nickmaltbie.StateMachineUnity",
+        "nickmaltbie.ScreenManager.TestCommon",
+        "nickmaltbie.TestUtilsUnity",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
