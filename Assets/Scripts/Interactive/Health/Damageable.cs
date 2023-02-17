@@ -103,7 +103,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         [ClientRpc]
         public void OnEmptyHealClientRpc(float amount, float previous, float current)
         {
-            InvokeListenersOnDamage(amount, previous, current, EmptyDamageSource.Instance);
+            InvokeListenersOnHeal(amount, previous, current, EmptyDamageSource.Instance);
         }
 
         [ClientRpc]

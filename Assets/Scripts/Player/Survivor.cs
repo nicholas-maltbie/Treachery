@@ -281,7 +281,7 @@ namespace nickmaltbie.Treachery.Player
         public class RevivingState : State { }
 
         [Animation(PunchingAnimState, 0.05f, true)]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.1f, false)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         public class PunchingState : State { }
 
