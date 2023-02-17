@@ -1,0 +1,19 @@
+{
+    "name": "nickmaltbie.Treachery.DebugScripts",
+    "rootNamespace": "nickmaltbie.Treachery.DebugScripts",
+    "references": [
+        "GUID:cdf0c7901dcdf064eab062e5a4c6ada1",
+        "GUID:1491147abca9d7d4bb7105af628b223e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -19,7 +19,6 @@
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Action;
-using nickmaltbie.OpenKCC.Character.Animation;
 using nickmaltbie.OpenKCC.Character.Attributes;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Character.Events;
@@ -30,9 +29,12 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
+using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using static nickmaltbie.Treachery.Player.PlayerAnimStates;
 
 namespace nickmaltbie.Treachery.Player
 {
@@ -42,7 +44,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping
+    public class Survivor : NetworkSMAnim, IJumping, IDamageListener
     {
         [Header("Input Controls")]
 
@@ -67,6 +69,13 @@ namespace nickmaltbie.Treachery.Player
         [SerializeField]
         public InputActionReference jumpActionReference;
 
+        /// <summary>
+        /// Action reference for attacking.
+        /// </summary>
+        [Tooltip("Action reference for player attack move")]
+        [SerializeField]
+        public InputActionReference attackActionReference;
+
         [Header("Movement Settings")]
 
         /// <summary>
@@ -75,6 +84,13 @@ namespace nickmaltbie.Treachery.Player
         [Tooltip("Speed of player when walking")]
         [SerializeField]
         public float walkingSpeed = 7.5f;
+
+        /// <summary>
+        /// Speed of player movement when attacking.
+        /// </summary>
+        [Tooltip("Speed of player when attacking")]
+        [SerializeField]
+        public float attackSpeed = 3.5f;
 
         /// <summary>
         /// Speed of player when sprinting.
@@ -133,6 +149,11 @@ namespace nickmaltbie.Treachery.Player
         private InputAction overrideSprintAction;
 
         /// <summary>
+        /// Override attack action for testing.
+        /// </summary>
+        private InputAction overrideAttackAction;
+
+        /// <summary>
         /// Gets the move action associated with this kcc.
         /// </summary>
         public InputAction MoveAction
@@ -148,6 +169,15 @@ namespace nickmaltbie.Treachery.Player
         {
             get => overrideSprintAction ?? sprintActionReference?.action;
             set => overrideSprintAction = value;
+        }
+
+        /// <summary>
+        /// Gets the attack action associated with this player.
+        /// </summary>
+        public InputAction AttackAction
+        {
+            get => overrideAttackAction ?? attackActionReference?.action;
+            set => overrideAttackAction = value;
         }
 
         /// <summary>
@@ -168,55 +198,60 @@ namespace nickmaltbie.Treachery.Player
         public RelativeParentConfig relativeParentConfig { get; protected set; } = new RelativeParentConfig();
 
         [InitialState]
-        [Animation(HumanoidKCCAnim.IdleAnimState, 0.35f, true)]
+        [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         public class IdleState : State { }
 
-        [Animation(HumanoidKCCAnim.JumpAnimState, 0.1f, true)]
+        [Animation(JumpAnimState, 0.1f, true)]
         [TransitionOnAnimationComplete(typeof(FallingState), 0.15f, true)]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class JumpState : State { }
 
-        [Animation(HumanoidKCCAnim.LandingAnimState, 0.1f, true)]
+        [Animation(LandingAnimState, 0.1f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.25f, true)]
         [AnimationTransition(typeof(StartMoveInput), typeof(WalkingState), 0.35f, true)]
         [AnimationTransition(typeof(JumpEvent), typeof(JumpState), 0.35f, true)]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class LandingState : State { }
 
-        [Animation(HumanoidKCCAnim.WalkingAnimState, 0.1f, true)]
+        [Animation(WalkingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StartSprintEvent), typeof(SprintingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class WalkingState : State { }
 
-        [Animation(HumanoidKCCAnim.SprintingAnimState, 0.1f, true)]
+        [Animation(SprintingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StopSprintEvent), typeof(WalkingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [MovementSettings(SpeedConfig = nameof(sprintSpeed))]
         public class SprintingState : State { }
 
-        [Animation(HumanoidKCCAnim.SlidingAnimState, 0.35f, true)]
+        [Animation(SlidingAnimState, 0.35f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class SlidingState : State { }
 
-        [Animation(HumanoidKCCAnim.FallingAnimState, 0.1f, true)]
+        [Animation(FallingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
@@ -224,12 +259,31 @@ namespace nickmaltbie.Treachery.Player
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class FallingState : State { }
 
-        [Animation(HumanoidKCCAnim.LongFallingAnimState, 0.1f, true)]
+        [Animation(LongFallingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 1.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class LongFallingState : State { }
+
+        [Animation(DyingAnimState, 0.35f, true)]
+        [TransitionFromAnyState(typeof(PlayerDeath))]
+        [TransitionOnAnimationComplete(typeof(DeadState))]
+        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        public class DyingState : State { }
+
+        [Animation(DeadAnimState, 0.35f, true)]
+        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        public class DeadState : State { }
+
+        [Animation(RevivingAnimState, 1.0f, true)]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.35f)]
+        public class RevivingState : State { }
+
+        [Animation(PunchingAnimState, 0.05f, true)]
+        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [MovementSettings(SpeedConfig = nameof(attackSpeed))]
+        public class PunchingState : State { }
 
         /// <summary>
         /// Update the grounded state of the kinematic character controller.
@@ -277,6 +331,15 @@ namespace nickmaltbie.Treachery.Player
             GetComponent<Rigidbody>().isKinematic = true;
             _cameraControls = GetComponent<ICameraControls>();
             SetupInputs();
+
+            AttackAction?.Enable();
+            SprintAction?.Enable();
+            MoveAction?.Enable();
+
+            if (AttackAction != null)
+            {
+                AttackAction.performed += _ => OnAttack();
+            }
         }
 
         /// <summary>
@@ -354,7 +417,7 @@ namespace nickmaltbie.Treachery.Player
         {
             if (IsOwner)
             {
-                ReadPlayerMovement();
+                ReadPlayerInput();
             }
 
             AttachedAnimator.SetFloat("MoveX", animationMove.Value.x);
@@ -376,7 +439,7 @@ namespace nickmaltbie.Treachery.Player
         /// <summary>
         /// Read the current player input values.
         /// </summary>
-        public void ReadPlayerMovement()
+        public void ReadPlayerInput()
         {
             bool denyMovement = PlayerInputUtils.playerMovementState == PlayerInputState.Deny;
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
@@ -403,6 +466,40 @@ namespace nickmaltbie.Treachery.Player
                 {
                     RaiseEvent(StopSprintEvent.Instance);
                 }
+            }
+        }
+
+        public void OnAttack()
+        {
+            if (IsLocalPlayer && PlayerInputUtils.playerMovementState != PlayerInputState.Deny)
+            {
+                RaiseEvent(PunchEvent.Instance);
+            }
+        }
+
+        public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
+        {
+            if (!IsLocalPlayer)
+            {
+                return;
+            }
+
+            if (previous > 0 && current == 0)
+            {
+                RaiseEvent(PlayerDeath.Instance);
+            }
+        }
+
+        public void OnHeal(IDamageable target, IDamageSource source, float previous, float current, float amount)
+        {
+            if (!IsLocalPlayer)
+            {
+                return;
+            }
+
+            if (previous == 0 && current > 0)
+            {
+                RaiseEvent(ReviveEvent.Instance);
             }
         }
     }

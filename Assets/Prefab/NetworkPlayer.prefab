@@ -313,8 +313,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc89439d3fae85c40a7ec6d6fb28864a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth:
+    m_InternalValue: 100
+  currentHealth:
+    m_InternalValue: 100
 --- !u!114 &937339341664039498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,6 +333,7 @@ MonoBehaviour:
   moveActionReference: {fileID: 8130185064591157487, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   sprintActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   jumpActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  attackActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   walkingSpeed: 7.5
   sprintSpeed: 10
   jumpVelocity: 6.5
@@ -392,7 +395,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: a6620ec1a85f96046b6f5c723c02c68f, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: c265a1c8e81445648af2ce2203a69e61, type: 2}
+      objectReference: {fileID: 9100000, guid: 8669068c34fd51147bdfe76217100811, type: 2}
     - target: {fileID: 5866666021909216657, guid: a6620ec1a85f96046b6f5c723c02c68f, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
