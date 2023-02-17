@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5020055778217533442}
   - component: {fileID: 5196115296718640188}
   m_Layer: 0
-  m_Name: UIManagerNetcode
+  m_Name: UIManagerTreachery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
