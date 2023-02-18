@@ -37,4 +37,10 @@ namespace nickmaltbie.Treachery.Player
         public static ReviveEvent Instance = new ReviveEvent();
         private ReviveEvent() { }
     }
+
+    public class OnHitEvent : IEvent
+    {
+        public static OnHitEvent Instance = new OnHitEvent();
+        private OnHitEvent() { }
+    }
 }

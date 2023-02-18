@@ -16,22 +16,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Player
+using Unity.Netcode;
+using UnityEngine;
+
+namespace nickmaltbie.Treachery.Interactive.Health
 {
-    public static class PlayerAnimStates
+    [RequireComponent(typeof(IDamageable))]
+    public class ReviveOnTimer : NetworkBehaviour
     {
-        public const string IdleAnimState = "Idle";
-        public const string JumpAnimState = "Jump";
-        public const string LandingAnimState = "Landing";
-        public const string WalkingAnimState = "Walking";
-        public const string SprintingAnimState = "Sprinting";
-        public const string SlidingAnimState = "Sliding";
-        public const string FallingAnimState = "Falling";
-        public const string LongFallingAnimState = "Long Falling";
-        public const string DyingAnimState = "Dying";
-        public const string DeadAnimState = "Dead";
-        public const string RevivingAnimState = "Reviving";
-        public const string PunchingAnimState = "Punching";
-        public const string HitReactionAnimState = "Hit Reaction";
+        public float respawnTime = 10.0f;
+        private float elapsedDead;
+        public float TimeToRespawn => Mathf.Max(0, respawnTime - elapsedDead);
+
+        public void Update()
+        {
+            var damageable = GetComponent<IDamageable>();
+            if (!damageable.IsAlive())
+            {
+                elapsedDead += Time.deltaTime;
+                if (elapsedDead >= respawnTime)
+                {
+                    damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+                }
+            }
+            else
+            {
+                elapsedDead = 0;
+            }
+        }
     }
 }
