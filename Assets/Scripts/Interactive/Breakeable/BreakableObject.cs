@@ -1,7 +1,3 @@
-
-using nickmaltbie.StateMachineUnity;
-using nickmaltbie.StateMachineUnity.Attributes;
-using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
@@ -9,10 +5,20 @@ using UnityEngine;
 
 namespace nickmaltbie.Treachery.Interactive.Breakeable
 {
-    [RequireComponent(typeof(Damageable))]
-    public class BreakableObject : NetworkSMBehaviour, IDamageListener
+    public enum BreakableObjectState
     {
-        NetworkVariable<bool> isFixed = new NetworkVariable<bool>(value: true);
+        Unitialized,
+        Fixed,
+        Broken,
+        CleanedUp
+    }
+
+    [RequireComponent(typeof(Damageable))]
+    public class BreakableObject : NetworkSMBehaviour
+    {
+        public BreakableObjectState defaultState = BreakableObjectState.Fixed;
+
+        private NetworkVariable<BreakableObjectState> borkenState;
 
         public GameObject fixedPrefab;
         public GameObject brokenPrefab;
@@ -22,41 +28,93 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
         private GameObject brokenSpawn;
         private float brokenElapsed;
 
+        public override void Start()
+        {
+            borkenState = new NetworkVariable<BreakableObjectState>(value: defaultState);
+            base.Start();
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            
+            if (IsServer)
+            {
+                borkenState.Value = defaultState;
+                Damageable damageable = GetComponent<Damageable>();
+                damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+            }
+
+            UpdatePrefabState();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+            borkenState.Value = defaultState;
+            UpdatePrefabState();
+        }
+
         public override void Update()
         {
             base.Update();
             
-            if (IsServer && !isFixed.Value)
+            if (IsServer)
             {
-                brokenElapsed += Time.deltaTime;
-                if (brokenElapsed >= despawnTime)
-                {
-                    GetComponent<NetworkObject>().Despawn(true);
-                }
+                UpdateObjectState();
             }
 
-            if (isFixed.Value)
+            UpdatePrefabState();
+        }
+
+        public void UpdateObjectState()
+        {
+            switch (borkenState.Value)
+            {
+                case BreakableObjectState.Broken:
+                    brokenElapsed += Time.deltaTime;
+                    if (brokenElapsed >= despawnTime)
+                    {
+                        borkenState.Value = BreakableObjectState.CleanedUp;
+                    }
+                    break;
+                case BreakableObjectState.Fixed:
+                    if (!GetComponent<Damageable>().IsAlive())
+                    {
+                        brokenElapsed = 0.0f;
+                        borkenState.Value = BreakableObjectState.Broken;
+                    }
+                    break;
+                case BreakableObjectState.CleanedUp:
+                    if (GetComponent<Damageable>().IsAlive())
+                    {
+                        borkenState.Value = BreakableObjectState.Fixed;
+                    }
+                    break;
+            }
+        }
+
+        public void UpdatePrefabState()
+        {
+            if (borkenState.Value == BreakableObjectState.Fixed)
             {
                 fixedSpawn ??= GameObject.Instantiate(fixedPrefab, transform.position, transform.rotation, transform);
             }
-            else if (!isFixed.Value && brokenSpawn == null)
+            else if (fixedSpawn != null)
             {
                 GameObject.Destroy(fixedSpawn);
+                fixedSpawn = null;
+            }
+
+            if (borkenState.Value == BreakableObjectState.Broken)
+            {
                 brokenSpawn ??= GameObject.Instantiate(brokenPrefab, transform.position, transform.rotation, transform);
             }
-        }
-
-        public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
-        {
-            if (isFixed.Value && !GetComponent<Damageable>().IsAlive())
+            else if (brokenSpawn != null)
             {
-                isFixed.Value = false;
+                GameObject.Destroy(brokenSpawn);
+                brokenSpawn = null;
             }
-        }
-
-        public void OnHeal(IDamageable target, IDamageSource source, float previous, float current, float amount)
-        {
-            
         }
     }
 }
