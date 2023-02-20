@@ -42,6 +42,11 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void ApplyDamage(float damage, IDamageSource source)
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // If player is dead, can't apply damage now can we.
             if (!IsAlive())
             {
@@ -85,6 +90,11 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void HealHealth(float amount, IDamageSource source)
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             float previous = CurrentHealth;
             AdjustHealth(amount);
             InvokeListenersOnHeal(amount, previous, CurrentHealth, source);

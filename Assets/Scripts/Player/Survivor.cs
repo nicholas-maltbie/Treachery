@@ -29,6 +29,7 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
+using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
 using UnityEngine;
@@ -44,7 +45,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageListener
+    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource
     {
         [Header("Input Controls")]
 
@@ -110,6 +111,16 @@ namespace nickmaltbie.Treachery.Player
         /// Action reference for jumping.
         /// </summary>
         internal JumpAction jumpAction;
+
+        /// <summary>
+        /// Punch attack for the player.
+        /// </summary>
+        internal PunchAttackAction punchAttack;
+
+        /// <summary>
+        /// Source of player viewpoint for attacks
+        /// </summary>
+        public Transform viewSource;
 
         /// <summary>
         /// Camera controls associated with the player.
@@ -197,6 +208,11 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public RelativeParentConfig relativeParentConfig { get; protected set; } = new RelativeParentConfig();
 
+        /// <summary>
+        /// One who deals damage is this.
+        /// </summary>
+        public GameObject Source => gameObject;
+
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -254,6 +270,7 @@ namespace nickmaltbie.Treachery.Player
         [Animation(FallingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [TransitionAfterTime(typeof(LongFallingState), 2.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
@@ -262,6 +279,7 @@ namespace nickmaltbie.Treachery.Player
         [Animation(LongFallingAnimState, 0.1f, true)]
         [Transition(typeof(JumpEvent), typeof(JumpState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 1.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class LongFallingState : State { }
@@ -281,7 +299,8 @@ namespace nickmaltbie.Treachery.Player
         public class RevivingState : State { }
 
         [Animation(PunchingAnimState, 0.05f, true)]
-        [TransitionOnAnimationComplete(typeof(IdleState), 0.1f, false)]
+        [Transition(typeof(PunchEvent), typeof(PunchingState))]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.1f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         public class PunchingState : State { }
 
@@ -319,6 +338,18 @@ namespace nickmaltbie.Treachery.Player
                 maxJumpAngle = 85.0f,
                 jumpAngleWeightFactor = 0.0f,
             };
+
+            punchAttack = new PunchAttackAction()
+            {
+                attackBaseOffset = viewSource.localPosition,
+                attackInput = new BufferedInput()
+                {
+                    inputActionReference = attackActionReference,
+                    cooldown = 0.25f,
+                    bufferTime = 0.05f,
+                },
+                coyoteTime = 0.0f,
+            };
         }
 
         /// <summary>
@@ -332,14 +363,8 @@ namespace nickmaltbie.Treachery.Player
             _cameraControls = GetComponent<ICameraControls>();
             SetupInputs();
 
-            AttackAction?.Enable();
             SprintAction?.Enable();
             MoveAction?.Enable();
-
-            if (AttackAction != null)
-            {
-                AttackAction.performed += _ => OnAttack();
-            }
         }
 
         /// <summary>
@@ -350,6 +375,18 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 jumpAction?.Setup(movementEngine.GroundedState, movementEngine, this);
+                punchAttack?.Setup(GetComponent<IDamageable>(), transform, CameraControls, this);
+
+                punchAttack.OnAttack += (e, attack) =>
+                {
+                    RaiseEvent(PunchEvent.Instance);
+
+                    if (attack.target != null)
+                    {
+                        AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
+                    }
+                };
+
                 MoveAction?.Enable();
             }
         }
@@ -383,6 +420,7 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 jumpAction.ApplyJumpIfPossible(movementEngine.GroundedState);
+                punchAttack.AttackIfPossible();
                 movementEngine.MovePlayer(
                     GetDesiredMovement() * unityService.fixedDeltaTime,
                     Velocity * unityService.fixedDeltaTime);
@@ -445,6 +483,7 @@ namespace nickmaltbie.Treachery.Player
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
             jumpAction.Update();
+            punchAttack.Update();
 
             float moveX = AttachedAnimator.GetFloat("MoveX");
             float moveY = AttachedAnimator.GetFloat("MoveY");
@@ -469,12 +508,10 @@ namespace nickmaltbie.Treachery.Player
             }
         }
 
-        public void OnAttack()
+        [ServerRpc]
+        public void AttackServerRpc(NetworkAttackEvent attack)
         {
-            if (IsLocalPlayer && PlayerInputUtils.playerMovementState != PlayerInputState.Deny)
-            {
-                RaiseEvent(PunchEvent.Instance);
-            }
+            NetworkAttackEvent.ProcessEvent(attack);
         }
 
         public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)

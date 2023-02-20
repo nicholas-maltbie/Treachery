@@ -16,22 +16,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Player
+using nickmaltbie.Treachery.Interactive.Health;
+using UnityEngine;
+
+namespace nickmaltbie.Treachery.Interactive.Hitbox
 {
-    public static class PlayerAnimStates
+    [RequireComponent(typeof(Collider))]
+    public class GenericHitbox : MonoBehaviour, IHitbox
     {
-        public const string IdleAnimState = "Idle";
-        public const string JumpAnimState = "Jump";
-        public const string LandingAnimState = "Landing";
-        public const string WalkingAnimState = "Walking";
-        public const string SprintingAnimState = "Sprinting";
-        public const string SlidingAnimState = "Sliding";
-        public const string FallingAnimState = "Falling";
-        public const string LongFallingAnimState = "Long Falling";
-        public const string DyingAnimState = "Dying";
-        public const string DeadAnimState = "Dead";
-        public const string RevivingAnimState = "Reviving";
-        public const string PunchingAnimState = "Punching";
-        public const string HitReactionAnimState = "Hit Reaction";
+        [SerializeField]
+        public Damageable damageable;
+        public bool isTriggerCollider = true;
+
+        public Collider Collider => GetComponent<Collider>();
+        public virtual bool IsCritical => false;
+
+        public IDamageable Source => damageable;
+
+        public void Awake()
+        {
+            gameObject.layer = IHitbox.HitboxLayer;
+            Collider.isTrigger = isTriggerCollider;
+
+            // If damageable is null, find in parent
+            damageable ??= GetComponentInParent<Damageable>();
+        }
     }
 }

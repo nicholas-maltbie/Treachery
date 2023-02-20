@@ -16,22 +16,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Player
+using nickmaltbie.Treachery.Interactive.Health;
+using UnityEngine;
+
+namespace nickmaltbie.Treachery.Interactive.Hitbox
 {
-    public static class PlayerAnimStates
+    public interface IHitbox
     {
-        public const string IdleAnimState = "Idle";
-        public const string JumpAnimState = "Jump";
-        public const string LandingAnimState = "Landing";
-        public const string WalkingAnimState = "Walking";
-        public const string SprintingAnimState = "Sprinting";
-        public const string SlidingAnimState = "Sliding";
-        public const string FallingAnimState = "Falling";
-        public const string LongFallingAnimState = "Long Falling";
-        public const string DyingAnimState = "Dying";
-        public const string DeadAnimState = "Dead";
-        public const string RevivingAnimState = "Reviving";
-        public const string PunchingAnimState = "Punching";
-        public const string HitReactionAnimState = "Hit Reaction";
+        public static readonly int HitboxLayer = LayerMask.NameToLayer("Hitbox");
+        public static readonly int HitboxLayerMask = 1 << HitboxLayer;
+
+        IDamageable Source { get; }
+        Collider Collider { get; }
+        bool IsCritical { get; }
     }
 }
