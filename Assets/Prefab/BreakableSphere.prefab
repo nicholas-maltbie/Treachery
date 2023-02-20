@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 542210302449983828}
   - component: {fileID: 542210302449983829}
   m_Layer: 0
-  m_Name: BrakeableSphere
+  m_Name: BreakableSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
