@@ -26,6 +26,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
     {
         [SerializeField]
         public Damageable damageable;
+        public bool isTriggerCollider = true;
 
         public Collider Collider => GetComponent<Collider>();
         public virtual bool IsCritical => false;
@@ -35,7 +36,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         public void Awake()
         {
             gameObject.layer = IHitbox.HitboxLayer;
-            Collider.isTrigger = true;
+            Collider.isTrigger = isTriggerCollider;
 
             // If damageable is null, find in parent
             damageable ??= GetComponentInParent<Damageable>();
