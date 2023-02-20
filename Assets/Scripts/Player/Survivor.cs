@@ -377,7 +377,16 @@ namespace nickmaltbie.Treachery.Player
                 jumpAction?.Setup(movementEngine.GroundedState, movementEngine, this);
                 punchAttack?.Setup(GetComponent<IDamageable>(), transform, CameraControls, this);
 
-                punchAttack.OnAttack += (e, evt) => RaiseEvent(PunchEvent.Instance);
+                punchAttack.OnAttack += (e, attack) =>
+                {
+                    RaiseEvent(PunchEvent.Instance);
+
+                    if (attack.target != null)
+                    {
+                        AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
+                    }
+                };
+
                 MoveAction?.Enable();
             }
         }
@@ -497,6 +506,12 @@ namespace nickmaltbie.Treachery.Player
                     RaiseEvent(StopSprintEvent.Instance);
                 }
             }
+        }
+
+        [ServerRpc]
+        public void AttackServerRpc(NetworkAttackEvent attack)
+        {
+            NetworkAttackEvent.ProcessEvent(attack);
         }
 
         public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)

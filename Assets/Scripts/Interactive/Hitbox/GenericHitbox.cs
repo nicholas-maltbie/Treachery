@@ -17,22 +17,28 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.Interactive.Hitbox;
-using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.DebugScripts
+namespace nickmaltbie.Treachery.Interactive.Hitbox
 {
-    [CustomEditor(typeof(GenericHitbox))]
-    public class HitboxDebug : Editor
+    [RequireComponent(typeof(Collider))]
+    public class GenericHitbox : MonoBehaviour, IHitbox
     {
+        [SerializeField]
+        public Damageable damageable;
 
-        public override void OnInspectorGUI()
+        public Collider Collider => GetComponent<Collider>();
+        public virtual bool IsCritical => false;
+
+        public IDamageable Source => damageable;
+
+        public void Awake()
         {
-            DrawDefaultInspector();
-            var hitbox = target as GenericHitbox;
-            hitbox.damageable ??= hitbox.gameObject.GetComponentInParent<Damageable>();
+            gameObject.layer = IHitbox.HitboxLayer;
+            Collider.isTrigger = true;
+
+            // If damageable is null, find in parent
+            damageable ??= GetComponentInParent<Damageable>();
         }
     }
 }

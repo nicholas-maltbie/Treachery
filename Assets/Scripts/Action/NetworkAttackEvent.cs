@@ -66,6 +66,11 @@ namespace nickmaltbie.Treachery.Action
             serializer.SerializeValue(ref sourceReference);
         }
 
+        public static void ProcessEvent(NetworkAttackEvent attack)
+        {
+            attack.target.ApplyDamage(attack.damage, attack.source);
+        }
+
         public static NetworkAttackEvent FromAttackEvent(AttackEvent attack, GameObject source)
         {
             return new NetworkAttackEvent

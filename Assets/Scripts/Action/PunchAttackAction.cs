@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using System;
+using System.Linq;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Action;
@@ -102,7 +103,7 @@ namespace nickmaltbie.Treachery.Action
 
         public Quaternion PlayerHeading()
         {
-            if (viewHeading is CameraController cameraController)
+            if (viewHeading is IManagedCamera cameraController)
             {
                 return Quaternion.Euler(cameraController.Pitch, cameraController.Yaw, 0);
             }
@@ -122,7 +123,7 @@ namespace nickmaltbie.Treachery.Action
             float damage = 0.0f;
             Vector3 hitPos = Vector3.zero;
             IHitbox hitbox = null;
-            
+
             foreach (RaycastHit hit in Physics.SphereCastAll(
                 source,
                 attackRadius,
@@ -145,7 +146,6 @@ namespace nickmaltbie.Treachery.Action
                 damage = damageDealt;
                 hitPos = hit.point;
                 hitbox = checkHitbox;
-                target.ApplyDamage(damageDealt, damageSource ?? EmptyDamageSource.Instance);
 
                 // Then exit, no piercing in this attack.
                 break;

@@ -33,26 +33,10 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
     }
 
     [RequireComponent(typeof(Collider))]
-    public class HumanoidHitbox : MonoBehaviour, IHitbox
+    public class HumanoidHitbox : GenericHitbox
     {
         [SerializeField]
         public HumanoidHitboxType hitboxType;
-
-        [SerializeField]
-        public IDamageable damageable;
-
-        public Collider Collider => GetComponent<Collider>();
-        public bool IsCritical => hitboxType == HumanoidHitboxType.Head;
-
-        public IDamageable Source => damageable;
-
-        public void Awake()
-        {
-            gameObject.layer = IHitbox.HitboxLayer;
-            Collider.isTrigger = true;
-
-            // If damageable is null, find in parent
-            damageable ??= GetComponentInParent<IDamageable>();
-        }
+        public override bool IsCritical => hitboxType == HumanoidHitboxType.Head;
     }
 }
