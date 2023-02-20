@@ -18,9 +18,7 @@
 
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
-using Unity.Netcode;
 using UnityEditor;
-using UnityEngine;
 
 namespace nickmaltbie.Treachery.DebugScripts
 {

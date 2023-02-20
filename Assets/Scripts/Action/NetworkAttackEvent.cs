@@ -17,7 +17,6 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -36,7 +35,7 @@ namespace nickmaltbie.Treachery.Action
         {
             get
             {
-                if(targetReference.TryGet(out NetworkObject obj))
+                if (targetReference.TryGet(out NetworkObject obj))
                 {
                     return obj.gameObject;
                 }
@@ -49,7 +48,7 @@ namespace nickmaltbie.Treachery.Action
         {
             get
             {
-                if(sourceReference.TryGet(out NetworkObject obj))
+                if (sourceReference.TryGet(out NetworkObject obj))
                 {
                     return obj.gameObject;
                 }

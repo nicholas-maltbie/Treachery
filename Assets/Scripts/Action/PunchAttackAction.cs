@@ -1,5 +1,4 @@
 
-
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -19,11 +18,9 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Action;
-using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
@@ -62,7 +59,7 @@ namespace nickmaltbie.Treachery.Action
         private IDamageable player;
         private ICameraControls viewHeading;
         private Transform playerPosition;
-        
+
         public EventHandler<AttackEvent> OnAttack;
 
         /// <summary>
@@ -152,7 +149,7 @@ namespace nickmaltbie.Treachery.Action
             }
 
             OnAttack?.Invoke(
-                this, 
+                this,
                 new AttackEvent
                 {
                     target = target,

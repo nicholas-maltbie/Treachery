@@ -30,7 +30,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void Update()
         {
-            var damageable = GetComponent<IDamageable>();
+            IDamageable damageable = GetComponent<IDamageable>();
             if (!damageable.IsAlive())
             {
                 elapsedDead += Time.deltaTime;
