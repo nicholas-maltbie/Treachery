@@ -17,42 +17,22 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Hitbox;
+using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Interactive.Hitbox
+namespace nickmaltbie.Treachery.DebugScripts
 {
-    public enum HumanoidHitboxType
+    [CustomEditor(typeof(HumanoidHitbox))]
+    public class HitboxDebug : Editor
     {
-        Unassigned,
-        Head,
-        Torso,
-        Arm,
-        Leg,
-        Foot,
-        Hand
-    }
 
-    [RequireComponent(typeof(Collider))]
-    public class HumanoidHitbox : MonoBehaviour, IHitbox
-    {
-        [SerializeField]
-        public HumanoidHitboxType hitboxType;
-
-        [SerializeField]
-        public IDamageable damageable;
-
-        public Collider Collider => GetComponent<Collider>();
-        public bool IsCritical => hitboxType == HumanoidHitboxType.Head;
-
-        public IDamageable Source => damageable;
-
-        public void Awake()
+        public override void OnInspectorGUI()
         {
-            gameObject.layer = IHitbox.HitboxLayer;
-            Collider.isTrigger = true;
-
-            // If damageable is null, find in parent
-            damageable ??= GetComponentInParent<IDamageable>();
+            DrawDefaultInspector();
+            var hitbox = target as HumanoidHitbox;
+            hitbox.damageable ??= hitbox.gameObject.GetComponentInParent<Damageable>();
         }
     }
 }

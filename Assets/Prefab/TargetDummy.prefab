@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 385868950501213387}
   - component: {fileID: 385868950501213384}
   - component: {fileID: 616145551}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TargetDummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,9 +133,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.25
-  m_Height: 2
+  m_Height: 1.8
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &6105023398458789439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143,6 +143,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 385868950501213391}
     m_Modifications:
+    - target: {fileID: 869488406, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
+      value: 
+      objectReference: {fileID: 385868950501213386}
     - target: {fileID: 410164249358181918, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -191,18 +195,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Y Bot With Hit Boxes Variant
       objectReference: {fileID: 0}
-    - target: {fileID: 1273118334868504395, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+    - target: {fileID: 3948703863679203682, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
       value: 
-      objectReference: {fileID: 2100000, guid: 008d05e5267283842b68c5df9f10ef0a, type: 2}
+      objectReference: {fileID: 385868950501213386}
+    - target: {fileID: 4330732997698501548, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
+      value: 
+      objectReference: {fileID: 385868950501213386}
     - target: {fileID: 5977784129592202710, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: adfd68d2c25d4064998096853bfdacf5, type: 2}
-    - target: {fileID: 6003613737157852260, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
-      propertyPath: m_Controller
+    - target: {fileID: 7211193072909961931, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
       value: 
-      objectReference: {fileID: 9100000, guid: 8669068c34fd51147bdfe76217100811, type: 2}
+      objectReference: {fileID: 385868950501213386}
+    - target: {fileID: 7698596828711329008, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
+      value: 
+      objectReference: {fileID: 385868950501213386}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
 --- !u!95 &569837903227089499 stripped

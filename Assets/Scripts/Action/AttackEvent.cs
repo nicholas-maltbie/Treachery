@@ -17,42 +17,16 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Interactive.Hitbox
+namespace nickmaltbie.Treachery.Action
 {
-    public enum HumanoidHitboxType
+    public struct AttackEvent
     {
-        Unassigned,
-        Head,
-        Torso,
-        Arm,
-        Leg,
-        Foot,
-        Hand
-    }
-
-    [RequireComponent(typeof(Collider))]
-    public class HumanoidHitbox : MonoBehaviour, IHitbox
-    {
-        [SerializeField]
-        public HumanoidHitboxType hitboxType;
-
-        [SerializeField]
-        public IDamageable damageable;
-
-        public Collider Collider => GetComponent<Collider>();
-        public bool IsCritical => hitboxType == HumanoidHitboxType.Head;
-
-        public IDamageable Source => damageable;
-
-        public void Awake()
-        {
-            gameObject.layer = IHitbox.HitboxLayer;
-            Collider.isTrigger = true;
-
-            // If damageable is null, find in parent
-            damageable ??= GetComponentInParent<IDamageable>();
-        }
+        public IDamageable target;
+        public float damage;
+        public Vector3 hitPos;
+        public IHitbox hitbox;
     }
 }

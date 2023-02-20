@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Interactive.Hitbox
@@ -23,7 +24,9 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
     public interface IHitbox
     {
         public static readonly int HitboxLayer = LayerMask.NameToLayer("Hitbox");
+        public static readonly int HitboxLayerMask = 1 << HitboxLayer;
 
+        IDamageable Source { get; }
         Collider Collider { get; }
         bool IsCritical { get; }
     }

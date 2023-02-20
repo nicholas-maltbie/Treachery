@@ -338,6 +338,7 @@ MonoBehaviour:
   attackSpeed: 3.5
   sprintSpeed: 10
   jumpVelocity: 6.5
+  viewSource: {fileID: 1928389238472999755}
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -345,6 +346,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1928389238801210310}
     m_Modifications:
+    - target: {fileID: 869488406, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: damageable
+      value: 
+      objectReference: {fileID: -2618219780861503884}
     - target: {fileID: 410164249358181918, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_RootOrder
       value: 1
