@@ -45,7 +45,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource
+    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor
     {
         [Header("Input Controls")]
 
@@ -76,6 +76,13 @@ namespace nickmaltbie.Treachery.Player
         [Tooltip("Action reference for player attack move")]
         [SerializeField]
         public InputActionReference attackActionReference;
+
+        /// <summary>
+        /// Action reference for dodging.
+        /// </summary>
+        [Tooltip("Action reference for player dodge")]
+        [SerializeField]
+        public InputActionReference dodgeActionReference;
 
         [Header("Movement Settings")]
 
@@ -283,6 +290,12 @@ namespace nickmaltbie.Treachery.Player
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 1.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
         public class LongFallingState : State { }
+        
+        [Animation(DodgeAnimState, 0.1f, true, 0.5f)]
+        [Transition(typeof(JumpEvent), typeof(JumpState))]
+        [Transition(typeof(DodgeEnd), typeof(IdleState))]
+        [TransitionOnAnimationComplete(typeof(IdleState))]
+        public class Dodge : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
         [TransitionFromAnyState(typeof(PlayerDeath))]
@@ -538,6 +551,11 @@ namespace nickmaltbie.Treachery.Player
             {
                 RaiseEvent(ReviveEvent.Instance);
             }
+        }
+
+        public bool IsBusy()
+        {
+            return false;
         }
     }
 }

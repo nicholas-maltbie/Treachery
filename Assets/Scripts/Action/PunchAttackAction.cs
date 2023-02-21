@@ -29,13 +29,11 @@ using UnityEngine;
 namespace nickmaltbie.Treachery.Action
 {
     /// <summary>
-    /// Jump action that can be performed by a character controller.
+    /// Punch action that can be performed by a player.
     /// </summary>
     [Serializable]
     public class PunchAttackAction : ConditionalAction
     {
-        [Header("Player Jump Settings")]
-
         /// <summary>
         /// Action reference for attacking.
         /// </summary>

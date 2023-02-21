@@ -43,4 +43,16 @@ namespace nickmaltbie.Treachery.Player
         public static OnHitEvent Instance = new OnHitEvent();
         private OnHitEvent() { }
     }
+
+    public class DodgeStart : IEvent
+    {
+        public static DodgeStart Instance = new DodgeStart();
+        private DodgeStart() { }
+    }
+
+    public class DodgeEnd : IEvent
+    {
+        public static DodgeEnd Instance = new DodgeEnd();
+        private DodgeEnd() { }
+    }
 }
