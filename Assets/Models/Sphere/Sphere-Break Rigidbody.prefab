@@ -189,7 +189,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &1214326802074303159 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1420196573705343409, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -210,7 +210,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &1616637491960324903 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7709923197106304991, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -231,7 +231,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &1860978806465658710 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7296907999051082670, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -252,7 +252,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &2661036181961383073 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6376449701726259289, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -273,7 +273,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &3040481440515893941 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6242447260443033165, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -294,7 +294,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &3846841442345963192 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3894790563273680320, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -315,7 +315,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &3919746393792010297 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3821891540669150015, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -336,7 +336,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &5755948614780950216 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3706860188484272688, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -357,7 +357,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &8302761133492990983 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1128433411934642431, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -378,7 +378,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &8362807592429738072 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8602160864134837088, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -399,7 +399,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &8750132940793742761 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 432032185809867089, guid: e754b8b77e6607045b6eec390fc26fee, type: 3}
@@ -420,4 +420,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0

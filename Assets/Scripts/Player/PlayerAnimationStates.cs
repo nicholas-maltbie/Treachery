@@ -33,5 +33,8 @@ namespace nickmaltbie.Treachery.Player
         public const string RevivingAnimState = "Reviving";
         public const string PunchingAnimState = "Punching";
         public const string HitReactionAnimState = "Hit Reaction";
+        public const string DodgeAnimState = "Dodge";
+        public const string BlockAnimState = "Blocking";
+        public const string RollAnimState = "Rolling";
     }
 }

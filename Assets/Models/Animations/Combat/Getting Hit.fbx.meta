@@ -39,8 +39,8 @@ ModelImporter:
       name: Getting Hit
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
-      lastFrame: 138
+      firstFrame: 31
+      lastFrame: 84
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

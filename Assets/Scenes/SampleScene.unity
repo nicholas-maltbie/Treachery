@@ -4434,7 +4434,7 @@ GameObject:
   - component: {fileID: 1963040128}
   - component: {fileID: 1963040127}
   - component: {fileID: 1963040126}
-  - component: {fileID: 1963040125}
+  - component: {fileID: 1963040130}
   m_Layer: 0
   m_Name: Teleport Box
   m_TagString: Untagged
@@ -4442,19 +4442,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1963040125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1963040124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7d1ea531b8a338468e3d314beea4a5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  teleportLocation: {fileID: 1299727520}
 --- !u!65 &1963040126
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4533,6 +4520,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1963040130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963040124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf4f48227af69b54aa62883fb14facaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teleportLocation: {fileID: 1299727520}
+  mask:
+    serializedVersion: 2
+    m_Bits: 247
 --- !u!1001 &1997614070
 PrefabInstance:
   m_ObjectHideFlags: 0

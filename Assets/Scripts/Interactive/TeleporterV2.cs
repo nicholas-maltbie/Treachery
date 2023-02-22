@@ -16,43 +16,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.StateMachineUnity.Event;
+using UnityEngine;
 
-namespace nickmaltbie.Treachery.Player
+namespace nickmaltbie.Treachery.Interactive
 {
-    public class PlayerDeath : IEvent
+    /// <summary>
+    /// This will teleport rigidbodies when they collide with this object
+    /// </summary>
+    public class TeleporterV2 : MonoBehaviour
     {
-        public static PlayerDeath Instance = new PlayerDeath();
-        private PlayerDeath() { }
-    }
+        /// <summary>
+        /// Position and rotation to which objects will be teleported when they collide with this object
+        /// </summary>
+        public Transform teleportLocation;
 
-    public class PunchEvent : IEvent
-    {
-        public static PunchEvent Instance = new PunchEvent();
-        private PunchEvent() { }
-    }
+        public LayerMask mask = ~0;
 
-    public class ReviveEvent : IEvent
-    {
-        public static ReviveEvent Instance = new ReviveEvent();
-        private ReviveEvent() { }
-    }
+        /// <summary>
+        /// Whenever something collides with this object, teleport it
+        /// </summary>
+        /// <param name="other">Other object that collided with this</param>
+        public void OnTriggerEnter(Collider other)
+        {
+            if ((other.gameObject.layer & mask) == 0)
+            {
+                return;
+            }
 
-    public class OnHitEvent : IEvent
-    {
-        public static OnHitEvent Instance = new OnHitEvent();
-        private OnHitEvent() { }
-    }
-
-    public class DodgeStart : IEvent
-    {
-        public static DodgeStart Instance = new DodgeStart();
-        private DodgeStart() { }
-    }
-
-    public class DodgeStop : IEvent
-    {
-        public static DodgeStop Instance = new DodgeStop();
-        private DodgeStop() { }
+            // Teleport the game object to the position and rotation of the teleport location
+            other.gameObject.transform.position = teleportLocation.position;
+            other.gameObject.transform.rotation = teleportLocation.rotation;
+        }
     }
 }

@@ -66,7 +66,7 @@
       "url": "https://registry.npmjs.org"
     },
     "com.nickmaltbie.statemachineunity": {
-      "version": "1.2.2",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -76,12 +76,12 @@
       "url": "https://registry.npmjs.org"
     },
     "com.nickmaltbie.statemachineunity.netcode": {
-      "version": "1.2.2",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.nickmaltbie.testutilsunity": "0.0.2",
-        "com.nickmaltbie.statemachineunity": "1.2.1",
+        "com.nickmaltbie.statemachineunity": "1.2.3",
         "com.unity.inputsystem": "1.0.0",
         "com.unity.netcode.gameobjects": "1.1.0"
       },

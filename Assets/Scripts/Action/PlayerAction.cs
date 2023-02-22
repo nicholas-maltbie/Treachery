@@ -16,43 +16,14 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.StateMachineUnity.Event;
-
-namespace nickmaltbie.Treachery.Player
+namespace nickmaltbie.Treachery.Action
 {
-    public class PlayerDeath : IEvent
+    public enum PlayerAction
     {
-        public static PlayerDeath Instance = new PlayerDeath();
-        private PlayerDeath() { }
-    }
-
-    public class PunchEvent : IEvent
-    {
-        public static PunchEvent Instance = new PunchEvent();
-        private PunchEvent() { }
-    }
-
-    public class ReviveEvent : IEvent
-    {
-        public static ReviveEvent Instance = new ReviveEvent();
-        private ReviveEvent() { }
-    }
-
-    public class OnHitEvent : IEvent
-    {
-        public static OnHitEvent Instance = new OnHitEvent();
-        private OnHitEvent() { }
-    }
-
-    public class DodgeStart : IEvent
-    {
-        public static DodgeStart Instance = new DodgeStart();
-        private DodgeStart() { }
-    }
-
-    public class DodgeStop : IEvent
-    {
-        public static DodgeStop Instance = new DodgeStop();
-        private DodgeStop() { }
+        Jump,
+        Dodge,
+        Punch,
+        Block,
+        Roll
     }
 }
