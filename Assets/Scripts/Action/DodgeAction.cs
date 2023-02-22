@@ -33,20 +33,8 @@ namespace nickmaltbie.Treachery.Action
     /// <summary>
     /// Dodge action that can be performed by a player.
     /// </summary>
-    [Serializable]
-    public class DodgeAction : ConditionalAction
+    public class DodgeAction : TimedConditionalAction<PlayerAction>
     {
-        /// <summary>
-        /// Action reference for dodge.
-        /// </summary>
-        [SerializeField]
-        public BufferedInput dodgeInput;
-
-        /// <summary>
-        /// Time in which the player is dodging.
-        /// </summary>
-        public float dodgeDuration;
-
         /// <summary>
         /// Speed at which the player moves while dodging.
         /// </summary>
@@ -72,43 +60,26 @@ namespace nickmaltbie.Treachery.Action
         /// </summary>
         protected float dodgeElapsed = Mathf.Infinity;
 
-        /// <summary>
-        /// Is the dodge action currently active.
-        /// </summary>
-        public bool DodgeActive => dodgeElapsed <= dodgeDuration;
-
-        /// <summary>
-        /// Setup this dodge action.
-        /// </summary>
-        public void Setup(Func<Vector3> moveDirFn)
+        public DodgeAction(
+            BufferedInput bufferedInput,
+            IActionActor<PlayerAction> actor,
+            Func<Vector3> moveDirFn,
+            float duration)
+            : base(bufferedInput, actor, PlayerAction.Dodge, duration)
         {
-            base.condition = CanDodge;
             this.GetMoveDir = moveDirFn;
-            dodgeInput.InputAction?.Enable();
         }
 
         /// <inheritdoc/>
-        public override void Update()
+        public void Update(KCCGroundedState groundedState)
         {
             base.Update();
-            dodgeInput?.Update();
-            dodgeElapsed += Time.deltaTime;
-        }
-
-        public bool DodgeIfPossible(KCCGroundedState groundedState)
-        {
             this.groundedState = groundedState;
-            if (dodgeInput.Pressed && CanPerform)
-            {
-                Dodge();
-                return true;
-            }
-
-            return false;
         }
 
-        public void Dodge()
+        protected override void Perform()
         {
+            base.Perform();
             dodgeDirection = GetMoveDir().normalized * dodgeSpeed;
             dodgeElapsed = 0.0f;
         }
@@ -117,11 +88,10 @@ namespace nickmaltbie.Treachery.Action
         /// Can the player attack based on current state.
         /// </summary>
         /// <returns>True if the player can jump, false otherwise.</returns>
-        public bool CanDodge()
+        protected override bool CanPerform()
         {
-            bool canMove = PlayerInputUtils.playerMovementState != PlayerInputState.Deny;
             bool grounded = groundedState.StandingOnGround && !groundedState.Sliding;
-            return canMove && grounded;
+            return base.CanPerform() && grounded;
         }
     }
 }

@@ -19,8 +19,6 @@
 
 using System;
 using nickmaltbie.OpenKCC.CameraControls;
-using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Character.Action;
 using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
@@ -32,15 +30,8 @@ namespace nickmaltbie.Treachery.Action
     /// Punch action that can be performed by a player.
     /// </summary>
     [Serializable]
-    public class PunchAttackAction : ConditionalAction
+    public class PunchAttackAction : ActorConditionalAction<PlayerAction>
     {
-        /// <summary>
-        /// Action reference for attacking.
-        /// </summary>
-        [Tooltip("Action reference for attacking.")]
-        [SerializeField]
-        public BufferedInput attackInput;
-
         /// <summary>
         /// Range at which the punch can hit targets.
         /// </summary>
@@ -53,7 +44,6 @@ namespace nickmaltbie.Treachery.Action
         public bool IsLocalPlayer = false;
 
         public Vector3 attackBaseOffset;
-        private IDamageSource damageSource;
         private IDamageable player;
         private ICameraControls viewHeading;
         private Transform playerPosition;
@@ -63,37 +53,17 @@ namespace nickmaltbie.Treachery.Action
         /// <summary>
         /// Setup this attack action.
         /// </summary>
-        public void Setup(IDamageable player, Transform playerPosition, ICameraControls viewHeading, IDamageSource damageSource)
+        public PunchAttackAction(
+            BufferedInput bufferedInput,
+            IActionActor<PlayerAction> actor,
+            IDamageable player,
+            Transform playerPosition,
+            ICameraControls viewHeading)
+            : base(bufferedInput, actor, PlayerAction.Punch)
         {
-            base.condition = CanAttack;
             this.player = player;
             this.playerPosition = playerPosition;
             this.viewHeading = viewHeading;
-            this.damageSource = damageSource;
-            attackInput.InputAction?.Enable();
-        }
-
-        /// <inheritdoc/>
-        public override void Update()
-        {
-            base.Update();
-            attackInput?.Update();
-        }
-
-        /// <summary>
-        /// Apply the jump action to the actor if attempting
-        /// jump and the player can jump.
-        /// </summary>
-        /// <returns>True if the player jumped, false otherwise.</returns>
-        public bool AttackIfPossible()
-        {
-            if (attackInput.Pressed && CanPerform)
-            {
-                Attack();
-                return true;
-            }
-
-            return false;
         }
 
         public Quaternion PlayerHeading()
@@ -106,7 +76,7 @@ namespace nickmaltbie.Treachery.Action
             return viewHeading.PlayerHeading;
         }
 
-        public void Attack()
+        protected override void Perform()
         {
             // Draw a line from the player's view towards
             // whatever direction they are looking.
@@ -155,17 +125,6 @@ namespace nickmaltbie.Treachery.Action
                     hitPos = hitPos,
                     hitbox = hitbox,
                 });
-
-            attackInput.Reset();
-        }
-
-        /// <summary>
-        /// Can the player attack based on current state.
-        /// </summary>
-        /// <returns>True if the player can jump, false otherwise.</returns>
-        public bool CanAttack()
-        {
-            return player.IsAlive() && PlayerInputUtils.playerMovementState != PlayerInputState.Deny;
         }
     }
 }

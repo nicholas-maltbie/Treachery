@@ -4,11 +4,13 @@ namespace nickmaltbie.Treachery.Action
     /// <summary>
     /// Actor who can be busy performing some action.
     /// </summary>
-    public interface IActionActor
+    public interface IActionActor<TAction>
     {
         /// <summary>
-        /// Is the actor busy performing some action.
+        /// Can the player perform a specific action.
         /// </summary>
-        public bool IsBusy();
+        /// <param name="action">Type of action the player wants to perform.</param>
+        /// <returns>True if they can, false otherwise.</returns>
+        bool CanPerform(TAction action);
     }
 }
