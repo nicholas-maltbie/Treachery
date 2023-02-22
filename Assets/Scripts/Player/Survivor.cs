@@ -308,7 +308,6 @@ namespace nickmaltbie.Treachery.Player
         public class LongFallingState : State { }
 
         [Animation(DodgeAnimState, 0.1f, true, 0.5f)]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
@@ -317,7 +316,6 @@ namespace nickmaltbie.Treachery.Player
         public class DodgeState : State { }
 
         [Animation(BlockAnimState, 0.1f, true, 0.5f)]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
         [BlockAllAction]
         public class GuardState : State { }
 
@@ -404,7 +402,7 @@ namespace nickmaltbie.Treachery.Player
                 new BufferedInput()
                 {
                     inputActionReference = dodgeActionReference,
-                    cooldown = 0.25f,
+                    cooldown = 0.5f,
                     bufferTime = 0.05f,
                 },
                 this,
