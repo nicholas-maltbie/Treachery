@@ -335,10 +335,13 @@ MonoBehaviour:
   sprintActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   jumpActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   attackActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  dodgeActionReference: {fileID: -6602405483767582039, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   walkingSpeed: 7.5
   attackSpeed: 3.5
+  dodgeDist: 3.5
   sprintSpeed: 10
   jumpVelocity: 6.5
+  minimumActionDelay: 1
   viewSource: {fileID: 1928389238472999755}
 --- !u!114 &-7457895822324968746
 MonoBehaviour:

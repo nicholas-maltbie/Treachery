@@ -50,9 +50,9 @@ namespace nickmaltbie.Treachery.Player
         private DodgeStart() { }
     }
 
-    public class DodgeEnd : IEvent
+    public class DodgeStop : IEvent
     {
-        public static DodgeEnd Instance = new DodgeEnd();
-        private DodgeEnd() { }
+        public static DodgeStop Instance = new DodgeStop();
+        private DodgeStop() { }
     }
 }

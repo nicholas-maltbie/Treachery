@@ -17,6 +17,8 @@ namespace nickmaltbie.Treachery.Action
 
         private IActionActor<TAction> actor;
 
+        public EventHandler OnPerform;
+
         public ActorConditionalAction(BufferedInput bufferedInput, IActionActor<TAction> actor, TAction actionType)
         {
             base.condition = this.CanPerform;
@@ -36,6 +38,7 @@ namespace nickmaltbie.Treachery.Action
             if (CanPerform() && bufferedInput.Pressed)
             {
                 Perform();
+                OnPerform?.Invoke(this, EventArgs.Empty);
                 bufferedInput.Reset();
                 return true;
             }

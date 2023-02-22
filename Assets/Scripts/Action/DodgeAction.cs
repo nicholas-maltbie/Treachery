@@ -18,14 +18,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Character.Action;
-using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
-using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Action
@@ -35,53 +29,52 @@ namespace nickmaltbie.Treachery.Action
     /// </summary>
     public class DodgeAction : TimedConditionalAction<PlayerAction>
     {
+        public static float DodgeSpeedFactor(float x)
+        {
+            float val = (x * 0.5f) * 2;
+            return Mathf.Exp(-(val * val));
+        }
+
         /// <summary>
         /// Speed at which the player moves while dodging.
         /// </summary>
-        public float dodgeSpeed;
+        public float dodgeDist;
 
-        /// <summary>
-        /// Function to get the direction the player is moving in.
-        /// </summary>
-        protected Func<Vector3> GetMoveDir;
-
-        /// <summary>
-        /// Grounded state of the player action.
-        /// </summary>
-        protected KCCGroundedState groundedState;
+        private Vector3 _dodgeDirection;
 
         /// <summary>
         /// Direction player is moving while dodging.
         /// </summary>
-        protected Vector3 dodgeDirection;
+        public Vector3 DodgeDirection
+        {
+            get
+            {
+                return _dodgeDirection.normalized * DodgeSpeedFactor(elapsed / duration) * dodgeDist / duration;
+            }
+            set
+            {
+                _dodgeDirection = value;
+            }
+        }
 
         /// <summary>
-        /// Time elapsed during the current dodge action.
+        /// MovementEngine for the player.
         /// </summary>
-        protected float dodgeElapsed = Mathf.Infinity;
+        private KCCMovementEngine movementEngine;
 
         public DodgeAction(
             BufferedInput bufferedInput,
             IActionActor<PlayerAction> actor,
-            Func<Vector3> moveDirFn,
-            float duration)
+            float duration,
+            KCCMovementEngine movementEngine)
             : base(bufferedInput, actor, PlayerAction.Dodge, duration)
         {
-            this.GetMoveDir = moveDirFn;
-        }
-
-        /// <inheritdoc/>
-        public void Update(KCCGroundedState groundedState)
-        {
-            base.Update();
-            this.groundedState = groundedState;
+            this.movementEngine = movementEngine;
         }
 
         protected override void Perform()
         {
             base.Perform();
-            dodgeDirection = GetMoveDir().normalized * dodgeSpeed;
-            dodgeElapsed = 0.0f;
         }
 
         /// <summary>
@@ -90,7 +83,8 @@ namespace nickmaltbie.Treachery.Action
         /// <returns>True if the player can jump, false otherwise.</returns>
         protected override bool CanPerform()
         {
-            bool grounded = groundedState.StandingOnGround && !groundedState.Sliding;
+            var kccGrounded = movementEngine.GroundedState;
+            bool grounded = kccGrounded.StandingOnGround && !kccGrounded.Sliding;
             return base.CanPerform() && grounded;
         }
     }

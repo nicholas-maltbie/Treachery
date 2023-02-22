@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System;
+using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.OpenKCC.Utils;
@@ -46,31 +47,17 @@ namespace nickmaltbie.Treachery.Action
         public float jumpAngleWeightFactor = 0.0f;
 
         /// <summary>
-        /// Actor to apply jumps to.
+        /// MovementEngine for the player.
         /// </summary>
-        private IJumping jumper;
-
-        /// <summary>
-        /// Configuration of the character controller.
-        /// </summary>
-        private IKCCConfig kccConfig;
-
-        /// <summary>
-        /// Configuration of the character grounded state.
-        /// </summary>
-        private IKCCGrounded kccGrounded;
+        private KCCMovementEngine movementEngine;
 
         public JumpActorAction(
             BufferedInput bufferedInput,
             IActionActor<PlayerAction> actor,
-            IKCCConfig kccConfig,
-            IKCCGrounded kccGrounded,
-            IJumping jumper)
+            KCCMovementEngine movementEngine)
             : base(bufferedInput, actor, PlayerAction.Jump)
         {
-            this.jumper = jumper;
-            this.kccConfig = kccConfig;
-            this.kccGrounded = kccGrounded;
+            this.movementEngine = movementEngine;
             JumpedWhileSliding = false;
         }
 
@@ -80,11 +67,11 @@ namespace nickmaltbie.Treachery.Action
         public bool JumpedWhileSliding { get; private set; }
 
         /// <inheritdoc/>
-        public void Update(IKCCGrounded kccGrounded)
+        public override void Update()
         {
-            this.kccGrounded = kccGrounded;
+            var kccGrounded = movementEngine.GroundedState;
             base.Update();
-            if (kccGrounded != null && kccGrounded.StandingOnGround && !kccGrounded.Sliding)
+            if (kccGrounded.StandingOnGround && !kccGrounded.Sliding)
             {
                 JumpedWhileSliding = false;
             }
@@ -95,14 +82,19 @@ namespace nickmaltbie.Treachery.Action
         /// </summary>
         protected override void Perform()
         {
+            var kccGrounded = movementEngine.GroundedState;
             if (kccGrounded.Sliding)
             {
                 JumpedWhileSliding = true;
             }
+        }
 
-            Vector3 jumpDirection = (kccGrounded.StandingOnGround ? kccGrounded.SurfaceNormal : kccConfig.Up) *
-                jumpAngleWeightFactor + kccConfig.Up * (1 - jumpAngleWeightFactor);
-            jumper.ApplyJump(jumpVelocity * jumpDirection.normalized);
+        public Vector3 JumpDirection()
+        {
+            var kccGrounded = movementEngine.GroundedState;
+            Vector3 normal = (kccGrounded.StandingOnGround ? kccGrounded.SurfaceNormal : movementEngine.Up);
+            Vector3 weighted = normal * jumpAngleWeightFactor + movementEngine.Up * (1 - jumpAngleWeightFactor);
+            return weighted.normalized;
         }
 
         /// <summary>
@@ -111,6 +103,7 @@ namespace nickmaltbie.Treachery.Action
         /// <returns>True if the player can jump, false otherwise.</returns>
         protected override bool CanPerform()
         {
+            var kccGrounded = movementEngine.GroundedState;
             bool canJump = kccGrounded.StandingOnGround && kccGrounded.Angle <= maxJumpAngle;
             if (canJump && !kccGrounded.Sliding)
             {

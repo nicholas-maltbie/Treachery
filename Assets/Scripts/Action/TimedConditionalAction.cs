@@ -12,7 +12,7 @@ namespace nickmaltbie.Treachery.Action
     {
         private bool performing = false;
         public float duration = 1.0f;
-        private float elapsed = Mathf.Infinity;
+        protected float elapsed = Mathf.Infinity;
         public bool IsPerforming => performing && elapsed <= duration;
 
         /// <summary>

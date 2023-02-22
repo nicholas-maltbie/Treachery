@@ -38,11 +38,11 @@ namespace nickmaltbie.Treachery.Player
 
         [Animation(HitReactionAnimState, 0.35f, true)]
         [Transition(typeof(OnHitEvent), typeof(HitReset))]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         public class HitReaction : State { }
 
         [Animation(IdleAnimState, 0.1f, false)]
-        [TransitionAfterTime(typeof(HitReaction), 0.05f)]
+        [TransitionAfterTime(typeof(HitReaction), 0.05f, true)]
         public class HitReset : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
