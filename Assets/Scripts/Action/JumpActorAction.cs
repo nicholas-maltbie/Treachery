@@ -16,11 +16,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
-using nickmaltbie.OpenKCC.Utils;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Action
@@ -69,7 +67,7 @@ namespace nickmaltbie.Treachery.Action
         /// <inheritdoc/>
         public override void Update()
         {
-            var kccGrounded = movementEngine.GroundedState;
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
             base.Update();
             if (kccGrounded.StandingOnGround && !kccGrounded.Sliding)
             {
@@ -82,7 +80,7 @@ namespace nickmaltbie.Treachery.Action
         /// </summary>
         protected override void Perform()
         {
-            var kccGrounded = movementEngine.GroundedState;
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
             if (kccGrounded.Sliding)
             {
                 JumpedWhileSliding = true;
@@ -91,7 +89,7 @@ namespace nickmaltbie.Treachery.Action
 
         public Vector3 JumpDirection()
         {
-            var kccGrounded = movementEngine.GroundedState;
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
             Vector3 normal = (kccGrounded.StandingOnGround ? kccGrounded.SurfaceNormal : movementEngine.Up);
             Vector3 weighted = normal * jumpAngleWeightFactor + movementEngine.Up * (1 - jumpAngleWeightFactor);
             return weighted.normalized;
@@ -103,7 +101,7 @@ namespace nickmaltbie.Treachery.Action
         /// <returns>True if the player can jump, false otherwise.</returns>
         protected override bool CanPerform()
         {
-            var kccGrounded = movementEngine.GroundedState;
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
             bool canJump = kccGrounded.StandingOnGround && kccGrounded.Angle <= maxJumpAngle;
             if (canJump && !kccGrounded.Sliding)
             {

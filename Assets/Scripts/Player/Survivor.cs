@@ -379,7 +379,7 @@ namespace nickmaltbie.Treachery.Player
                 maxJumpAngle = 85.0f,
                 jumpAngleWeightFactor = 0.0f,
             };
-            jumpAction.OnPerform += (_, _) => this.ApplyJump(jumpVelocity * jumpAction.JumpDirection());
+            jumpAction.OnPerform += (_, _) => ApplyJump(jumpVelocity * jumpAction.JumpDirection());
 
             punchAttack = new PunchAttackAction(
                 new BufferedInput()
@@ -453,9 +453,9 @@ namespace nickmaltbie.Treachery.Player
                     Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
                     UpdateAnimationState(move, false);
                     dodgeAction.DodgeDirection = GetDesiredMovement().normalized;
-                    this.RaiseEvent(DodgeStart.Instance);
+                    RaiseEvent(DodgeStart.Instance);
                 };
-                dodgeAction.OnComplete += (_, _) => this.RaiseEvent(DodgeStop.Instance);
+                dodgeAction.OnComplete += (_, _) => RaiseEvent(DodgeStop.Instance);
 
                 MoveAction?.Enable();
             }
@@ -640,7 +640,7 @@ namespace nickmaltbie.Treachery.Player
         }
 
         public bool CanPerform(PlayerAction action)
-        {            
+        {
             if (!GetComponent<IDamageable>().IsAlive())
             {
                 return false;

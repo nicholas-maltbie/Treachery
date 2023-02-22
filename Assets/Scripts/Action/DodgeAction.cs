@@ -1,5 +1,4 @@
 
-
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -47,14 +46,8 @@ namespace nickmaltbie.Treachery.Action
         /// </summary>
         public Vector3 DodgeDirection
         {
-            get
-            {
-                return _dodgeDirection.normalized * DodgeSpeedFactor(elapsed / duration) * dodgeDist / duration;
-            }
-            set
-            {
-                _dodgeDirection = value;
-            }
+            get => _dodgeDirection.normalized * DodgeSpeedFactor(elapsed / duration) * dodgeDist / duration;
+            set => _dodgeDirection = value;
         }
 
         /// <summary>
@@ -83,7 +76,7 @@ namespace nickmaltbie.Treachery.Action
         /// <returns>True if the player can jump, false otherwise.</returns>
         protected override bool CanPerform()
         {
-            var kccGrounded = movementEngine.GroundedState;
+            OpenKCC.Character.Config.KCCGroundedState kccGrounded = movementEngine.GroundedState;
             bool grounded = kccGrounded.StandingOnGround && !kccGrounded.Sliding;
             return base.CanPerform() && grounded;
         }
