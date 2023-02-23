@@ -59,12 +59,6 @@ namespace nickmaltbie.Treachery.Player
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f)]
         public class RevivingState : State { }
 
-        public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-            SetStateQuiet(typeof(IdleState));
-        }
-
         public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
         {
             if (!IsServer)

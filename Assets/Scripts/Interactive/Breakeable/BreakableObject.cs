@@ -16,9 +16,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Interactive.Breakeable
@@ -32,11 +34,11 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
     }
 
     [RequireComponent(typeof(Damageable))]
-    public class BreakableObject : NetworkSMBehaviour
+    public class BreakableObject : NetworkBehaviour
     {
         public BreakableObjectState defaultState = BreakableObjectState.Fixed;
 
-        private NetworkVariable<BreakableObjectState> borkenState;
+        private NetworkVariable<BreakableObjectState> brokenState = new NetworkVariable<BreakableObjectState>(value: BreakableObjectState.Unitialized);
 
         public GameObject fixedPrefab;
         public GameObject brokenPrefab;
@@ -46,54 +48,67 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
         private GameObject brokenSpawn;
         private float brokenElapsed;
 
-        public override void Start()
+        public GameObject CurrentPreviewState { get; set; }
+        public GameObject CurrentPreview { get; set; }
+
+        public GameObject PreviewPrefab()
         {
-            borkenState = new NetworkVariable<BreakableObjectState>(value: defaultState);
-            base.Start();
+            switch(defaultState)
+            {
+                case BreakableObjectState.Fixed:
+                    return fixedPrefab;
+                case BreakableObjectState.Broken:
+                    return brokenPrefab;
+                default:
+                    return null;
+            }
+        }
+
+        public void Awake()
+        {
+            if (CurrentPreview != null)
+            {
+                GameObject.Destroy(CurrentPreview);
+                CurrentPreview = null;
+            }
         }
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-
-            if (IsServer)
-            {
-                borkenState.Value = defaultState;
-                Damageable damageable = GetComponent<Damageable>();
-                damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
-            }
-
+            brokenState = new NetworkVariable<BreakableObjectState>(value: defaultState);
             UpdatePrefabState();
         }
 
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
-            borkenState.Value = defaultState;
+            brokenState.Value = defaultState;
             UpdatePrefabState();
         }
 
-        public override void Update()
+        public void Update()
         {
-            base.Update();
-
             if (IsSpawned && IsServer)
             {
                 UpdateObjectState();
             }
 
-            UpdatePrefabState();
+            if (IsSpawned)
+            {
+                UpdatePrefabState();
+            }
         }
 
         public void UpdateObjectState()
         {
-            switch (borkenState.Value)
+            switch (brokenState.Value)
             {
                 case BreakableObjectState.Broken:
                     brokenElapsed += Time.deltaTime;
                     if (brokenElapsed >= despawnTime)
                     {
-                        borkenState.Value = BreakableObjectState.CleanedUp;
+                        brokenState.Value = BreakableObjectState.CleanedUp;
                     }
 
                     break;
@@ -101,14 +116,14 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
                     if (!GetComponent<Damageable>().IsAlive())
                     {
                         brokenElapsed = 0.0f;
-                        borkenState.Value = BreakableObjectState.Broken;
+                        brokenState.Value = BreakableObjectState.Broken;
                     }
 
                     break;
                 case BreakableObjectState.CleanedUp:
                     if (GetComponent<Damageable>().IsAlive())
                     {
-                        borkenState.Value = BreakableObjectState.Fixed;
+                        brokenState.Value = BreakableObjectState.Fixed;
                     }
 
                     break;
@@ -117,7 +132,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
 
         public void UpdatePrefabState()
         {
-            if (borkenState.Value == BreakableObjectState.Fixed)
+            if (brokenState.Value == BreakableObjectState.Fixed)
             {
                 fixedSpawn ??= GameObject.Instantiate(fixedPrefab, transform.position, transform.rotation, transform);
             }
@@ -127,7 +142,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
                 fixedSpawn = null;
             }
 
-            if (borkenState.Value == BreakableObjectState.Broken)
+            if (brokenState.Value == BreakableObjectState.Broken)
             {
                 brokenSpawn ??= GameObject.Instantiate(brokenPrefab, transform.position, transform.rotation, transform);
             }
@@ -136,6 +151,31 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
                 GameObject.Destroy(brokenSpawn);
                 brokenSpawn = null;
             }
+        }
+
+        public void UpdatePreviewState()
+        {
+            if (Application.isPlaying)
+            {
+                return;
+            }
+
+            GameObject desiredState = PreviewPrefab();
+            if (CurrentPreviewState != desiredState)
+            {
+                if (CurrentPreview != null)
+                {
+                    GameObject.DestroyImmediate(CurrentPreview);
+                }
+
+                if (desiredState != null)
+                {
+                    CurrentPreview = GameObject.Instantiate(desiredState, transform.position, transform.rotation, transform);
+                    CurrentPreview.hideFlags = HideFlags.HideAndDontSave;
+                }
+            }
+
+            CurrentPreviewState = desiredState;
         }
     }
 }
