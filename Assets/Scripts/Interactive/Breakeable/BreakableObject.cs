@@ -38,7 +38,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
     {
         public BreakableObjectState defaultState = BreakableObjectState.Fixed;
 
-        private NetworkVariable<BreakableObjectState> brokenState = new NetworkVariable<BreakableObjectState>(value: BreakableObjectState.Unitialized);
+        private NetworkVariable<BreakableObjectState> brokenState;
 
         public GameObject fixedPrefab;
         public GameObject brokenPrefab;
@@ -71,12 +71,21 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
                 GameObject.Destroy(CurrentPreview);
                 CurrentPreview = null;
             }
+
+            brokenState = new NetworkVariable<BreakableObjectState>(value: defaultState);
+            UpdatePrefabState();
         }
 
         public override void OnNetworkSpawn()
         {
+            if (IsServer)
+            {
+                Damageable damageable = GetComponent<Damageable>();
+                damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+                brokenState.Value = defaultState;
+            }
+
             base.OnNetworkSpawn();
-            brokenState = new NetworkVariable<BreakableObjectState>(value: defaultState);
             UpdatePrefabState();
         }
 
