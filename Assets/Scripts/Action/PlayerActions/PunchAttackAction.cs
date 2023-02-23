@@ -24,7 +24,7 @@ using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
     /// Punch action that can be performed by a player.

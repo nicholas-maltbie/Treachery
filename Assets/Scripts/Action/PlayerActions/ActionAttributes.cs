@@ -19,7 +19,7 @@
 using System;
 using System.Linq;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
     /// Attribute to show performing an action

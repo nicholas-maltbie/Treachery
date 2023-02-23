@@ -20,7 +20,7 @@ using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     public struct NetworkAttackEvent : INetworkSerializable
     {

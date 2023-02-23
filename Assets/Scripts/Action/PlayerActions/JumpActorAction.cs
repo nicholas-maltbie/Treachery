@@ -21,7 +21,7 @@ using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
     /// Jump action that can be performed by a character controller.

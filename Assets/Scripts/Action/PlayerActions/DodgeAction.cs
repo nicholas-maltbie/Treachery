@@ -21,7 +21,7 @@ using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
     /// Dodge action that can be performed by a player.
@@ -39,6 +39,9 @@ namespace nickmaltbie.Treachery.Action
         /// </summary>
         public float dodgeDist;
 
+        /// <summary>
+        /// Direction the dodge is moving in.
+        /// </summary>
         private Vector3 _dodgeDirection;
 
         /// <summary>

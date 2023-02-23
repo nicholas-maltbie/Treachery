@@ -16,17 +16,14 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.Interactive.Hitbox;
-using UnityEngine;
-
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
-    public struct AttackEvent
+    public enum PlayerAction
     {
-        public IDamageable target;
-        public float damage;
-        public Vector3 hitPos;
-        public IHitbox hitbox;
+        Jump,
+        Dodge,
+        Punch,
+        Block,
+        Roll
     }
 }

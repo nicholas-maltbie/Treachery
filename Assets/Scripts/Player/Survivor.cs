@@ -30,7 +30,9 @@ using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Action;
+using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Player.Action;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -45,7 +47,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor<PlayerAction>
+    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor<PlayerAction>, IMovementActor
     {
         public class BlockMovement : Attribute
         {
@@ -93,13 +95,6 @@ namespace nickmaltbie.Treachery.Player
         [SerializeField]
         public InputActionReference attackActionReference;
 
-        /// <summary>
-        /// Action reference for dodging.
-        /// </summary>
-        [Tooltip("Action reference for player dodge")]
-        [SerializeField]
-        public InputActionReference dodgeActionReference;
-
         [Header("Movement Settings")]
 
         /// <summary>
@@ -115,13 +110,6 @@ namespace nickmaltbie.Treachery.Player
         [Tooltip("Speed of player when attacking")]
         [SerializeField]
         public float attackSpeed = 3.5f;
-
-        /// <summary>
-        /// Distance player moves while dodging.
-        /// </summary>
-        [Tooltip("Distance player moves when dodging.")]
-        [SerializeField]
-        public float dodgeDist = 3.5f;
 
         /// <summary>
         /// Speed of player when sprinting.
@@ -151,11 +139,6 @@ namespace nickmaltbie.Treachery.Player
         /// Punch attack for the player.
         /// </summary>
         private PunchAttackAction punchAttack;
-
-        /// <summary>
-        /// Dodge action for survivor.
-        /// </summary>
-        private DodgeAction dodgeAction;
 
         /// <summary>
         /// Source of player viewpoint for attacks
@@ -311,6 +294,7 @@ namespace nickmaltbie.Treachery.Player
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
+        [OnEnterState(nameof(OnStartDodge))]
         [LockMovementAnimation]
         [BlockAllAction]
         public class DodgeState : State { }
@@ -397,21 +381,6 @@ namespace nickmaltbie.Treachery.Player
                 attackBaseOffset = viewSource.localPosition,
                 coyoteTime = 0.0f,
             };
-
-            dodgeAction = new DodgeAction(
-                new BufferedInput()
-                {
-                    inputActionReference = dodgeActionReference,
-                    cooldown = 0.5f,
-                    bufferTime = 0.05f,
-                },
-                this,
-                1.0f,
-                movementEngine
-            )
-            {
-                dodgeDist = dodgeDist,
-            };
         }
 
         /// <summary>
@@ -437,7 +406,6 @@ namespace nickmaltbie.Treachery.Player
             {
                 jumpAction?.Setup();
                 punchAttack?.Setup();
-                dodgeAction?.Setup();
 
                 punchAttack.OnAttack += (e, attack) =>
                 {
@@ -448,14 +416,6 @@ namespace nickmaltbie.Treachery.Player
                         AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
                     }
                 };
-                dodgeAction.OnPerform += (_, _) =>
-                {
-                    Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-                    UpdateAnimationState(move, false);
-                    dodgeAction.DodgeDirection = GetDesiredMovement().normalized;
-                    RaiseEvent(DodgeStart.Instance);
-                };
-                dodgeAction.OnComplete += (_, _) => RaiseEvent(DodgeStop.Instance);
 
                 MoveAction?.Enable();
             }
@@ -490,7 +450,6 @@ namespace nickmaltbie.Treachery.Player
             {
                 jumpAction.AttemptIfPossible();
                 punchAttack.AttemptIfPossible();
-                dodgeAction.AttemptIfPossible();
 
                 if (!BlockMovement.IsMovementBlocked(CurrentState))
                 {
@@ -558,7 +517,6 @@ namespace nickmaltbie.Treachery.Player
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
             jumpAction.Update();
-            dodgeAction.Update();
             punchAttack.Update();
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
@@ -599,9 +557,16 @@ namespace nickmaltbie.Treachery.Player
             animationMove.Value = new Vector2(moveX, moveY);
         }
 
+        public void OnStartDodge()
+        {
+            Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
+            UpdateAnimationState(move, false);
+        }
+
         public void DodgeMovement()
         {
-            Vector3 dodgeMovement = dodgeAction.DodgeDirection * unityService.fixedDeltaTime;
+            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.dodgeAction;
+            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
             movementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
