@@ -1,7 +1,7 @@
 
 using Unity.Netcode;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.Behaviour
 {
     public abstract class AbstractActionBehaviour<TAction> : NetworkBehaviour
     {
