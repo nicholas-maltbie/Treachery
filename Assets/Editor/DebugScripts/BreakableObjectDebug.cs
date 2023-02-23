@@ -17,8 +17,6 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Breakeable;
-using nickmaltbie.Treachery.Interactive.Health;
-using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 

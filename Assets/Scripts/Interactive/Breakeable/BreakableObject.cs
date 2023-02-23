@@ -16,11 +16,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Interactive.Breakeable
@@ -53,7 +50,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
 
         public GameObject PreviewPrefab()
         {
-            switch(defaultState)
+            switch (defaultState)
             {
                 case BreakableObjectState.Fixed:
                     return fixedPrefab;
