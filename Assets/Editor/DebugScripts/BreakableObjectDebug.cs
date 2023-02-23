@@ -27,11 +27,6 @@ namespace nickmaltbie.Treachery.DebugScripts
     [CustomEditor(typeof(BreakableObject))]
     public class BreakableObjectDebug : Editor
     {
-        public void OnSceneGUI()
-        {
-            (target as BreakableObject)?.UpdatePreviewState();
-        }
-
         [InitializeOnLoadMethod]
         public static void Setup()
         {
