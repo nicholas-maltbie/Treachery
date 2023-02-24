@@ -27,35 +27,33 @@ namespace nickmaltbie.Treachery.Action
     /// </summary>
     public abstract class ActorConditionalAction<TAction> : ConditionalAction
     {
-        protected BufferedInput bufferedInput;
-
+        public EventHandler OnPerform;
         private TAction actionType;
-
         private IActionActor<TAction> actor;
 
-        public EventHandler OnPerform;
+        protected BufferedInput BufferedInput { get; private set; }
 
         public ActorConditionalAction(BufferedInput bufferedInput, IActionActor<TAction> actor, TAction actionType)
         {
             base.condition = CanPerform;
-            this.bufferedInput = bufferedInput;
+            this.BufferedInput = bufferedInput;
             this.actionType = actionType;
             this.actor = actor;
         }
 
         public override void Update()
         {
-            bufferedInput.Update();
+            BufferedInput.Update();
             base.Update();
         }
 
         public bool AttemptIfPossible()
         {
-            if (CanPerform() && bufferedInput.Pressed)
+            if (CanPerform() && BufferedInput.Pressed)
             {
                 Perform();
                 OnPerform?.Invoke(this, EventArgs.Empty);
-                bufferedInput.Reset();
+                BufferedInput.Reset();
                 return true;
             }
 
@@ -66,7 +64,7 @@ namespace nickmaltbie.Treachery.Action
 
         public void Setup()
         {
-            bufferedInput.InputAction?.Enable();
+            BufferedInput.InputAction?.Enable();
         }
 
         protected new virtual bool CanPerform()

@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 937339341664039498}
   - component: {fileID: -7457895822324968746}
   - component: {fileID: 5297545829931420426}
+  - component: {fileID: -3116674992473226055}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -372,6 +373,22 @@ MonoBehaviour:
   bufferTime: 0.05
   dodgeDuration: 1
   dodgeDistance: 3.5
+--- !u!114 &-3116674992473226055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8dcd69d067ece48982bb6221e2edfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.5
+  bufferTime: 0.05
+  viewSource: {fileID: 1928389238472999755}
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0

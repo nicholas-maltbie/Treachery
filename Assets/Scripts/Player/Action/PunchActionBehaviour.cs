@@ -17,9 +17,10 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.OpenKCC.Character;
+using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Health;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
@@ -27,54 +28,49 @@ namespace nickmaltbie.Treachery.Player.Action
     /// <summary>
     /// Dodge action that can be performed by a player.
     /// </summary>
-    [RequireComponent(typeof(KCCMovementEngine))]
-    [RequireComponent(typeof(IMovementActor))]
-    public class DodgeActionBehaviour : AbstractActionBehaviour<DodgeAction>
+    [RequireComponent(typeof(IDamageSource))]
+    [RequireComponent(typeof(IDamageable))]
+    [RequireComponent(typeof(ICameraControls))]
+    public class PunchActionBehaviour : AbstractActionBehaviour<PunchAttackAction>
     {
         [SerializeField]
-        private float dodgeDuration = 1.0f;
+        public Transform viewSource;
 
-        [SerializeField]
-        private float dodgeDistance = 3.5f;
-
-        private IMovementActor _movementActor;
-        private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
-
-        public override void Awake()
+        public override PunchAttackAction SetupAction()
         {
-            base.Awake();
-        }
-
-        public override DodgeAction SetupAction()
-        {
-            DodgeAction action = new DodgeAction(
+            var punchAttack = new PunchAttackAction(
                 BufferedInput,
                 Actor,
-                dodgeDuration,
-                GetComponent<KCCMovementEngine>())
+                GetComponent<IDamageable>(),
+                transform,
+                GetComponent<ICameraControls>()
+            )
             {
-                dodgeDist = dodgeDistance,
+                attackBaseOffset = viewSource?.localPosition ?? Vector3.zero,
+                coyoteTime = 0.0f,
             };
-            action.OnPerform += OnDodge;
-            action.OnComplete += OnComplete;
-            return action;
+            punchAttack.OnAttack += OnAttack;
+            return punchAttack;
         }
 
-        private void OnDodge(object source, EventArgs args)
+        public void OnAttack(object source, AttackEvent attack)
         {
-            Action.DodgeDirection = MovementActor.GetDesiredMovement().normalized;
-            Actor.RaiseEvent(DodgeStart.Instance);
+            Actor.RaiseEvent(PunchEvent.Instance);
+            if (attack.target != null)
+            {
+                AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
+            }
         }
 
-        private void OnComplete(object source, bool interrupted)
+        public override void CleanupAction(PunchAttackAction action)
         {
-            Actor.RaiseEvent(DodgeStop.Instance);
+            action.OnAttack -= OnAttack;
         }
 
-        public override void CleanupAction(DodgeAction action)
+        [ServerRpc]
+        public void AttackServerRpc(NetworkAttackEvent attack)
         {
-            action.OnPerform -= OnDodge;
-            action.OnComplete -= OnComplete;
+            NetworkAttackEvent.ProcessEvent(attack);
         }
     }
 }

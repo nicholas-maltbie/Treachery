@@ -136,11 +136,6 @@ namespace nickmaltbie.Treachery.Player
         private JumpActorAction jumpAction;
 
         /// <summary>
-        /// Punch attack for the player.
-        /// </summary>
-        private PunchAttackAction punchAttack;
-
-        /// <summary>
         /// Source of player viewpoint for attacks
         /// </summary>
         public Transform viewSource;
@@ -364,23 +359,6 @@ namespace nickmaltbie.Treachery.Player
                 jumpAngleWeightFactor = 0.0f,
             };
             jumpAction.OnPerform += (_, _) => ApplyJump(jumpVelocity * jumpAction.JumpDirection());
-
-            punchAttack = new PunchAttackAction(
-                new BufferedInput()
-                {
-                    inputActionReference = attackActionReference,
-                    cooldown = 1.0f,
-                    bufferTime = 0.05f,
-                },
-                this,
-                GetComponent<Damageable>(),
-                transform,
-                CameraControls
-            )
-            {
-                attackBaseOffset = viewSource.localPosition,
-                coyoteTime = 0.0f,
-            };
         }
 
         /// <summary>
@@ -405,18 +383,6 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 jumpAction?.Setup();
-                punchAttack?.Setup();
-
-                punchAttack.OnAttack += (e, attack) =>
-                {
-                    RaiseEvent(PunchEvent.Instance);
-
-                    if (attack.target != null)
-                    {
-                        AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
-                    }
-                };
-
                 MoveAction?.Enable();
             }
         }
@@ -449,8 +415,6 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 jumpAction.AttemptIfPossible();
-                punchAttack.AttemptIfPossible();
-
                 if (!BlockMovement.IsMovementBlocked(CurrentState))
                 {
                     movementEngine.MovePlayer(
@@ -517,7 +481,6 @@ namespace nickmaltbie.Treachery.Player
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
             jumpAction.Update();
-            punchAttack.Update();
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
             if (!locked)
@@ -565,17 +528,11 @@ namespace nickmaltbie.Treachery.Player
 
         public void DodgeMovement()
         {
-            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.dodgeAction;
+            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
             Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
             movementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
-        }
-
-        [ServerRpc]
-        public void AttackServerRpc(NetworkAttackEvent attack)
-        {
-            NetworkAttackEvent.ProcessEvent(attack);
         }
 
         public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)

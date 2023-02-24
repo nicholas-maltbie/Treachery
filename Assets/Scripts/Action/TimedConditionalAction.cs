@@ -58,7 +58,7 @@ namespace nickmaltbie.Treachery.Action
                 elapsed += Time.deltaTime;
                 if (elapsed >= duration)
                 {
-                    bufferedInput.Reset();
+                    BufferedInput.Reset();
                     performing = false;
                     OnComplete?.Invoke(this, false);
                 }
@@ -76,7 +76,7 @@ namespace nickmaltbie.Treachery.Action
                 performing = false;
                 elapsed = 0.0f;
                 OnComplete?.Invoke(this, true);
-                bufferedInput.Reset();
+                BufferedInput.Reset();
                 return true;
             }
 
