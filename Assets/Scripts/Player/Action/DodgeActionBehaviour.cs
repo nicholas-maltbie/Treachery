@@ -42,7 +42,7 @@ namespace nickmaltbie.Treachery.Player.Action
 
         public override DodgeAction SetupAction()
         {
-            DodgeAction action = new DodgeAction(
+            var action = new DodgeAction(
                 BufferedInput,
                 Actor,
                 dodgeDuration,

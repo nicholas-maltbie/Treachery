@@ -36,7 +36,7 @@ namespace nickmaltbie.Treachery.Action
         public ActorConditionalAction(BufferedInput bufferedInput, IActionActor<TAction> actor, TAction actionType)
         {
             base.condition = CanPerform;
-            this.BufferedInput = bufferedInput;
+            BufferedInput = bufferedInput;
             this.actionType = actionType;
             this.actor = actor;
         }

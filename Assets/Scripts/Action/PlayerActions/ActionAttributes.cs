@@ -35,7 +35,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
 
         public static bool CheckBlocked(Type type, PlayerAction action)
         {
-            var blocks = Attribute.GetCustomAttributes(type, typeof(AbstractBlockActionAttribute));
+            Attribute[] blocks = Attribute.GetCustomAttributes(type, typeof(AbstractBlockActionAttribute));
             return blocks.Any(block => (block as AbstractBlockActionAttribute).ActionBlocked(action));
         }
     }

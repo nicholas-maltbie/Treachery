@@ -22,7 +22,6 @@ using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Attributes;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Character.Events;
-using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.OpenKCC.netcode.Utils;
 using nickmaltbie.OpenKCC.Utils;
 using nickmaltbie.StateMachineUnity;
@@ -152,11 +151,6 @@ namespace nickmaltbie.Treachery.Player
         /// Override move action for testing.
         /// </summary>
         private InputAction overrideSprintAction;
-
-        /// <summary>
-        /// Override attack action for testing.
-        /// </summary>
-        private InputAction overrideAttackAction;
 
         /// <summary>
         /// Gets the move action associated with this kcc.
