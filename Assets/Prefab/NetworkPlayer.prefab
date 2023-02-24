@@ -52,6 +52,9 @@ GameObject:
   - component: {fileID: -2618219780861503884}
   - component: {fileID: 937339341664039498}
   - component: {fileID: -7457895822324968746}
+  - component: {fileID: 5297545829931420426}
+  - component: {fileID: -3116674992473226055}
+  - component: {fileID: 420403279906431496}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -333,14 +336,10 @@ MonoBehaviour:
   _attachedAnimator: {fileID: 5025415980018636554}
   moveActionReference: {fileID: 8130185064591157487, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   sprintActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
-  jumpActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   attackActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
-  dodgeActionReference: {fileID: -6602405483767582039, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   walkingSpeed: 7.5
   attackSpeed: 3.5
-  dodgeDist: 3.5
   sprintSpeed: 10
-  jumpVelocity: 6.5
   minimumActionDelay: 1
   viewSource: {fileID: 1928389238472999755}
 --- !u!114 &-7457895822324968746
@@ -356,6 +355,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnTime: 10
+--- !u!114 &5297545829931420426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a4bd1a9a0cd0443b9d6cad54aaeb6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: -6602405483767582039, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.5
+  bufferTime: 0.05
+  dodgeDuration: 1
+  dodgeDistance: 3.5
+--- !u!114 &-3116674992473226055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8dcd69d067ece48982bb6221e2edfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.5
+  bufferTime: 0.05
+  viewSource: {fileID: 1928389238472999755}
+--- !u!114 &420403279906431496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aede03c2fc71e114b8965766b39c1438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.05
+  bufferTime: 0.05
+  jumpVelocity: 6.5
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0

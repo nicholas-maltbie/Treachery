@@ -89,7 +89,12 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
-            brokenState.Value = defaultState;
+
+            if (IsServer)
+            {
+                brokenState.Value = defaultState;
+            }
+
             UpdatePrefabState();
         }
 

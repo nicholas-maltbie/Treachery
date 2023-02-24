@@ -16,21 +16,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.StateMachineUnity;
+using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Player
 {
-    /// <summary>
-    /// Actor who can be busy performing some action.
-    /// </summary>
-    public interface IActionActor<TAction> : IStateMachine<Type>
+    public interface IMovementActor
     {
-        /// <summary>
-        /// Can the player perform a specific action.
-        /// </summary>
-        /// <param name="action">Type of action the player wants to perform.</param>
-        /// <returns>True if they can, false otherwise.</returns>
-        bool CanPerform(TAction action);
+        Vector3 GetDesiredMovement();
     }
 }

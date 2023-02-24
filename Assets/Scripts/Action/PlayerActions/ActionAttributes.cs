@@ -19,7 +19,7 @@
 using System;
 using System.Linq;
 
-namespace nickmaltbie.Treachery.Action
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
     /// Attribute to show performing an action
@@ -35,12 +35,8 @@ namespace nickmaltbie.Treachery.Action
 
         public static bool CheckBlocked(Type type, PlayerAction action)
         {
-            if (Attribute.GetCustomAttribute(type, typeof(AbstractBlockActionAttribute)) is AbstractBlockActionAttribute block)
-            {
-                return block.ActionBlocked(action);
-            }
-
-            return false;
+            Attribute[] blocks = Attribute.GetCustomAttributes(type, typeof(AbstractBlockActionAttribute));
+            return blocks.Any(block => (block as AbstractBlockActionAttribute).ActionBlocked(action));
         }
     }
 

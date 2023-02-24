@@ -22,7 +22,6 @@ using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Attributes;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Character.Events;
-using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.OpenKCC.netcode.Utils;
 using nickmaltbie.OpenKCC.Utils;
 using nickmaltbie.StateMachineUnity;
@@ -30,7 +29,9 @@ using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Action;
+using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Player.Action;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -45,7 +46,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor<PlayerAction>
+    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor<PlayerAction>, IMovementActor
     {
         public class BlockMovement : Attribute
         {
@@ -79,27 +80,6 @@ namespace nickmaltbie.Treachery.Player
         [SerializeField]
         public InputActionReference sprintActionReference;
 
-        /// <summary>
-        /// Action reference for sprinting.
-        /// </summary>
-        [Tooltip("Action reference for player jumping")]
-        [SerializeField]
-        public InputActionReference jumpActionReference;
-
-        /// <summary>
-        /// Action reference for attacking.
-        /// </summary>
-        [Tooltip("Action reference for player attack move")]
-        [SerializeField]
-        public InputActionReference attackActionReference;
-
-        /// <summary>
-        /// Action reference for dodging.
-        /// </summary>
-        [Tooltip("Action reference for player dodge")]
-        [SerializeField]
-        public InputActionReference dodgeActionReference;
-
         [Header("Movement Settings")]
 
         /// <summary>
@@ -117,13 +97,6 @@ namespace nickmaltbie.Treachery.Player
         public float attackSpeed = 3.5f;
 
         /// <summary>
-        /// Distance player moves while dodging.
-        /// </summary>
-        [Tooltip("Distance player moves when dodging.")]
-        [SerializeField]
-        public float dodgeDist = 3.5f;
-
-        /// <summary>
         /// Speed of player when sprinting.
         /// </summary>
         [Tooltip("Speed of player when sprinting")]
@@ -131,31 +104,9 @@ namespace nickmaltbie.Treachery.Player
         public float sprintSpeed = 10.0f;
 
         /// <summary>
-        /// Velocity of player jump.
-        /// </summary>
-        [Tooltip("Velocity of player jump.")]
-        [SerializeField]
-        public float jumpVelocity = 6.5f;
-
-        /// <summary>
         /// Minimum delay between actions.
         /// </summary>
         public float minimumActionDelay = 1.0f;
-
-        /// <summary>
-        /// Action reference for jumping.
-        /// </summary>
-        private JumpActorAction jumpAction;
-
-        /// <summary>
-        /// Punch attack for the player.
-        /// </summary>
-        private PunchAttackAction punchAttack;
-
-        /// <summary>
-        /// Dodge action for survivor.
-        /// </summary>
-        private DodgeAction dodgeAction;
 
         /// <summary>
         /// Source of player viewpoint for attacks
@@ -184,10 +135,12 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public Vector3 InputMovement { get; private set; }
 
+        private KCCMovementEngine _movementEngine;
+
         /// <summary>
         /// Movement engine for controlling the kinematic character controller.
         /// </summary>
-        protected KCCMovementEngine movementEngine;
+        protected KCCMovementEngine MovementEngine => _movementEngine ??= GetComponent<KCCMovementEngine>();
 
         /// <summary>
         /// Override move action for testing.
@@ -198,11 +151,6 @@ namespace nickmaltbie.Treachery.Player
         /// Override move action for testing.
         /// </summary>
         private InputAction overrideSprintAction;
-
-        /// <summary>
-        /// Override attack action for testing.
-        /// </summary>
-        private InputAction overrideAttackAction;
 
         /// <summary>
         /// Gets the move action associated with this kcc.
@@ -220,15 +168,6 @@ namespace nickmaltbie.Treachery.Player
         {
             get => overrideSprintAction ?? sprintActionReference?.action;
             set => overrideSprintAction = value;
-        }
-
-        /// <summary>
-        /// Gets the attack action associated with this player.
-        /// </summary>
-        public InputAction AttackAction
-        {
-            get => overrideAttackAction ?? attackActionReference?.action;
-            set => overrideAttackAction = value;
         }
 
         /// <summary>
@@ -261,6 +200,7 @@ namespace nickmaltbie.Treachery.Player
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
+        [BlockAllAction]
         public class JumpState : State { }
 
         [Animation(LandingAnimState, 0.1f, true)]
@@ -269,7 +209,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
-        [BlockAllAction]
+        [BlockAction(PlayerAction.Punch)]
         public class LandingState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
@@ -299,18 +239,21 @@ namespace nickmaltbie.Treachery.Player
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [TransitionAfterTime(typeof(LongFallingState), 2.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
+        [BlockAllAction]
         public class FallingState : State { }
 
         [Animation(LongFallingAnimState, 0.1f, true)]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 1.0f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
+        [BlockAllAction]
         public class LongFallingState : State { }
 
         [Animation(DodgeAnimState, 0.1f, true, 0.5f)]
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
+        [OnEnterState(nameof(OnStartDodge))]
         [LockMovementAnimation]
         [BlockAllAction]
         public class DodgeState : State { }
@@ -323,7 +266,7 @@ namespace nickmaltbie.Treachery.Player
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         [TransitionFromAnyState(typeof(PunchEvent))]
-        [BlockAllAction]
+        [BlockAction(PlayerAction.Punch, PlayerAction.Roll)]
         public class PunchingState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
@@ -348,70 +291,18 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public void UpdateGroundedState()
         {
-            if (movementEngine.GroundedState.Falling)
+            if (MovementEngine.GroundedState.Falling)
             {
                 RaiseEvent(LeaveGroundEvent.Instance);
             }
-            else if (movementEngine.GroundedState.Sliding)
+            else if (MovementEngine.GroundedState.Sliding)
             {
                 RaiseEvent(SteepSlopeEvent.Instance);
             }
-            else if (movementEngine.GroundedState.StandingOnGround)
+            else if (MovementEngine.GroundedState.StandingOnGround)
             {
                 RaiseEvent(GroundedEvent.Instance);
             }
-        }
-
-        public void Awake()
-        {
-            movementEngine = GetComponent<KCCMovementEngine>();
-            jumpAction = new JumpActorAction(
-                new BufferedInput()
-                {
-                    inputActionReference = jumpActionReference,
-                    cooldown = 0.25f,
-                    bufferTime = 0.05f,
-                },
-                this,
-                movementEngine)
-            {
-                jumpVelocity = jumpVelocity,
-                maxJumpAngle = 85.0f,
-                jumpAngleWeightFactor = 0.0f,
-            };
-            jumpAction.OnPerform += (_, _) => ApplyJump(jumpVelocity * jumpAction.JumpDirection());
-
-            punchAttack = new PunchAttackAction(
-                new BufferedInput()
-                {
-                    inputActionReference = attackActionReference,
-                    cooldown = 1.0f,
-                    bufferTime = 0.05f,
-                },
-                this,
-                GetComponent<Damageable>(),
-                transform,
-                CameraControls
-            )
-            {
-                attackBaseOffset = viewSource.localPosition,
-                coyoteTime = 0.0f,
-            };
-
-            dodgeAction = new DodgeAction(
-                new BufferedInput()
-                {
-                    inputActionReference = dodgeActionReference,
-                    cooldown = 0.5f,
-                    bufferTime = 0.05f,
-                },
-                this,
-                1.0f,
-                movementEngine
-            )
-            {
-                dodgeDist = dodgeDist,
-            };
         }
 
         /// <summary>
@@ -435,36 +326,13 @@ namespace nickmaltbie.Treachery.Player
         {
             if (IsOwner)
             {
-                jumpAction?.Setup();
-                punchAttack?.Setup();
-                dodgeAction?.Setup();
-
-                punchAttack.OnAttack += (e, attack) =>
-                {
-                    RaiseEvent(PunchEvent.Instance);
-
-                    if (attack.target != null)
-                    {
-                        AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
-                    }
-                };
-                dodgeAction.OnPerform += (_, _) =>
-                {
-                    Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-                    UpdateAnimationState(move, false);
-                    dodgeAction.DodgeDirection = GetDesiredMovement().normalized;
-                    RaiseEvent(DodgeStart.Instance);
-                };
-                dodgeAction.OnComplete += (_, _) => RaiseEvent(DodgeStop.Instance);
-
                 MoveAction?.Enable();
             }
         }
 
         public override void LateUpdate()
         {
-            transform.position += movementEngine.ColliderCast.PushOutOverlapping(transform.position, transform.rotation, 100 * unityService.deltaTime);
-
+            transform.position += MovementEngine.ColliderCast.PushOutOverlapping(transform.position, transform.rotation, 100 * unityService.deltaTime);
             base.LateUpdate();
         }
 
@@ -476,7 +344,7 @@ namespace nickmaltbie.Treachery.Player
         public Vector3 GetDesiredMovement()
         {
             Vector3 rotatedMovement = HorizPlaneView * InputMovement;
-            Vector3 projectedMovement = movementEngine.GetProjectedMovement(rotatedMovement);
+            Vector3 projectedMovement = MovementEngine.GetProjectedMovement(rotatedMovement);
             float speed = MovementSettingsAttribute.GetSpeed(CurrentState, this);
             Vector3 scaledMovement = projectedMovement * speed;
             return scaledMovement;
@@ -486,29 +354,22 @@ namespace nickmaltbie.Treachery.Player
         {
             GetComponent<Rigidbody>().isKinematic = true;
 
-            if (IsOwner)
+            if (IsOwner && !BlockMovement.IsMovementBlocked(CurrentState))
             {
-                jumpAction.AttemptIfPossible();
-                punchAttack.AttemptIfPossible();
-                dodgeAction.AttemptIfPossible();
-
-                if (!BlockMovement.IsMovementBlocked(CurrentState))
-                {
-                    movementEngine.MovePlayer(
-                        GetDesiredMovement() * unityService.fixedDeltaTime,
-                        Velocity * unityService.fixedDeltaTime);
-                }
+                MovementEngine.MovePlayer(
+                    GetDesiredMovement() * unityService.fixedDeltaTime,
+                    Velocity * unityService.fixedDeltaTime);
             }
 
             UpdateGroundedState();
-            GetComponent<NetworkRelativeTransform>()?.UpdateState(movementEngine.RelativeParentConfig);
+            GetComponent<NetworkRelativeTransform>()?.UpdateState(MovementEngine.RelativeParentConfig);
 
             // Apply gravity if needed
-            if (movementEngine.GroundedState.Falling || movementEngine.GroundedState.Sliding)
+            if (MovementEngine.GroundedState.Falling || MovementEngine.GroundedState.Sliding)
             {
                 Velocity += Physics.gravity * unityService.fixedDeltaTime;
             }
-            else if (movementEngine.GroundedState.StandingOnGround)
+            else if (MovementEngine.GroundedState.StandingOnGround)
             {
                 Velocity = Vector3.zero;
             }
@@ -522,7 +383,7 @@ namespace nickmaltbie.Treachery.Player
         /// <param name="position">Position to teleport player to.</param>
         public void TeleportPlayer(Vector3 position)
         {
-            movementEngine.TeleportPlayer(position);
+            MovementEngine.TeleportPlayer(position);
         }
 
         /// <inheritdoc/>
@@ -544,7 +405,7 @@ namespace nickmaltbie.Treachery.Player
         {
             if (IsOwner)
             {
-                Velocity = velocity + movementEngine.GetGroundVelocity();
+                Velocity = velocity + MovementEngine.GetGroundVelocity();
                 RaiseEvent(JumpEvent.Instance);
             }
         }
@@ -557,9 +418,6 @@ namespace nickmaltbie.Treachery.Player
             bool denyMovement = PlayerInputUtils.playerMovementState == PlayerInputState.Deny;
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
-            jumpAction.Update();
-            dodgeAction.Update();
-            punchAttack.Update();
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
             if (!locked)
@@ -599,18 +457,19 @@ namespace nickmaltbie.Treachery.Player
             animationMove.Value = new Vector2(moveX, moveY);
         }
 
-        public void DodgeMovement()
+        public void OnStartDodge()
         {
-            Vector3 dodgeMovement = dodgeAction.DodgeDirection * unityService.fixedDeltaTime;
-            movementEngine.MovePlayer(
-                dodgeMovement,
-                Velocity * unityService.fixedDeltaTime);
+            Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
+            UpdateAnimationState(move, false);
         }
 
-        [ServerRpc]
-        public void AttackServerRpc(NetworkAttackEvent attack)
+        public void DodgeMovement()
         {
-            NetworkAttackEvent.ProcessEvent(attack);
+            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
+            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            MovementEngine.MovePlayer(
+                dodgeMovement,
+                Velocity * unityService.fixedDeltaTime);
         }
 
         public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
