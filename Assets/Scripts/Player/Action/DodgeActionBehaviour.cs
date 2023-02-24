@@ -40,11 +40,6 @@ namespace nickmaltbie.Treachery.Player.Action
         private IMovementActor _movementActor;
         private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
 
-        public override void Awake()
-        {
-            base.Awake();
-        }
-
         public override DodgeAction SetupAction()
         {
             DodgeAction action = new DodgeAction(
