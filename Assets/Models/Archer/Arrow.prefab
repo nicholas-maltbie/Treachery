@@ -164,6 +164,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdPosition: {fileID: 3539152149362065594}
   front: {fileID: 5337740325894751779}
+  despawnTime: 100
+  despawnPinTime: 10
+  arrowDamage: 10
+  useGravity: 1
+  hitboxRadius: 0.01
 --- !u!114 &8755493474642377193
 MonoBehaviour:
   m_ObjectHideFlags: 0
