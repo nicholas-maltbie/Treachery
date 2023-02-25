@@ -127,7 +127,7 @@ namespace nickmaltbie.Treachery.Interactive
                 hitboxRadius,
                 dir.normalized,
                 dir.magnitude,
-                ~IHitbox.HitboxLayerMask,
+                ~(IHitbox.PlayerLayerMask | IHitbox.HitboxLayerMask),
                 QueryTriggerInteraction.Ignore))
             {
                 // If we hit something, despawn and create pinned arrow.
@@ -177,7 +177,7 @@ namespace nickmaltbie.Treachery.Interactive
             Transform pincushion = (localEvent.hitbox as Component ?? localEvent.target as Component).transform;
             Vector3 arrowPos = pincushion.localToWorldMatrix * localEvent.relativeHitPos;
             Quaternion arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
-            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos, arrowRot, pincushion);
+            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
         }
     }

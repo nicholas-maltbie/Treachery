@@ -26,42 +26,26 @@ namespace nickmaltbie.Treachery.Interactive.Particles
     {
         public ParticleSystem bloodParticles;
         public int maxParticles = 10;
-        private ParticleSystem[] particleCache;
+        private ParticleSystem spawnedParticles;
         private int currentIndex;
-
-        public ParticleSystem CurrentParticles => particleCache[currentIndex];
-        public ParticleSystem NextParticles
-        {
-            get
-            {
-                currentIndex = (currentIndex + 1) % particleCache.Length;
-                return CurrentParticles;
-            }
-        }
 
         public void Awake()
         {
-            particleCache = Enumerable.Range(0, maxParticles).Select(_ =>
-            {
-                var spawned = GameObject.Instantiate(bloodParticles.gameObject, transform.position, transform.rotation, transform);
-                spawned.hideFlags = HideFlags.HideAndDontSave;
-                ParticleSystem particles = spawned.GetComponent<ParticleSystem>();
-                particles.Stop();
-                return particles;
-            }).ToArray();
-
+            var spawned = GameObject.Instantiate(bloodParticles.gameObject, transform.position, transform.rotation, transform);
+            spawned.hideFlags = HideFlags.HideAndDontSave;
+            spawnedParticles = spawned.GetComponent<ParticleSystem>();
+            spawnedParticles.Stop();
+            spawnedParticles.Clear();
             GetComponent<IDamageable>().OnDamageEvent += OnDamage;
         }
 
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
         {
-            ParticleSystem particles = NextParticles;
             Transform sourceTransform = onDamagedEvent.damageEvent.SourceTransform;
-            particles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
-            particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
-            particles.Stop();
-            particles.Clear();
-            particles.Play();
+            spawnedParticles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
+            spawnedParticles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
+            spawnedParticles.Stop();
+            spawnedParticles.Play();
         }
     }
 }

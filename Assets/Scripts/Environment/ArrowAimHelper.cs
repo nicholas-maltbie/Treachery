@@ -58,7 +58,7 @@ namespace nickmaltbie.Treachery.Environment
             {
                 Transform drawHandTransform = animator.GetBoneTransform(ArrowDrawHandBone);
                 Transform bowHandTransform = animator.GetBoneTransform(BowHoldHandBone);
-                Quaternion targetBowRotation = Quaternion.LookRotation((targetPosition.position - bowHandTransform.position).normalized, AimNormal);
+                Quaternion targetBowRotation = Quaternion.LookRotation((targetPosition.position - bowHandTransform.position).normalized, -AimNormal);
 
                 Transform shoulderTransform = animator.GetBoneTransform(BowHoldShoulderBone);
                 float armLength = Mathf.Min((bowHandTransform.position - shoulderTransform.position).magnitude, 1.5f);
