@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
 
@@ -49,7 +48,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         {
             this.type = type;
             this.target = target;
-            this.damageSource = source;
+            damageSource = source;
             this.amount = amount;
             this.relativeHitPos = relativeHitPos;
             this.hitNormal = hitNormal;

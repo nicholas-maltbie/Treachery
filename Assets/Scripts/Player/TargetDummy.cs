@@ -62,7 +62,7 @@ namespace nickmaltbie.Treachery.Player
         public void Awake()
         {
             IDamageable damageable = GetComponent<IDamageable>();
-            damageable.OnResetHealth += (_, _) => 
+            damageable.OnResetHealth += (_, _) =>
             {
                 if (IsServer)
                 {

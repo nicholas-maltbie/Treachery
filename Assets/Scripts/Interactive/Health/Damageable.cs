@@ -72,7 +72,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         [ClientRpc]
         public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent, float previousHealth, float currentHealth)
         {
-            this.OnDamageEvent?.Invoke(
+            OnDamageEvent?.Invoke(
                 this,
                 new OnDamagedEvent
                 {
@@ -85,7 +85,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         [ClientRpc]
         public void OnResetHealthClientRpc()
         {
-            this.OnResetHealth?.Invoke(this, EventArgs.Empty);
+            OnResetHealth?.Invoke(this, EventArgs.Empty);
         }
 
         public void ApplyDamage(DamageEvent damageEvent)
@@ -108,7 +108,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void ResetToMaxHealth()
         {
-            this.currentHealth.Value = maxHealth.Value;
+            currentHealth.Value = maxHealth.Value;
         }
     }
 }

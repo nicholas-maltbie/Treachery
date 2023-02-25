@@ -43,7 +43,7 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         {
             particleCache = Enumerable.Range(0, maxParticles).Select(_ =>
             {
-                GameObject spawned = GameObject.Instantiate(bloodParticles.gameObject, transform.position, transform.rotation, transform);
+                var spawned = GameObject.Instantiate(bloodParticles.gameObject, transform.position, transform.rotation, transform);
                 spawned.hideFlags = HideFlags.HideAndDontSave;
                 ParticleSystem particles = spawned.GetComponent<ParticleSystem>();
                 particles.Stop();
