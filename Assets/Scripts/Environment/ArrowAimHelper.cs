@@ -1,4 +1,20 @@
-
+// Copyright (C) 2023 Nicholas Maltbie
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute,
+// sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+// BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive;
 using UnityEngine;
@@ -27,13 +43,13 @@ namespace nickmaltbie.Treachery.Environment
         protected Arrow spawnedArrow;
         protected Animator animator;
 
-        public AvatarIKGoal ArrowDrawHand => dominantHand == DominantHand.RightHanded ? 
+        public AvatarIKGoal ArrowDrawHand => dominantHand == DominantHand.RightHanded ?
             AvatarIKGoal.RightHand : AvatarIKGoal.LeftHand;
-        public AvatarIKGoal BowHoldHand => dominantHand == DominantHand.RightHanded ? 
+        public AvatarIKGoal BowHoldHand => dominantHand == DominantHand.RightHanded ?
             AvatarIKGoal.LeftHand : AvatarIKGoal.RightHand;
-        public HumanBodyBones ArrowDrawHandBone => dominantHand == DominantHand.RightHanded ? 
+        public HumanBodyBones ArrowDrawHandBone => dominantHand == DominantHand.RightHanded ?
             HumanBodyBones.RightHand : HumanBodyBones.LeftHand;
-        public HumanBodyBones BowHoldHandBone => dominantHand == DominantHand.RightHanded ? 
+        public HumanBodyBones BowHoldHandBone => dominantHand == DominantHand.RightHanded ?
             HumanBodyBones.LeftHand : HumanBodyBones.RightHand;
         public HumanBodyBones BowHoldShoulderBone => dominantHand == DominantHand.RightHanded ?
             HumanBodyBones.LeftShoulder : HumanBodyBones.RightShoulder;
@@ -58,7 +74,7 @@ namespace nickmaltbie.Treachery.Environment
             {
                 Transform drawHandTransform = animator.GetBoneTransform(ArrowDrawHandBone);
                 Transform bowHandTransform = animator.GetBoneTransform(BowHoldHandBone);
-                Quaternion targetBowRotation = Quaternion.LookRotation((targetPosition.position - bowHandTransform.position).normalized, -AimNormal);
+                var targetBowRotation = Quaternion.LookRotation((targetPosition.position - bowHandTransform.position).normalized, -AimNormal);
 
                 Transform shoulderTransform = animator.GetBoneTransform(BowHoldShoulderBone);
                 float armLength = Mathf.Min((bowHandTransform.position - shoulderTransform.position).magnitude, 1.5f);

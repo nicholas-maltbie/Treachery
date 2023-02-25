@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
@@ -128,6 +127,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
                 {
                     id = name;
                 }
+
                 hitboxLookup[id] = hitbox;
             }
 

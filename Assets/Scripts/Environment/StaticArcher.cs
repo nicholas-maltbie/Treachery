@@ -67,7 +67,7 @@ namespace nickmaltbie.Treachery.Environment
         [TransitionAfterTime(typeof(FireState), 0.1f)]
         [ArrowAim(showArrow = true, drawingArrow = true)]
         public class AimState : State { }
-    
+
         [Animation(FireArrowAnimState, 0.35f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState))]
         [ArrowAim(showArrow = false, drawingArrow = false)]
@@ -100,7 +100,7 @@ namespace nickmaltbie.Treachery.Environment
         public override void Update()
         {
             base.Update();
-            ArrowAimAttribute aimAttribute = Attribute.GetCustomAttribute(CurrentState, typeof(ArrowAimAttribute)) as ArrowAimAttribute;
+            var aimAttribute = Attribute.GetCustomAttribute(CurrentState, typeof(ArrowAimAttribute)) as ArrowAimAttribute;
             aimAttribute ??= ArrowAimAttribute.Disabled;
 
             aimHelper.ShowArrow = aimAttribute.showArrow;

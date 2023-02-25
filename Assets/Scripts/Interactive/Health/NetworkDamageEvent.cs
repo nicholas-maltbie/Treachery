@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -104,7 +103,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         {
             NetworkObject sourceObj = (damageEvent.damageSource as Component)?.GetComponent<NetworkObject>();
             NetworkObject targetObject = (damageEvent.target as Component)?.gameObject.GetComponent<NetworkObject>();
-            var hitboxBehaviour = damageEvent.hitbox as NetworkBehaviour;
+            _ = damageEvent.hitbox as NetworkBehaviour;
 
             return new NetworkDamageEvent
             {

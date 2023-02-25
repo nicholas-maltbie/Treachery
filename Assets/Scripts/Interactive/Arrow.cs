@@ -106,7 +106,7 @@ namespace nickmaltbie.Treachery.Interactive
                 Component hitObj = (checkHitbox as Component) ?? (checkHitbox.Source as Component);
                 Vector3 relativeHitPos = hitObj.transform.worldToLocalMatrix * hit.point;
 
-                DamageEvent arrowDamageEvent = new DamageEvent(
+                var arrowDamageEvent = new DamageEvent(
                     type: DamageType.Damage,
                     target: checkHitbox.Source,
                     source: EmptyDamageSource.Instance,
@@ -159,7 +159,7 @@ namespace nickmaltbie.Treachery.Interactive
         {
             if (parentReference.TryGet(out NetworkObject parentNetworkObj))
             {
-                Quaternion arrowRot = Quaternion.LookRotation(-normal);
+                var arrowRot = Quaternion.LookRotation(-normal);
                 Vector3 arrowPos = parentNetworkObj.transform.localToWorldMatrix * relativePos;
                 Arrow pinnedArrow = GameObject.Instantiate(
                     this,
@@ -176,7 +176,7 @@ namespace nickmaltbie.Treachery.Interactive
             DamageEvent localEvent = damageEvent;
             Transform pincushion = (localEvent.hitbox as Component ?? localEvent.target as Component).transform;
             Vector3 arrowPos = pincushion.localToWorldMatrix * localEvent.relativeHitPos;
-            Quaternion arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
+            var arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
             Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
         }

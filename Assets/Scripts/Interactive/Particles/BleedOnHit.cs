@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
 
@@ -27,7 +26,6 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         public ParticleSystem bloodParticles;
         public int maxParticles = 10;
         private ParticleSystem spawnedParticles;
-        private int currentIndex;
 
         public void Awake()
         {
