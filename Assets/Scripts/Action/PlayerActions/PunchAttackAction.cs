@@ -48,7 +48,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         private ICameraControls viewHeading;
         private Transform playerPosition;
 
-        public EventHandler<AttackEvent> OnAttack;
+        public EventHandler<DamageEvent> OnAttack;
 
         /// <summary>
         /// Setup this attack action.
@@ -86,7 +86,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
 
             IDamageable target = null;
             float damage = 0.0f;
-            Vector3 hitPos = Vector3.zero;
+            Vector3 relativePos = Vector3.zero;
+            Vector3 hitNormal = Vector3.zero;
             IHitbox hitbox = null;
 
             foreach (RaycastHit hit in Physics.SphereCastAll(
@@ -109,8 +110,9 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 // Otherwise deal some damage
                 target = checkHitbox.Source;
                 damage = damageDealt;
-                hitPos = hit.point;
+                relativePos = (checkHitbox.Source as Component).transform.worldToLocalMatrix * hit.point;
                 hitbox = checkHitbox;
+                hitNormal = -dir;
 
                 // Then exit, no piercing in this attack.
                 break;
@@ -118,13 +120,15 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
 
             OnAttack?.Invoke(
                 this,
-                new AttackEvent
-                {
-                    target = target,
-                    damage = damageDealt,
-                    hitPos = hitPos,
-                    hitbox = hitbox,
-                });
+                new DamageEvent(
+                    DamageType.Damage,
+                    target,
+                    EmptyDamageSource.Instance,
+                    damageDealt,
+                    relativePos,
+                    hitNormal,
+                    hitbox
+                ));
         }
     }
 }

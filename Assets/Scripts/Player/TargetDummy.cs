@@ -29,7 +29,7 @@ namespace nickmaltbie.Treachery.Player
     /// <summary>
     /// Have a character controller push any dynamic rigidbody it hits
     /// </summary>
-    public class TargetDummy : NetworkSMAnim, IDamageListener
+    public class TargetDummy : NetworkSMAnim
     {
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
@@ -46,46 +46,43 @@ namespace nickmaltbie.Treachery.Player
         public class HitReset : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
-        [TransitionFromAnyState(typeof(PlayerDeath))]
+        [TransitionFromAnyState(typeof(PlayerDeathEvent))]
         [TransitionOnAnimationComplete(typeof(DeadState))]
-        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        [Transition(typeof(PlayerReviveEvent), typeof(RevivingState))]
         public class DyingState : State { }
 
         [Animation(DeadAnimState, 0.35f, true)]
-        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        [Transition(typeof(PlayerReviveEvent), typeof(RevivingState))]
         public class DeadState : State { }
 
         [Animation(RevivingAnimState, 1.0f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f)]
         public class RevivingState : State { }
 
-        public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
+        public void Awake()
         {
-            if (!IsServer)
+            IDamageable damageable = GetComponent<IDamageable>();
+            damageable.OnResetHealth += (_, _) =>
             {
-                return;
-            }
-
-            if (previous > 0 && current == 0)
-            {
-                RaiseEvent(PlayerDeath.Instance);
-            }
-            else
-            {
-                RaiseEvent(OnHitEvent.Instance);
-            }
+                if (IsServer)
+                {
+                    RaiseEvent(PlayerReviveEvent.Instance);
+                }
+            };
+            damageable.OnDamageEvent += OnDamage;
+            gameObject.AddComponent<ReviveEventManager>();
         }
 
-        public void OnHeal(IDamageable target, IDamageSource source, float previous, float current, float amount)
+        public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
         {
             if (!IsServer)
             {
                 return;
             }
 
-            if (previous == 0 && current > 0)
+            if (onDamagedEvent.damageEvent.type == DamageType.Damage)
             {
-                RaiseEvent(ReviveEvent.Instance);
+                RaiseEvent(OnHitEvent.Instance);
             }
         }
     }

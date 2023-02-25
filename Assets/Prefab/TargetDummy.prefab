@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 385868950501213387}
   - component: {fileID: 385868950501213384}
   - component: {fileID: 616145551}
+  - component: {fileID: 385868950975800904}
   m_Layer: 7
   m_Name: TargetDummy
   m_TagString: Untagged
@@ -136,6 +137,20 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &385868950975800904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385868950501213390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5df654a8e35ef5d428323378cf04ea1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodParticles: {fileID: 3056285708718256572, guid: 54a6b88e0ef3e354c9b74d2841afb347, type: 3}
+  maxParticles: 10
 --- !u!1001 &6105023398458789439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143,10 +158,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 385868950501213391}
     m_Modifications:
+    - target: {fileID: 869488404, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 869488406, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: damageable
       value: 
       objectReference: {fileID: 385868950501213386}
+    - target: {fileID: 44706961688897295, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 410164249358181918, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -191,9 +214,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 796415991612901965, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1079424214785555620, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_Name
       value: Y Bot With Hit Boxes Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168476968448830910, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2067262104230464918, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2430928656345594610, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3226811710957654566, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3948703863679203682, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: damageable
@@ -203,10 +246,38 @@ PrefabInstance:
       propertyPath: damageable
       value: 
       objectReference: {fileID: 385868950501213386}
+    - target: {fileID: 4597044228336204791, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4711591373500340534, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407551729954965408, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5495671603231470084, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5607189994623936258, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5686882922486268382, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5977784129592202710, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: adfd68d2c25d4064998096853bfdacf5, type: 2}
+    - target: {fileID: 6502488928835250653, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7211193072909961931, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
       propertyPath: damageable
       value: 
@@ -215,6 +286,10 @@ PrefabInstance:
       propertyPath: damageable
       value: 
       objectReference: {fileID: 385868950501213386}
+    - target: {fileID: 8440752251791538988, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}
 --- !u!95 &569837903227089499 stripped

@@ -30,13 +30,18 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void Update()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             IDamageable damageable = GetComponent<IDamageable>();
             if (!damageable.IsAlive())
             {
                 elapsedDead += Time.deltaTime;
                 if (elapsedDead >= respawnTime)
                 {
-                    damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+                    damageable.ResetToMaxHealth();
                 }
             }
             else

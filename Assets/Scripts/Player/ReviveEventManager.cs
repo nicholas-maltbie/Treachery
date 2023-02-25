@@ -17,19 +17,40 @@
 // SOFTWARE.
 
 using System;
+using nickmaltbie.StateMachineUnity;
+using nickmaltbie.Treachery.Interactive.Health;
+using Unity.Netcode;
+using UnityEngine;
 
-namespace nickmaltbie.Treachery.Interactive.Health
+namespace nickmaltbie.Treachery.Player
 {
-    public interface IDamageable
+    [RequireComponent(typeof(IDamageable))]
+    [RequireComponent(typeof(IStateMachine<Type>))]
+    public class ReviveEventManager : NetworkBehaviour
     {
-        void ApplyDamage(DamageEvent damageEvent);
-        void ResetToMaxHealth();
-        float GetRemainingHealth();
-        float GetMaxHealth();
-        float GetHealthPercentage();
-        bool IsAlive();
+        /// <summary>
+        /// Previous live state of the player.
+        /// </summary>
+        protected bool PreviousLivingState { get; set; }
 
-        event EventHandler<OnDamagedEvent> OnDamageEvent;
-        event EventHandler OnResetHealth;
+        public void Start()
+        {
+            PreviousLivingState = GetComponent<Damageable>().IsAlive();
+        }
+
+        public void Update()
+        {
+            if (IsOwner)
+            {
+                bool currentLivingState = GetComponent<Damageable>().IsAlive();
+                if (currentLivingState != PreviousLivingState)
+                {
+                    IStateMachine<Type> sm = GetComponent<IStateMachine<Type>>();
+                    sm.RaiseEvent(currentLivingState ? PlayerReviveEvent.Instance : PlayerDeathEvent.Instance);
+                }
+
+                PreviousLivingState = currentLivingState;
+            }
+        }
     }
 }

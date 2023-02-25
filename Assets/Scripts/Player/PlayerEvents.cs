@@ -20,10 +20,10 @@ using nickmaltbie.StateMachineUnity.Event;
 
 namespace nickmaltbie.Treachery.Player
 {
-    public class PlayerDeath : IEvent
+    public class PlayerDeathEvent : IEvent
     {
-        public static PlayerDeath Instance = new PlayerDeath();
-        private PlayerDeath() { }
+        public static PlayerDeathEvent Instance = new PlayerDeathEvent();
+        private PlayerDeathEvent() { }
     }
 
     public class PunchEvent : IEvent
@@ -32,10 +32,10 @@ namespace nickmaltbie.Treachery.Player
         private PunchEvent() { }
     }
 
-    public class ReviveEvent : IEvent
+    public class PlayerReviveEvent : IEvent
     {
-        public static ReviveEvent Instance = new ReviveEvent();
-        private ReviveEvent() { }
+        public static PlayerReviveEvent Instance = new PlayerReviveEvent();
+        private PlayerReviveEvent() { }
     }
 
     public class OnHitEvent : IEvent

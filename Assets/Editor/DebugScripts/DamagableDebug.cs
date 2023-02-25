@@ -37,12 +37,12 @@ namespace nickmaltbie.Treachery.DebugScripts
             {
                 if (GUILayout.Button("Deal 10 Damage"))
                 {
-                    damagable.ApplyDamage(10, EmptyDamageSource.Instance);
+                    damagable.ApplyDamage(new DamageEvent { amount = 10, type = DamageType.Damage });
                 }
 
                 if (GUILayout.Button("Heal 10 Damage"))
                 {
-                    damagable.HealHealth(10, EmptyDamageSource.Instance);
+                    damagable.ApplyDamage(new DamageEvent { amount = 10, type = DamageType.Heal });
                 }
             }
         }
