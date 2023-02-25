@@ -36,7 +36,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
                 elapsedDead += Time.deltaTime;
                 if (elapsedDead >= respawnTime)
                 {
-                    damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+                    damageable.ResetToMaxHealth();
                 }
             }
             else

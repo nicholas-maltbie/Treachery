@@ -16,15 +16,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace nickmaltbie.Treachery.Interactive.Health
 {
     public interface IDamageable
     {
-        void ApplyDamage(float damage, IDamageSource source);
-        void HealHealth(float amount, IDamageSource source);
+        void ApplyDamage(DamageEvent damageEvent);
+        void ResetToMaxHealth();
         float GetRemainingHealth();
         float GetMaxHealth();
         float GetHealthPercentage();
         bool IsAlive();
+
+        event EventHandler<OnDamagedEvent> OnDamageEvent;
+        event EventHandler OnResetHealth;
     }
 }

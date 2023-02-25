@@ -53,12 +53,13 @@ namespace nickmaltbie.Treachery.Player.Action
             return punchAttack;
         }
 
-        public void OnAttack(object source, AttackEvent attack)
+        public void OnAttack(object source, DamageEvent attack)
         {
             Actor.RaiseEvent(PunchEvent.Instance);
             if (attack.target != null)
             {
-                AttackServerRpc(NetworkAttackEvent.FromAttackEvent(attack, gameObject));
+                attack.damageSource = GetComponent<IDamageSource>();
+                AttackServerRpc(attack);
             }
         }
 
@@ -68,9 +69,9 @@ namespace nickmaltbie.Treachery.Player.Action
         }
 
         [ServerRpc]
-        public void AttackServerRpc(NetworkAttackEvent attack)
+        public void AttackServerRpc(NetworkDamageEvent attack)
         {
-            NetworkAttackEvent.ProcessEvent(attack);
+            NetworkDamageEvent.ProcessEvent(attack);
         }
     }
 }

@@ -78,7 +78,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
             if (IsServer)
             {
                 Damageable damageable = GetComponent<Damageable>();
-                damageable.HealHealth(damageable.GetMaxHealth(), EmptyDamageSource.Instance);
+                damageable.ResetToMaxHealth();
                 brokenState.Value = defaultState;
             }
 

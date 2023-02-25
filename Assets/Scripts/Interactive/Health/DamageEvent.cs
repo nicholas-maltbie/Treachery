@@ -20,13 +20,40 @@ using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Action.PlayerActions
+namespace nickmaltbie.Treachery.Interactive.Health
 {
-    public struct AttackEvent
+    public enum DamageType
     {
+        Damage,
+        Heal
+    }
+
+    public struct OnDamagedEvent
+    {
+        public DamageEvent damageEvent;
+        public float previousHealth;
+        public float currentHealth;
+    }
+
+    public struct DamageEvent
+    {
+        public DamageType type;
         public IDamageable target;
-        public float damage;
-        public Vector3 hitPos;
+        public IDamageSource damageSource;
+        public float amount;
+        public Vector3 relativeHitPos;
+        public Vector3 hitNormal;
         public IHitbox hitbox;
+
+        public DamageEvent(DamageType type, IDamageable target, IDamageSource source, float amount, Vector3 relativeHitPos, Vector3 hitNormal, IHitbox hitbox)
+        {
+            this.type = type;
+            this.target = target;
+            this.damageSource = source;
+            this.amount = amount;
+            this.relativeHitPos = relativeHitPos;
+            this.hitNormal = hitNormal;
+            this.hitbox = hitbox;
+        }
     }
 }

@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -32,40 +33,15 @@ namespace nickmaltbie.Treachery.Interactive.Health
             writePerm: NetworkVariableWritePermission.Server,
             readPerm: NetworkVariableReadPermission.Everyone);
 
+        public event EventHandler<OnDamagedEvent> OnDamageEvent;
+        public event EventHandler OnResetHealth;
+
         public float MaxHealth => maxHealth.Value;
         public float CurrentHealth => currentHealth.Value;
 
         private void AdjustHealth(float change)
         {
             currentHealth.Value = Mathf.Clamp(CurrentHealth + change, 0, MaxHealth);
-        }
-
-        public void ApplyDamage(float damage, IDamageSource source)
-        {
-            if (!IsServer)
-            {
-                return;
-            }
-
-            // If player is dead, can't apply damage now can we.
-            if (!IsAlive())
-            {
-                return;
-            }
-
-            float previous = CurrentHealth;
-            AdjustHealth(-damage);
-            InvokeListenersOnDamage(damage, previous, CurrentHealth, source);
-
-            NetworkObject objectSource = source.Source?.GetComponent<NetworkObject>();
-            if (objectSource != null)
-            {
-                OnDamageClientRpc(damage, previous, CurrentHealth, objectSource);
-            }
-            else
-            {
-                OnEmptyDamageClientRpc(damage, previous, CurrentHealth);
-            }
         }
 
         public float GetHealthPercentage()
@@ -88,76 +64,51 @@ namespace nickmaltbie.Treachery.Interactive.Health
             return CurrentHealth;
         }
 
-        public void HealHealth(float amount, IDamageSource source)
-        {
-            if (!IsServer)
-            {
-                return;
-            }
-
-            float previous = CurrentHealth;
-            AdjustHealth(amount);
-            InvokeListenersOnHeal(amount, previous, CurrentHealth, source);
-
-            NetworkObject objectSource = source.Source?.GetComponent<NetworkObject>();
-            if (objectSource != null)
-            {
-                OnHealedClientRpc(amount, previous, CurrentHealth, objectSource);
-            }
-            else
-            {
-                OnEmptyHealClientRpc(amount, previous, CurrentHealth);
-            }
-        }
-
         public bool IsAlive()
         {
             return CurrentHealth > 0;
         }
 
         [ClientRpc]
-        public void OnEmptyDamageClientRpc(float damage, float previous, float current)
+        public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent, float previousHealth, float currentHealth)
         {
-            InvokeListenersOnDamage(damage, previous, current, EmptyDamageSource.Instance);
+            this.OnDamageEvent?.Invoke(
+                this,
+                new OnDamagedEvent
+                {
+                    damageEvent = networkDamageEvent,
+                    previousHealth = previousHealth,
+                    currentHealth = currentHealth,
+                });
         }
 
         [ClientRpc]
-        public void OnDamageClientRpc(float damage, float previous, float current, NetworkObjectReference networkDamageSource)
+        public void OnResetHealthClientRpc()
         {
-            InvokeListenersOnDamage(damage, previous, current, DamageSource.Resolve(networkDamageSource));
+            this.OnResetHealth?.Invoke(this, EventArgs.Empty);
         }
 
-        [ClientRpc]
-        public void OnEmptyHealClientRpc(float amount, float previous, float current)
+        public void ApplyDamage(DamageEvent damageEvent)
         {
-            InvokeListenersOnHeal(amount, previous, current, EmptyDamageSource.Instance);
-        }
-
-        [ClientRpc]
-        public void OnHealedClientRpc(float amount, float previous, float current, NetworkObjectReference networkDamageSource)
-        {
-            InvokeListenersOnHeal(amount, previous, current, DamageSource.Resolve(networkDamageSource));
-        }
-
-        public void InvokeListenersOnHeal(float amount, float previous, float current, IDamageSource source)
-        {
-            foreach (IDamageListener listener in gameObject.GetComponents<IDamageListener>())
+            float adjust = damageEvent.amount;
+            if (damageEvent.type == DamageType.Damage)
             {
-                listener.OnHeal(this, source, previous, current, amount);
+                if (!IsAlive())
+                {
+                    return;
+                }
+
+                adjust *= -1;
             }
+
+            float previousHealth = currentHealth.Value;
+            AdjustHealth(adjust);
+            OnDamageClientRpc(damageEvent, previousHealth, currentHealth.Value);
         }
 
-        public void InvokeListenersOnDamage(float damage, float previous, float current, IDamageSource source)
+        public void ResetToMaxHealth()
         {
-            foreach (IDamageListener listener in gameObject.GetComponents<IDamageListener>())
-            {
-                listener.OnDamage(this, source, previous, current, damage);
-            }
-        }
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            // nothing to serialize here
+            this.currentHealth.Value = maxHealth.Value;
         }
     }
 }

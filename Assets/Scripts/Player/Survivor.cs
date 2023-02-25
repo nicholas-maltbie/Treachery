@@ -46,7 +46,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageListener, IDamageSource, IActionActor<PlayerAction>, IMovementActor
+    public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor
     {
         public class BlockMovement : Attribute
         {
@@ -187,6 +187,11 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public GameObject Source => gameObject;
 
+        /// <summary>
+        /// Previous live state of the player.
+        /// </summary>
+        protected bool PreviousLivingState { get; set; }
+
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -270,14 +275,14 @@ namespace nickmaltbie.Treachery.Player
         public class PunchingState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
-        [TransitionFromAnyState(typeof(PlayerDeath))]
+        [TransitionFromAnyState(typeof(PlayerDeathEvent))]
         [TransitionOnAnimationComplete(typeof(DeadState))]
-        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        [Transition(typeof(PlayerReviveEvent), typeof(RevivingState))]
         [BlockAllAction]
         public class DyingState : State { }
 
         [Animation(DeadAnimState, 0.35f, true)]
-        [Transition(typeof(ReviveEvent), typeof(RevivingState))]
+        [Transition(typeof(PlayerReviveEvent), typeof(RevivingState))]
         [BlockAllAction]
         public class DeadState : State { }
 
@@ -317,6 +322,8 @@ namespace nickmaltbie.Treachery.Player
 
             SprintAction?.Enable();
             MoveAction?.Enable();
+
+            PreviousLivingState = GetComponent<Damageable>().IsAlive();
         }
 
         /// <summary>
@@ -392,6 +399,14 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 ReadPlayerInput();
+                bool currentLivingState = GetComponent<Damageable>().IsAlive();
+
+                if (currentLivingState != PreviousLivingState)
+                {
+                    RaiseEvent(currentLivingState ? PlayerReviveEvent.Instance : PlayerDeathEvent.Instance);
+                }
+
+                PreviousLivingState = currentLivingState;
             }
 
             AttachedAnimator.SetFloat("MoveX", animationMove.Value.x);
@@ -470,32 +485,6 @@ namespace nickmaltbie.Treachery.Player
             MovementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
-        }
-
-        public void OnDamage(IDamageable target, IDamageSource source, float previous, float current, float damage)
-        {
-            if (!IsLocalPlayer)
-            {
-                return;
-            }
-
-            if (previous > 0 && current == 0)
-            {
-                RaiseEvent(PlayerDeath.Instance);
-            }
-        }
-
-        public void OnHeal(IDamageable target, IDamageSource source, float previous, float current, float amount)
-        {
-            if (!IsLocalPlayer)
-            {
-                return;
-            }
-
-            if (previous == 0 && current > 0)
-            {
-                RaiseEvent(ReviveEvent.Instance);
-            }
         }
 
         public bool CanPerform(PlayerAction action)
