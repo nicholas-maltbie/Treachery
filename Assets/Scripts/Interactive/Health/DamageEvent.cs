@@ -44,6 +44,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public Vector3 hitNormal;
         public IHitbox hitbox;
 
+        public Transform SourceTransform => (hitbox as Component ?? target as Component).transform;
+
         public DamageEvent(DamageType type, IDamageable target, IDamageSource source, float amount, Vector3 relativeHitPos, Vector3 hitNormal, IHitbox hitbox)
         {
             this.type = type;

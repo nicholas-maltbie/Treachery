@@ -17,12 +17,14 @@
 // SOFTWARE.
 
 using System;
+using nickmaltbie.Treachery.Interactive.Hitbox;
 
 namespace nickmaltbie.Treachery.Interactive.Health
 {
     public interface IDamageable
     {
         void ApplyDamage(DamageEvent damageEvent);
+        IHitbox LookupHitbox(string id);
         void ResetToMaxHealth();
         float GetRemainingHealth();
         float GetMaxHealth();

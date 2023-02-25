@@ -17,6 +17,9 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -24,6 +27,9 @@ namespace nickmaltbie.Treachery.Interactive.Health
 {
     public class Damageable : NetworkBehaviour, IDamageable
     {
+        public static readonly SHA256 hash = SHA256.Create();
+        private Dictionary<string, IHitbox> hitboxLookup = new Dictionary<string, IHitbox>();
+
         public NetworkVariable<float> maxHealth = new NetworkVariable<float>(
             value: 100,
             writePerm: NetworkVariableWritePermission.Server,
@@ -109,6 +115,39 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public void ResetToMaxHealth()
         {
             currentHealth.Value = maxHealth.Value;
+        }
+
+        public string AddHitbox(IHitbox hitbox, string name = "")
+        {
+            string id = null;
+            lock (hitboxLookup)
+            {
+                id = hitboxLookup.Count.ToString();
+                if (!string.IsNullOrEmpty(name))
+                {
+                    id = name;
+                }
+
+                hitboxLookup[id] = hitbox;
+            }
+
+            return id;
+        }
+
+        public IHitbox LookupHitbox(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+            else if (hitboxLookup.TryGetValue(id, out IHitbox hitbox))
+            {
+                return hitbox;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

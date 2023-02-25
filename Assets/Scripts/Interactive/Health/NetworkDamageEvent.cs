@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,9 +29,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public Vector3 hitNormal;
         private NetworkObjectReference targetReference;
         private NetworkObjectReference sourceReference;
-        private NetworkBehaviourReference hitboxReference;
+        private string hitboxId;
         private bool hasSource;
-        private bool hasHitbox;
 
         private GameObject Target
         {
@@ -71,16 +69,11 @@ namespace nickmaltbie.Treachery.Interactive.Health
             serializer.SerializeValue(ref hitNormal);
             serializer.SerializeValue(ref targetReference);
             serializer.SerializeValue(ref hasSource);
-            serializer.SerializeValue(ref hasHitbox);
+            serializer.SerializeValue(ref hitboxId);
 
             if (hasSource)
             {
                 serializer.SerializeValue(ref sourceReference);
-            }
-
-            if (hasHitbox)
-            {
-                serializer.SerializeValue(ref hitboxReference);
             }
         }
 
@@ -92,18 +85,17 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public static implicit operator DamageEvent(NetworkDamageEvent damageEvent)
         {
             NetworkObject source = null;
-            NetworkBehaviour hitbox = null;
             bool hasTarget = damageEvent.targetReference.TryGet(out NetworkObject target);
             bool hasSource = damageEvent.hasSource && damageEvent.sourceReference.TryGet(out source);
-            bool hasHitbox = damageEvent.hasHitbox && damageEvent.hitboxReference.TryGet(out hitbox);
+            IDamageable taget = hasTarget ? target.GetComponent<IDamageable>() : null;
             return new DamageEvent(
                 type: damageEvent.eventType,
                 amount: damageEvent.amount,
                 relativeHitPos: damageEvent.relativeHitPos,
                 hitNormal: damageEvent.hitNormal,
-                target: hasTarget ? target.GetComponent<IDamageable>() : null,
+                target: taget,
                 source: hasSource ? source.gameObject.GetComponent<IDamageSource>() : EmptyDamageSource.Instance,
-                hitbox: hasHitbox ? hitbox.gameObject.GetComponent<IHitbox>() : null
+                hitbox: taget?.LookupHitbox(damageEvent.hitboxId)
             );
         }
 
@@ -111,7 +103,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         {
             NetworkObject sourceObj = (damageEvent.damageSource as Component)?.GetComponent<NetworkObject>();
             NetworkObject targetObject = (damageEvent.target as Component)?.gameObject.GetComponent<NetworkObject>();
-            var hitboxBehaviour = damageEvent.hitbox as NetworkBehaviour;
+            _ = damageEvent.hitbox as NetworkBehaviour;
 
             return new NetworkDamageEvent
             {
@@ -120,10 +112,9 @@ namespace nickmaltbie.Treachery.Interactive.Health
                 relativeHitPos = damageEvent.relativeHitPos,
                 hitNormal = damageEvent.hitNormal,
                 hasSource = sourceObj != null,
-                hasHitbox = hitboxBehaviour != null,
                 targetReference = targetObject != null ? new NetworkObjectReference(targetObject) : default,
                 sourceReference = sourceObj != null ? new NetworkObjectReference(sourceObj) : default,
-                hitboxReference = hitboxBehaviour != null ? new NetworkBehaviourReference(hitboxBehaviour) : default,
+                hitboxId = damageEvent.hitbox?.HitboxId ?? "",
             };
         }
     }

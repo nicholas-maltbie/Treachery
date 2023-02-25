@@ -88,7 +88,6 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             float damage = 0.0f;
             Vector3 relativePos = Vector3.zero;
             Vector3 hitNormal = Vector3.zero;
-            IHitbox hitbox = null;
 
             foreach (RaycastHit hit in Physics.SphereCastAll(
                 source,
@@ -110,8 +109,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 // Otherwise deal some damage
                 target = checkHitbox.Source;
                 damage = damageDealt;
-                relativePos = (checkHitbox.Source as Component).transform.worldToLocalMatrix * hit.point;
-                hitbox = checkHitbox;
+                Transform sourceTransform = (checkHitbox.Source as Component).transform;
+                relativePos = sourceTransform.transform.worldToLocalMatrix * hit.point;
                 hitNormal = -dir;
 
                 // Then exit, no piercing in this attack.
@@ -127,7 +126,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                     damageDealt,
                     relativePos,
                     hitNormal,
-                    hitbox
+                    null
                 ));
         }
     }

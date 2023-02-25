@@ -33,6 +33,8 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
 
         public IDamageable Source => damageable;
 
+        public string HitboxId { get; private set; }
+
         public void Awake()
         {
             gameObject.layer = IHitbox.HitboxLayer;
@@ -40,6 +42,11 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
 
             // If damageable is null, find in parent
             damageable ??= GetComponentInParent<Damageable>();
+        }
+
+        public void Start()
+        {
+            HitboxId = damageable?.AddHitbox(this, gameObject.name) ?? string.Empty;
         }
     }
 }
