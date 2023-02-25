@@ -70,6 +70,7 @@ namespace nickmaltbie.Treachery.Player
                 }
             };
             damageable.OnDamageEvent += OnDamage;
+            gameObject.AddComponent<ReviveEventManager>();
         }
 
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
@@ -79,15 +80,7 @@ namespace nickmaltbie.Treachery.Player
                 return;
             }
 
-            if (onDamagedEvent.previousHealth > 0 && onDamagedEvent.currentHealth == 0)
-            {
-                RaiseEvent(PlayerDeathEvent.Instance);
-            }
-            else if (onDamagedEvent.previousHealth == 0 && onDamagedEvent.currentHealth > 0)
-            {
-                RaiseEvent(PlayerReviveEvent.Instance);
-            }
-            else if (onDamagedEvent.damageEvent.type == DamageType.Damage)
+            if (onDamagedEvent.damageEvent.type == DamageType.Damage)
             {
                 RaiseEvent(OnHitEvent.Instance);
             }

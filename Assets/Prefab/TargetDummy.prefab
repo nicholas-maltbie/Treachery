@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 385868950501213387}
   - component: {fileID: 385868950501213384}
   - component: {fileID: 616145551}
+  - component: {fileID: 385868950975800904}
   m_Layer: 7
   m_Name: TargetDummy
   m_TagString: Untagged
@@ -136,6 +137,20 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &385868950975800904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385868950501213390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5df654a8e35ef5d428323378cf04ea1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodParticles: {fileID: 3056285708718256572, guid: 54a6b88e0ef3e354c9b74d2841afb347, type: 3}
+  maxParticles: 10
 --- !u!1001 &6105023398458789439
 PrefabInstance:
   m_ObjectHideFlags: 0

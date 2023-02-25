@@ -57,8 +57,9 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         {
             ParticleSystem particles = NextParticles;
             particles.transform.position = transform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
-            particles.transform.rotation = Quaternion.FromToRotation(Vector3.up, onDamagedEvent.damageEvent.hitNormal);
+            particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
             particles.Stop();
+            particles.Clear();
             particles.Play();
         }
     }

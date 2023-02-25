@@ -112,7 +112,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 damage = damageDealt;
                 relativePos = (checkHitbox.Source as Component).transform.worldToLocalMatrix * hit.point;
                 hitbox = checkHitbox;
-                hitNormal = hit.normal;
+                hitNormal = -dir;
 
                 // Then exit, no piercing in this attack.
                 break;

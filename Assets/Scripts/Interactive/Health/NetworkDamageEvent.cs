@@ -112,6 +112,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public static implicit operator NetworkDamageEvent(DamageEvent damageEvent)
         {
             NetworkObject sourceObj = (damageEvent.damageSource as Component)?.GetComponent<NetworkObject>();
+            NetworkObject targetObject = (damageEvent.target as Component)?.gameObject.GetComponent<NetworkObject>();
             var hitboxBehaviour = damageEvent.hitbox as NetworkBehaviour;
 
             return new NetworkDamageEvent
@@ -120,9 +121,9 @@ namespace nickmaltbie.Treachery.Interactive.Health
                 amount = damageEvent.amount,
                 relativeHitPos = damageEvent.relativeHitPos,
                 hitNormal = damageEvent.hitNormal,
-                targetReference = (damageEvent.target as Component).gameObject.GetComponent<NetworkObject>(),
                 hasSource = sourceObj != null,
                 hasHitbox = hitboxBehaviour != null,
+                targetReference = targetObject != null ? new NetworkObjectReference(targetObject) : default,
                 sourceReference = sourceObj != null ? new NetworkObjectReference(sourceObj) : default,
                 hitboxReference = hitboxBehaviour != null ? new NetworkBehaviourReference(hitboxBehaviour) : default,
             };

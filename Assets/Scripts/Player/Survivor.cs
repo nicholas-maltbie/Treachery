@@ -187,11 +187,6 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public GameObject Source => gameObject;
 
-        /// <summary>
-        /// Previous live state of the player.
-        /// </summary>
-        protected bool PreviousLivingState { get; set; }
-
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -310,6 +305,11 @@ namespace nickmaltbie.Treachery.Player
             }
         }
 
+        public void Awake()
+        {
+            gameObject.AddComponent<ReviveEventManager>();
+        }
+
         /// <summary>
         /// Configure kcc state machine operations.
         /// </summary>
@@ -322,8 +322,6 @@ namespace nickmaltbie.Treachery.Player
 
             SprintAction?.Enable();
             MoveAction?.Enable();
-
-            PreviousLivingState = GetComponent<Damageable>().IsAlive();
         }
 
         /// <summary>
@@ -399,14 +397,6 @@ namespace nickmaltbie.Treachery.Player
             if (IsOwner)
             {
                 ReadPlayerInput();
-                bool currentLivingState = GetComponent<Damageable>().IsAlive();
-
-                if (currentLivingState != PreviousLivingState)
-                {
-                    RaiseEvent(currentLivingState ? PlayerReviveEvent.Instance : PlayerDeathEvent.Instance);
-                }
-
-                PreviousLivingState = currentLivingState;
             }
 
             AttachedAnimator.SetFloat("MoveX", animationMove.Value.x);
