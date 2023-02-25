@@ -21,6 +21,8 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
+using nickmaltbie.Treachery.Interactive;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Environment
@@ -35,6 +37,8 @@ namespace nickmaltbie.Treachery.Environment
 
     public class StaticArcher : NetworkSMAnim
     {
+        public float arrowFireSpeed = 50.0f;
+
         public class DrawArrowEvent : IEvent { }
 
         public const string ArcherIdleAnimState = "Idle";
@@ -67,6 +71,7 @@ namespace nickmaltbie.Treachery.Environment
         [Animation(FireArrowAnimState, 0.35f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState))]
         [ArrowAim(showArrow = false, drawingArrow = false)]
+        [OnEnterState(nameof(FireArrow))]
         public class FireState : State { }
 
         public ArrowAimHelper aimHelper;
@@ -74,7 +79,22 @@ namespace nickmaltbie.Treachery.Environment
         public override void Start()
         {
             base.Start();
+            NetworkManager.AddNetworkPrefab(aimHelper.arrowPrefab.gameObject);
             aimHelper ??= GetComponentInChildren<ArrowAimHelper>();
+        }
+
+        public void FireArrow()
+        {
+            if (IsServer)
+            {
+                Transform arrowTransform = aimHelper.ArrowTransform;
+                Arrow firedArrow = GameObject.Instantiate(aimHelper.arrowPrefab, arrowTransform.position, arrowTransform.rotation);
+                firedArrow.GetComponent<NetworkObject>().Spawn(true);
+
+                Transform targetPosition = aimHelper.targetPosition;
+                Vector3 dir = targetPosition.position - firedArrow.transform.position;
+                firedArrow.Loose(dir.normalized, arrowFireSpeed);
+            }
         }
 
         public override void Update()

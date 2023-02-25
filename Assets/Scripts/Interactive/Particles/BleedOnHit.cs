@@ -56,7 +56,8 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
         {
             ParticleSystem particles = NextParticles;
-            particles.transform.position = transform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
+            Transform sourceTransform = onDamagedEvent.damageEvent.SourceTransform;
+            particles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
             particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
             particles.Stop();
             particles.Clear();

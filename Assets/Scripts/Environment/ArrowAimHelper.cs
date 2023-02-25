@@ -39,6 +39,8 @@ namespace nickmaltbie.Treachery.Environment
             HumanBodyBones.LeftShoulder : HumanBodyBones.RightShoulder;
         public Vector3 AimNormal => dominantHand == DominantHand.RightHanded ? Vector3.left : Vector3.right;
 
+        public Transform ArrowTransform => spawnedArrow.transform;
+
         public void Start()
         {
             animator = GetComponent<Animator>();

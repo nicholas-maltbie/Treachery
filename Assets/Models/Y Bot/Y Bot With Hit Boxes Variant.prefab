@@ -58,6 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 1
 --- !u!1 &44706961688897295
 GameObject:
@@ -104,6 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 6
 --- !u!136 &6949271684411459713
 CapsuleCollider:
@@ -178,6 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 5
 --- !u!1 &1168476968448830910
 GameObject:
@@ -237,6 +243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 2
 --- !u!1 &2067262104230464918
 GameObject:
@@ -297,6 +305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 5
 --- !u!1 &2430928656345594610
 GameObject:
@@ -343,6 +353,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 1
 --- !u!136 &6569642230896948320
 CapsuleCollider:
@@ -403,6 +415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 3
 --- !u!136 &9128854290174477873
 CapsuleCollider:
@@ -463,6 +477,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 3
 --- !u!136 &7258541205531751420
 CapsuleCollider:
@@ -523,6 +539,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 3
 --- !u!136 &2887892788830107761
 CapsuleCollider:
@@ -596,6 +614,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 2
 --- !u!1 &5407551729954965408
 GameObject:
@@ -655,6 +675,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 2
 --- !u!1 &5495671603231470084
 GameObject:
@@ -715,6 +737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 4
 --- !u!1 &5607189994623936258
 GameObject:
@@ -761,6 +785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 3
 --- !u!136 &2947540878896075987
 CapsuleCollider:
@@ -835,6 +861,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 4
 --- !u!1 &6502488928835250653
 GameObject:
@@ -895,6 +923,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 4
 --- !u!1 &8440752251791538988
 GameObject:
@@ -955,6 +985,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8ce809374b92b4fb9405d40450d140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageable: {fileID: 0}
+  isTriggerCollider: 1
   hitboxType: 4
 --- !u!1001 &160875367286063605
 PrefabInstance:

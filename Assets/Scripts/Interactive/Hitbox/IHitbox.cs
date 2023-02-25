@@ -29,5 +29,6 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         IDamageable Source { get; }
         Collider Collider { get; }
         bool IsCritical { get; }
+        string HitboxId { get; }
     }
 }
