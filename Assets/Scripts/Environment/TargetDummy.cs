@@ -20,11 +20,12 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Player;
 using UnityEngine;
 
 using static nickmaltbie.Treachery.Player.PlayerAnimStates;
 
-namespace nickmaltbie.Treachery.Player
+namespace nickmaltbie.Treachery.Environment
 {
     /// <summary>
     /// Have a character controller push any dynamic rigidbody it hits
@@ -62,13 +63,6 @@ namespace nickmaltbie.Treachery.Player
         public void Awake()
         {
             IDamageable damageable = GetComponent<IDamageable>();
-            damageable.OnResetHealth += (_, _) =>
-            {
-                if (IsServer)
-                {
-                    RaiseEvent(PlayerReviveEvent.Instance);
-                }
-            };
             damageable.OnDamageEvent += OnDamage;
             gameObject.AddComponent<ReviveEventManager>();
         }
