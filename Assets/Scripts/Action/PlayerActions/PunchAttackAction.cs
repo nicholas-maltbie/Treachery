@@ -18,6 +18,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.Treachery.Interactive.Health;
@@ -83,56 +84,25 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             // Get the first thing we can hit in that direction
             Vector3 source = playerPosition.position + attackBaseOffset;
             Vector3 dir = PlayerHeading() * Vector3.forward;
-
-            IDamageable target = null;
-            float damage = 0.0f;
-            Vector3 relativePos = Vector3.zero;
-            Vector3 hitNormal = Vector3.zero;
-
-            foreach (RaycastHit hit in Physics.SphereCastAll(
-                source,
-                attackRadius,
-                dir,
-                attackRange,
-                IHitbox.HitLayerMaskComputation,
-                QueryTriggerInteraction.Collide))
+            IEnumerable<RaycastHit> hits = Physics.SphereCastAll(source, attackRadius, dir, attackRange, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
+            var hitbox = IHitbox.GetFirstValidHit(hits, player, out RaycastHit hit, out bool didHit);
+            if (didHit && hitbox != null)
             {
-                // Get the hitbox associated with the hit
-                IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
-
-                // Don't let the player hit him/her self.
-                if (checkHitbox != null && checkHitbox.Source == player)
-                {
-                    continue;
-                }
-                else if (checkHitbox == null && !hit.collider.isTrigger)
-                {
-                    break;
-                }
-
-                // Otherwise deal some damage
-                target = checkHitbox.Source;
-                damage = damageDealt;
-                Transform sourceTransform = (checkHitbox.Source as Component).transform;
-                relativePos = sourceTransform.transform.worldToLocalMatrix * hit.point;
-                hitNormal = -dir;
-
-                // Then exit, no piercing in this attack.
-                break;
+                DamageEvent damageEvent = IHitbox.DamageEventFromHit(hit, hitbox, damageDealt, -dir, DamageType.Bludgeoning);
+                OnAttack?.Invoke(this, damageEvent);
             }
-
-            OnAttack?.Invoke(
-                this,
-                new DamageEvent(
+            else
+            {
+                OnAttack?.Invoke(this, new DamageEvent(
                     Interactive.Health.EventType.Damage,
-                    DamageType.Bludgeoning,
-                    target,
-                    EmptyDamageSource.Instance,
+                    DamageType.None,
+                    null,
+                    null,
                     damageDealt,
-                    relativePos,
-                    hitNormal,
-                    null
-                ));
+                    source,
+                    -dir,
+                    null));
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
@@ -109,57 +110,45 @@ namespace nickmaltbie.Treachery.Interactive
 
             // Draw a ray from start position to end position.
             Vector3 dir = front.position - startArrowHeadPos;
-            foreach (RaycastHit hit in Physics.SphereCastAll(
+            IEnumerable<RaycastHit> hits = Physics.SphereCastAll(
                 startArrowHeadPos,
                 hitboxRadius,
                 dir.normalized,
                 dir.magnitude,
                 IHitbox.HitLayerMaskComputation,
-                QueryTriggerInteraction.Collide))
+                QueryTriggerInteraction.Collide);
+            var hitbox = IHitbox.GetFirstValidHit(hits, source, out RaycastHit hit, out bool didHit);
+            Vector3 normal = transform.rotation * Vector3.back;
+
+            if (!didHit)
             {
-                // Get the hitbox associated with the hit
-                IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
-
-                // Don't let the player hit him/her self.
-                if (checkHitbox != null && checkHitbox.Source == source)
+                // If we didn't hit anything useful...
+                return;
+            }
+            else if (hitbox == null)
+            {
+                // If we hit a wall and need to stop and leave an arrow.
+                NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
+                if (netObj != null)
                 {
-                    continue;
+                    Vector3 relativePos = netObj.transform.worldToLocalMatrix * hit.point;
+                    SpawnPincushionArrowParentedClientRpc(netObj, relativePos, normal);
                 }
-                else if (checkHitbox == null && !hit.collider.isTrigger)
+                else
                 {
-                    // If we hit something, despawn and create pinned arrow.
-                    NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
-
-                    if (netObj != null)
-                    {
-                        Vector3 relativePos = netObj.transform.worldToLocalMatrix * hit.point;
-                        SpawnPincushionArrowParentedClientRpc(netObj, relativePos, transform.rotation * Vector3.back);
-                    }
-                    else
-                    {
-                        SpawnPincushionArrowClientRpc(hit.point, transform.rotation * Vector3.back);
-                    }
-
-                    Fired = false;
-                    GetComponent<NetworkObject>().Despawn();
-                    return;
+                    SpawnPincushionArrowClientRpc(hit.point, normal);
                 }
 
-                Component hitObj = (checkHitbox as Component) ?? (checkHitbox.Source as Component);
-                Vector3 relativeHitPos = hitObj.transform.worldToLocalMatrix * hit.point;
-
-                var arrowDamageEvent = new DamageEvent(
-                    type: Health.EventType.Damage,
-                    damageType: DamageType.Piercing,
-                    target: checkHitbox.Source,
-                    source: EmptyDamageSource.Instance,
-                    amount: arrowDamage,
-                    relativeHitPos: relativeHitPos,
-                    hitNormal: transform.rotation * Vector3.back,
-                    hitbox: checkHitbox);
-                checkHitbox.Source.ApplyDamage(arrowDamageEvent);
-                SpawnPincushionArrowOnDamageClientRpc(arrowDamageEvent);
                 Fired = false;
+                GetComponent<NetworkObject>().Despawn();
+                return;
+            }
+            else
+            {
+                var arrowDamageEvent = IHitbox.DamageEventFromHit(hit, hitbox, arrowDamage, normal, DamageType.Piercing);
+                Fired = false;
+                hitbox.Source.ApplyDamage(arrowDamageEvent);
+                SpawnPincushionArrowOnDamageClientRpc(arrowDamageEvent);
                 GetComponent<NetworkObject>().Despawn();
                 return;
             }

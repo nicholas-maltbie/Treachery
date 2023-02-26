@@ -57,13 +57,13 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         /// </summary>
         string HitboxId { get; }
 
-        public static DamageEvent DamageEventFromhit(RaycastHit hit, IHitbox hitbox, float damage, Vector3 normal)
+        public static DamageEvent DamageEventFromHit(RaycastHit hit, IHitbox hitbox, float damage, Vector3 normal, DamageType damageType = DamageType.Slashing)
         {
             Component hitObj = (hitbox as Component) ?? (hitbox.Source as Component);
             Vector3 relativeHitPos = hitObj.transform.worldToLocalMatrix * hit.point;
             return new DamageEvent(
                 type: Health.EventType.Damage,
-                damageType: DamageType.Piercing,
+                damageType: damageType,
                 target: hitbox.Source,
                 source: EmptyDamageSource.Instance,
                 amount: damage,
@@ -72,7 +72,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 hitbox: hitbox);
         }
 
-        public static IHitbox GetFirstValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source, out RaycastHit firstHit)
+        public static IHitbox GetFirstValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source, out RaycastHit firstHit, out bool didHit)
         {
             foreach (RaycastHit hit in hitSequence)
             {
@@ -88,17 +88,20 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 {
                     // check if we hit a wall or something.
                     firstHit = hit;
+                    didHit = true;
                     return null;
                 }
                 else if (!checkHitbox.Disabled)
                 {
                     // we had a valid hit, return this hitbox.
                     firstHit = hit;
+                    didHit = true;
                     return checkHitbox;
                 }
             }
 
             firstHit = default;
+            didHit = false;
             return null;
         }
     }

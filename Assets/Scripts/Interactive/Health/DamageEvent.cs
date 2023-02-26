@@ -23,6 +23,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
 {
     public enum DamageType
     {
+        None,
         Bludgeoning,
         Slashing,
         Piercing
