@@ -94,9 +94,16 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 attackRadius,
                 dir,
                 attackRange,
-                IHitbox.HitboxLayerMask,
+                IHitbox.HitLayermaskComputation,
                 QueryTriggerInteraction.Collide))
             {
+                // Check if we are trying to punch through a wall
+                if ((hit.collider.gameObject.layer ^ IHitbox.HitboxLayer) != 0 &&
+                    !hit.collider.isTrigger)
+                {
+                    break;
+                }
+
                 // Get the hitbox associated with the hit
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 

@@ -91,9 +91,31 @@ namespace nickmaltbie.Treachery.Interactive
                 hitboxRadius,
                 dir.normalized,
                 dir.magnitude,
-                IHitbox.HitboxLayerMask,
+                IHitbox.HitLayermaskComputation,
                 QueryTriggerInteraction.Collide))
             {
+                // Check if we hit an object and need to drop a pincushion
+                if ((hit.collider.gameObject.layer ^ IHitbox.HitboxLayer) != 0 &&
+                    !hit.collider.isTrigger)
+                {
+                    // If we hit something, despawn and create pinned arrow.
+                    NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
+
+                    if (netObj != null)
+                    {
+                        Vector3 relativePos = netObj.transform.worldToLocalMatrix * transform.position;
+                        SpawnPincushionArrowParented(netObj, relativePos, transform.rotation * Vector3.back);
+                    }
+                    else
+                    {
+                        SpawnPincushionArrow(transform.position, transform.rotation * Vector3.back);
+                    }
+
+                    Fired = false;
+                    GetComponent<NetworkObject>().Despawn();
+                    return;
+                }
+
                 // Get the hitbox associated with the hit
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 
@@ -117,33 +139,6 @@ namespace nickmaltbie.Treachery.Interactive
                     hitbox: checkHitbox);
                 checkHitbox.Source.ApplyDamage(arrowDamageEvent);
                 SpawnPincushionArrowClientRpc(arrowDamageEvent);
-                Fired = false;
-                GetComponent<NetworkObject>().Despawn();
-                return;
-            }
-
-            // If we didn't hit any players, check if we hit any other objects
-            foreach (RaycastHit hit in Physics.SphereCastAll(
-                startArrowHeadPos,
-                hitboxRadius,
-                dir.normalized,
-                dir.magnitude,
-                ~(IHitbox.PlayerLayerMask | IHitbox.HitboxLayerMask),
-                QueryTriggerInteraction.Ignore))
-            {
-                // If we hit something, despawn and create pinned arrow.
-                NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
-
-                if (netObj != null)
-                {
-                    Vector3 relativePos = netObj.transform.worldToLocalMatrix * transform.position;
-                    SpawnPincushionArrowParented(netObj, relativePos, transform.rotation * Vector3.back);
-                }
-                else
-                {
-                    SpawnPincushionArrow(transform.position, transform.rotation * Vector3.back);
-                }
-
                 Fired = false;
                 GetComponent<NetworkObject>().Despawn();
                 return;
