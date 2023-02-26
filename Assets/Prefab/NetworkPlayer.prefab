@@ -416,7 +416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df654a8e35ef5d428323378cf04ea1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bloodParticles: {fileID: 3056285708718256572, guid: 54a6b88e0ef3e354c9b74d2841afb347, type: 3}
+  library: {fileID: 11400000, guid: c02bd4889a689c64d84aa8d9b740c7b8, type: 2}
   maxParticles: 10
 --- !u!1001 &1651910495456193390
 PrefabInstance:

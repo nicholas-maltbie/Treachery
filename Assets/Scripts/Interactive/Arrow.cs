@@ -178,7 +178,7 @@ namespace nickmaltbie.Treachery.Interactive
             Transform pincushion = (localEvent.hitbox as Component ?? localEvent.target as Component).transform;
             Vector3 arrowPos = pincushion.localToWorldMatrix * localEvent.relativeHitPos;
             var arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
-            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition, arrowRot, pincushion);
+            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition - damageEvent.hitNormal * 0.1f, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
         }
     }

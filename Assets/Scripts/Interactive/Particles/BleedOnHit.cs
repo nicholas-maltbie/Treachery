@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
 
@@ -23,27 +24,25 @@ namespace nickmaltbie.Treachery.Interactive.Particles
 {
     public class BleedOnHit : MonoBehaviour
     {
-        public ParticleSystem bloodParticles;
-        public int maxParticles = 10;
-        private ParticleSystem spawnedParticles;
+        public static ParticleCacheSet BleedParticleCache = null;
+
+        public DamageParticleLibrary library;
+        public int maxParticles = 100;
 
         public void Awake()
         {
-            var spawned = GameObject.Instantiate(bloodParticles.gameObject, transform.position, transform.rotation, transform);
-            spawned.hideFlags = HideFlags.HideAndDontSave;
-            spawnedParticles = spawned.GetComponent<ParticleSystem>();
-            spawnedParticles.Stop();
-            spawnedParticles.Clear();
             GetComponent<IDamageable>().OnDamageEvent += OnDamage;
+            BleedParticleCache ??= new ParticleCacheSet(library);
         }
 
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
         {
             Transform sourceTransform = onDamagedEvent.damageEvent.SourceTransform;
-            spawnedParticles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
-            spawnedParticles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
-            spawnedParticles.Stop();
-            spawnedParticles.Play();
+            ParticleSystem particles = BleedParticleCache.GetNextParticleCache(onDamagedEvent.damageEvent.damageType);
+            particles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
+            particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
+            particles.Stop();
+            particles.Play();
         }
     }
 }
