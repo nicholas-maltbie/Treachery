@@ -168,7 +168,7 @@ MonoBehaviour:
   despawnPinTime: 10
   arrowDamage: 10
   useGravity: 1
-  hitboxRadius: 0.01
+  hitboxRadius: 0.005
 --- !u!114 &8755493474642377193
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -44,6 +44,14 @@ namespace nickmaltbie.Treachery.Interactive
         {
             Fired = true;
             Speed = direction * speed;
+            LooseClientRpc(Speed);
+        }
+
+        [ClientRpc]
+        public void LooseClientRpc(Vector3 speed)
+        {
+            Fired = true;
+            Speed = speed;
         }
 
         public void Update()
@@ -58,10 +66,29 @@ namespace nickmaltbie.Treachery.Interactive
             }
         }
 
+        public void UpdatePosition()
+        {
+            transform.position += Speed * Time.fixedDeltaTime;
+            transform.rotation = Quaternion.LookRotation(Speed.normalized, -Physics.gravity.normalized);
+            if (useGravity)
+            {
+                Speed += Physics.gravity * Time.fixedDeltaTime;
+            }
+        }
+
+        public void PredictMovement()
+        {
+            if (Fired)
+            {
+                UpdatePosition();
+            }
+        }
+
         public void FixedUpdate()
         {
             if (!IsServer)
             {
+                PredictMovement();
                 return;
             }
 
@@ -78,14 +105,7 @@ namespace nickmaltbie.Treachery.Interactive
             }
 
             Vector3 startArrowHeadPos = front.position;
-            transform.position += Speed * Time.fixedDeltaTime;
-            transform.rotation = Quaternion.LookRotation(Speed.normalized, -Physics.gravity.normalized);
-            if (useGravity)
-            {
-                Speed += Physics.gravity * Time.fixedDeltaTime;
-            }
-
-            UnityEngine.Debug.Log($"hitboxLayer{Convert.ToString(IHitbox.HitboxLayerMask, 2)} PlayerLayerMask:{Convert.ToString(IHitbox.PlayerLayerMask, 2)} ~PlayerLayerMask:{Convert.ToString(~IHitbox.PlayerLayerMask, 2)} combined: {Convert.ToString(IHitbox.HitLayerMaskComputation, 2)}");
+            UpdatePosition();
 
             // Draw a ray from start position to end position.
             Vector3 dir = front.position - startArrowHeadPos;
@@ -112,12 +132,12 @@ namespace nickmaltbie.Treachery.Interactive
 
                     if (netObj != null)
                     {
-                        Vector3 relativePos = netObj.transform.worldToLocalMatrix * transform.position;
-                        SpawnPincushionArrowParented(netObj, relativePos, transform.rotation * Vector3.back);
+                        Vector3 relativePos = netObj.transform.worldToLocalMatrix * hit.point;
+                        SpawnPincushionArrowParentedClientRpc(netObj, relativePos, transform.rotation * Vector3.back);
                     }
                     else
                     {
-                        SpawnPincushionArrow(transform.position, transform.rotation * Vector3.back);
+                        SpawnPincushionArrowClientRpc(hit.point, transform.rotation * Vector3.back);
                     }
 
                     Fired = false;
@@ -138,20 +158,22 @@ namespace nickmaltbie.Treachery.Interactive
                     hitNormal: transform.rotation * Vector3.back,
                     hitbox: checkHitbox);
                 checkHitbox.Source.ApplyDamage(arrowDamageEvent);
-                SpawnPincushionArrowClientRpc(arrowDamageEvent);
+                SpawnPincushionArrowOnDamageClientRpc(arrowDamageEvent);
                 Fired = false;
                 GetComponent<NetworkObject>().Despawn();
                 return;
             }
         }
 
-        public void SpawnPincushionArrow(Vector3 pos, Vector3 normal)
+        [ClientRpc]
+        public void SpawnPincushionArrowClientRpc(Vector3 pos, Vector3 normal)
         {
-            Arrow pinnedArrow = GameObject.Instantiate(this, pos, Quaternion.LookRotation(-normal));
+            Arrow pinnedArrow = GameObject.Instantiate(this, pos + front.localPosition - normal * 0.1f, Quaternion.LookRotation(-normal));
             pinnedArrow.Pinned = true;
         }
 
-        public void SpawnPincushionArrowParented(NetworkObjectReference parentReference, Vector3 relativePos, Vector3 normal)
+        [ClientRpc]
+        public void SpawnPincushionArrowParentedClientRpc(NetworkObjectReference parentReference, Vector3 relativePos, Vector3 normal)
         {
             if (parentReference.TryGet(out NetworkObject parentNetworkObj))
             {
@@ -159,7 +181,7 @@ namespace nickmaltbie.Treachery.Interactive
                 Vector3 arrowPos = parentNetworkObj.transform.localToWorldMatrix * relativePos;
                 Arrow pinnedArrow = GameObject.Instantiate(
                     this,
-                    arrowPos,
+                    arrowPos + front.localPosition - normal * 0.1f,
                     arrowRot,
                     parentNetworkObj.transform);
                 pinnedArrow.Pinned = true;
@@ -167,14 +189,15 @@ namespace nickmaltbie.Treachery.Interactive
         }
 
         [ClientRpc]
-        public void SpawnPincushionArrowClientRpc(NetworkDamageEvent damageEvent)
+        public void SpawnPincushionArrowOnDamageClientRpc(NetworkDamageEvent damageEvent)
         {
             DamageEvent localEvent = damageEvent;
-            Transform pincushion = (localEvent.hitbox as Component ?? localEvent.target as Component).transform;
-            Vector3 arrowPos = pincushion.localToWorldMatrix * localEvent.relativeHitPos;
-            var arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
+            Transform pincushion = (damageEvent.hitbox as Component ?? damageEvent.target as Component).transform;
+            Vector3 arrowPos = pincushion.localToWorldMatrix * damageEvent.relativeHitPos;
+            var arrowRot = Quaternion.LookRotation(-damageEvent.hitNormal);
             Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition - damageEvent.hitNormal * 0.1f, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
+            pinnedArrow.transform.SetParent(localEvent.SourceTransform);
         }
     }
 }

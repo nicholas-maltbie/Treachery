@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -32,6 +33,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
         private NetworkObjectReference sourceReference;
         private string hitboxId;
         private bool hasSource;
+
+        public IHitbox hitbox => Target?.GetComponent<IDamageable>()?.LookupHitbox(hitboxId);
 
         private GameObject Target
         {
