@@ -120,7 +120,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             OnAttack?.Invoke(
                 this,
                 new DamageEvent(
-                    DamageType.Damage,
+                    Interactive.Health.EventType.Damage,
+                    DamageType.Bludgeoning,
                     target,
                     EmptyDamageSource.Instance,
                     damageDealt,

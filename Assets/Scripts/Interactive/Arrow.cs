@@ -107,7 +107,8 @@ namespace nickmaltbie.Treachery.Interactive
                 Vector3 relativeHitPos = hitObj.transform.worldToLocalMatrix * hit.point;
 
                 var arrowDamageEvent = new DamageEvent(
-                    type: DamageType.Damage,
+                    type: Health.EventType.Damage,
+                    damageType: DamageType.Piercing,
                     target: checkHitbox.Source,
                     source: EmptyDamageSource.Instance,
                     amount: arrowDamage,

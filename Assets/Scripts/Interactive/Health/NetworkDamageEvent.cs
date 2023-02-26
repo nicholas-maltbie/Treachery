@@ -23,7 +23,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
 {
     public struct NetworkDamageEvent : INetworkSerializable
     {
-        public DamageType eventType;
+        public DamageType damageType;
+        public EventType eventType;
         public float amount;
         public Vector3 relativeHitPos;
         public Vector3 hitNormal;
@@ -70,6 +71,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
             serializer.SerializeValue(ref targetReference);
             serializer.SerializeValue(ref hasSource);
             serializer.SerializeValue(ref hitboxId);
+            serializer.SerializeValue(ref damageType);
 
             if (hasSource)
             {
@@ -90,6 +92,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
             IDamageable taget = hasTarget ? target.GetComponent<IDamageable>() : null;
             return new DamageEvent(
                 type: damageEvent.eventType,
+                damageType: damageEvent.damageType,
                 amount: damageEvent.amount,
                 relativeHitPos: damageEvent.relativeHitPos,
                 hitNormal: damageEvent.hitNormal,
@@ -108,6 +111,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
             return new NetworkDamageEvent
             {
                 eventType = damageEvent.type,
+                damageType = damageEvent.damageType,
                 amount = damageEvent.amount,
                 relativeHitPos = damageEvent.relativeHitPos,
                 hitNormal = damageEvent.hitNormal,

@@ -74,9 +74,9 @@ namespace nickmaltbie.Treachery.Environment
                 return;
             }
 
-            if (onDamagedEvent.damageEvent.type == DamageType.Damage)
+            if (onDamagedEvent.damageEvent.type == Interactive.Health.EventType.Damage)
             {
-                RaiseEvent(OnHitEvent.Instance);
+                base.RaiseEvent(OnHitEvent.Instance);
             }
         }
     }
