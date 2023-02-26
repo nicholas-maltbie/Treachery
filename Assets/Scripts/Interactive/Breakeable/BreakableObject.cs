@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -146,6 +147,10 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
             if (brokenState.Value == BreakableObjectState.Fixed)
             {
                 fixedSpawn ??= GameObject.Instantiate(fixedPrefab, transform.position, transform.rotation, transform);
+                foreach (var hitbox in GetComponentsInChildren<GenericHitbox>())
+                {
+                    hitbox.Disabled = false;
+                }
             }
             else if (fixedSpawn != null)
             {
@@ -156,6 +161,10 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
             if (brokenState.Value == BreakableObjectState.Broken)
             {
                 brokenSpawn ??= GameObject.Instantiate(brokenPrefab, transform.position, transform.rotation, transform);
+                foreach (var hitbox in GetComponentsInChildren<GenericHitbox>())
+                {
+                    hitbox.Disabled = true;
+                }
             }
             else if (brokenSpawn != null)
             {

@@ -33,7 +33,10 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
 
         public IDamageable Source => damageable;
 
+        public bool disabledOverride = false;
+
         public string HitboxId { get; private set; }
+        public bool Disabled { get; set; }
 
         public void Awake()
         {

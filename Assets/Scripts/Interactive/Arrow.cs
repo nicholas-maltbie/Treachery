@@ -169,6 +169,7 @@ namespace nickmaltbie.Treachery.Interactive
         public void SpawnPincushionArrowClientRpc(Vector3 pos, Vector3 normal)
         {
             Arrow pinnedArrow = GameObject.Instantiate(this, pos + front.localPosition - normal * 0.1f, Quaternion.LookRotation(-normal));
+            pinnedArrow.hideFlags = HideFlags.HideAndDontSave;
             pinnedArrow.Pinned = true;
         }
 
@@ -184,6 +185,7 @@ namespace nickmaltbie.Treachery.Interactive
                     arrowPos + front.localPosition - normal * 0.1f,
                     arrowRot,
                     parentNetworkObj.transform);
+                pinnedArrow.hideFlags = HideFlags.HideAndDontSave;
                 pinnedArrow.Pinned = true;
             }
         }
@@ -197,6 +199,7 @@ namespace nickmaltbie.Treachery.Interactive
             var arrowRot = Quaternion.LookRotation(-damageEvent.hitNormal);
             Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition - damageEvent.hitNormal * 0.1f, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
+            pinnedArrow.hideFlags = HideFlags.HideAndDontSave;
             pinnedArrow.transform.SetParent(localEvent.SourceTransform);
         }
     }
