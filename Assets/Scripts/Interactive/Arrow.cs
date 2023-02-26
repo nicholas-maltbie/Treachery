@@ -91,12 +91,18 @@ namespace nickmaltbie.Treachery.Interactive
                 hitboxRadius,
                 dir.normalized,
                 dir.magnitude,
-                IHitbox.HitLayermaskComputation,
+                IHitbox.HitLayerMaskComputation,
                 QueryTriggerInteraction.Collide))
             {
-                // Check if we hit an object and need to drop a pincushion
-                if ((hit.collider.gameObject.layer ^ IHitbox.HitboxLayer) != 0 &&
-                    !hit.collider.isTrigger)
+                // Get the hitbox associated with the hit
+                IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
+
+                // Don't let the player hit him/her self.
+                if (checkHitbox?.Source == source)
+                {
+                    continue;
+                }
+                else if (checkHitbox == null && !hit.collider.isTrigger)
                 {
                     // If we hit something, despawn and create pinned arrow.
                     NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
@@ -114,15 +120,6 @@ namespace nickmaltbie.Treachery.Interactive
                     Fired = false;
                     GetComponent<NetworkObject>().Despawn();
                     return;
-                }
-
-                // Get the hitbox associated with the hit
-                IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
-
-                // Don't let the player hit him/her self.
-                if (checkHitbox == null || checkHitbox.Source == source)
-                {
-                    continue;
                 }
 
                 Component hitObj = (checkHitbox as Component) ?? (checkHitbox.Source as Component);
