@@ -93,15 +93,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             }
             else
             {
-                OnAttack?.Invoke(this, new DamageEvent(
-                    Interactive.Health.EventType.Damage,
-                    DamageType.None,
-                    null,
-                    null,
-                    damageDealt,
-                    source,
-                    -dir,
-                    null));
+                OnAttack?.Invoke(this, IHitbox.EmptyDamageEvent(Interactive.Health.EventType.Damage, damageDealt));
             }
         }
     }

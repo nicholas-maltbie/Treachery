@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
+using EventType = nickmaltbie.Treachery.Interactive.Health.EventType;
 
 namespace nickmaltbie.Treachery.Interactive.Hitbox
 {
@@ -56,6 +57,19 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         /// Hitbox id for differentiating between other hitboxes on a character/object.
         /// </summary>
         string HitboxId { get; }
+
+        public static DamageEvent EmptyDamageEvent(EventType eventType, float damageDealt)
+        {
+            return new DamageEvent(
+                type: eventType,
+                damageType: DamageType.None,
+                target: null,
+                source: EmptyDamageSource.Instance,
+                amount: damageDealt,
+                relativeHitPos: Vector3.zero,
+                hitNormal: Vector3.zero,
+                hitbox: null);
+        }
 
         public static DamageEvent DamageEventFromHit(RaycastHit hit, IHitbox hitbox, float damage, Vector3 normal, DamageType damageType = DamageType.Slashing)
         {
