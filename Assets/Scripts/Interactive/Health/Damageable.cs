@@ -97,7 +97,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public void ApplyDamage(DamageEvent damageEvent)
         {
             float adjust = damageEvent.amount;
-            if (damageEvent.type == DamageType.Damage)
+            if (damageEvent.type == EventType.Damage)
             {
                 if (!IsAlive())
                 {

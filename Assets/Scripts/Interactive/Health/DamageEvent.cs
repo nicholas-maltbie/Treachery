@@ -23,6 +23,13 @@ namespace nickmaltbie.Treachery.Interactive.Health
 {
     public enum DamageType
     {
+        Bludgeoning,
+        Slashing,
+        Piercing
+    }
+
+    public enum EventType
+    {
         Damage,
         Heal
     }
@@ -36,17 +43,26 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
     public struct DamageEvent
     {
-        public DamageType type;
+        public EventType type;
         public IDamageable target;
         public IDamageSource damageSource;
         public float amount;
         public Vector3 relativeHitPos;
         public Vector3 hitNormal;
         public IHitbox hitbox;
+        public DamageType damageType;
 
         public Transform SourceTransform => (hitbox as Component ?? target as Component).transform;
 
-        public DamageEvent(DamageType type, IDamageable target, IDamageSource source, float amount, Vector3 relativeHitPos, Vector3 hitNormal, IHitbox hitbox)
+        public DamageEvent(
+            EventType type,
+            DamageType damageType,
+            IDamageable target,
+            IDamageSource source,
+            float amount,
+            Vector3 relativeHitPos,
+            Vector3 hitNormal,
+            IHitbox hitbox)
         {
             this.type = type;
             this.target = target;
@@ -55,6 +71,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
             this.relativeHitPos = relativeHitPos;
             this.hitNormal = hitNormal;
             this.hitbox = hitbox;
+            this.damageType = damageType;
         }
     }
 }

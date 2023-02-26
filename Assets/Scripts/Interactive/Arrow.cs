@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
@@ -84,6 +85,8 @@ namespace nickmaltbie.Treachery.Interactive
                 Speed += Physics.gravity * Time.fixedDeltaTime;
             }
 
+            UnityEngine.Debug.Log($"hitboxLayer{Convert.ToString(IHitbox.HitboxLayerMask, 2)} PlayerLayerMask:{Convert.ToString(IHitbox.PlayerLayerMask, 2)} ~PlayerLayerMask:{Convert.ToString(~IHitbox.PlayerLayerMask, 2)} combined: {Convert.ToString(IHitbox.HitLayerMaskComputation, 2)}");
+
             // Draw a ray from start position to end position.
             Vector3 dir = front.position - startArrowHeadPos;
             foreach (RaycastHit hit in Physics.SphereCastAll(
@@ -91,23 +94,43 @@ namespace nickmaltbie.Treachery.Interactive
                 hitboxRadius,
                 dir.normalized,
                 dir.magnitude,
-                IHitbox.HitboxLayerMask,
+                IHitbox.HitLayerMaskComputation,
                 QueryTriggerInteraction.Collide))
             {
                 // Get the hitbox associated with the hit
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 
                 // Don't let the player hit him/her self.
-                if (checkHitbox == null || checkHitbox.Source == source)
+                if (checkHitbox != null && checkHitbox.Source == source)
                 {
                     continue;
+                }
+                else if (checkHitbox == null && !hit.collider.isTrigger)
+                {
+                    // If we hit something, despawn and create pinned arrow.
+                    NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
+
+                    if (netObj != null)
+                    {
+                        Vector3 relativePos = netObj.transform.worldToLocalMatrix * transform.position;
+                        SpawnPincushionArrowParented(netObj, relativePos, transform.rotation * Vector3.back);
+                    }
+                    else
+                    {
+                        SpawnPincushionArrow(transform.position, transform.rotation * Vector3.back);
+                    }
+
+                    Fired = false;
+                    GetComponent<NetworkObject>().Despawn();
+                    return;
                 }
 
                 Component hitObj = (checkHitbox as Component) ?? (checkHitbox.Source as Component);
                 Vector3 relativeHitPos = hitObj.transform.worldToLocalMatrix * hit.point;
 
                 var arrowDamageEvent = new DamageEvent(
-                    type: DamageType.Damage,
+                    type: Health.EventType.Damage,
+                    damageType: DamageType.Piercing,
                     target: checkHitbox.Source,
                     source: EmptyDamageSource.Instance,
                     amount: arrowDamage,
@@ -116,33 +139,6 @@ namespace nickmaltbie.Treachery.Interactive
                     hitbox: checkHitbox);
                 checkHitbox.Source.ApplyDamage(arrowDamageEvent);
                 SpawnPincushionArrowClientRpc(arrowDamageEvent);
-                Fired = false;
-                GetComponent<NetworkObject>().Despawn();
-                return;
-            }
-
-            // If we didn't hit any players, check if we hit any other objects
-            foreach (RaycastHit hit in Physics.SphereCastAll(
-                startArrowHeadPos,
-                hitboxRadius,
-                dir.normalized,
-                dir.magnitude,
-                ~(IHitbox.PlayerLayerMask | IHitbox.HitboxLayerMask),
-                QueryTriggerInteraction.Ignore))
-            {
-                // If we hit something, despawn and create pinned arrow.
-                NetworkObject netObj = hit.collider.GetComponent<NetworkObject>();
-
-                if (netObj != null)
-                {
-                    Vector3 relativePos = netObj.transform.worldToLocalMatrix * transform.position;
-                    SpawnPincushionArrowParented(netObj, relativePos, transform.rotation * Vector3.back);
-                }
-                else
-                {
-                    SpawnPincushionArrow(transform.position, transform.rotation * Vector3.back);
-                }
-
                 Fired = false;
                 GetComponent<NetworkObject>().Despawn();
                 return;
@@ -177,7 +173,7 @@ namespace nickmaltbie.Treachery.Interactive
             Transform pincushion = (localEvent.hitbox as Component ?? localEvent.target as Component).transform;
             Vector3 arrowPos = pincushion.localToWorldMatrix * localEvent.relativeHitPos;
             var arrowRot = Quaternion.LookRotation(-localEvent.hitNormal);
-            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition, arrowRot, pincushion);
+            Arrow pinnedArrow = GameObject.Instantiate(this, arrowPos + front.localPosition - damageEvent.hitNormal * 0.1f, arrowRot, pincushion);
             pinnedArrow.Pinned = true;
         }
     }
