@@ -37,6 +37,7 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         {
             Transform sourceTransform = onDamagedEvent.damageEvent.SourceTransform;
             ParticleSystem particles = BleedParticleCache.GetNextParticleCache(onDamagedEvent.damageEvent.damageType);
+            particles.transform.SetParent(sourceTransform);
             particles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
             particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
             particles.Stop();
