@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
 
@@ -27,7 +26,6 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         public static ParticleCacheSet BleedParticleCache = null;
 
         public DamageParticleLibrary library;
-        public int maxParticles = 100;
 
         public void Awake()
         {
