@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using Unity.Netcode;
@@ -84,6 +85,8 @@ namespace nickmaltbie.Treachery.Interactive
                 Speed += Physics.gravity * Time.fixedDeltaTime;
             }
 
+            UnityEngine.Debug.Log($"hitboxLayer{Convert.ToString(IHitbox.HitboxLayerMask, 2)} PlayerLayerMask:{Convert.ToString(IHitbox.PlayerLayerMask, 2)} ~PlayerLayerMask:{Convert.ToString(~IHitbox.PlayerLayerMask, 2)} combined: {Convert.ToString(IHitbox.HitLayerMaskComputation, 2)}");
+
             // Draw a ray from start position to end position.
             Vector3 dir = front.position - startArrowHeadPos;
             foreach (RaycastHit hit in Physics.SphereCastAll(
@@ -98,7 +101,7 @@ namespace nickmaltbie.Treachery.Interactive
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 
                 // Don't let the player hit him/her self.
-                if (checkHitbox?.Source == source)
+                if (checkHitbox != null && checkHitbox.Source == source)
                 {
                     continue;
                 }

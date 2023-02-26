@@ -23,11 +23,11 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
 {
     public interface IHitbox
     {
-        public static readonly int HitboxLayer = LayerMask.NameToLayer("Hitbox");
-        public static readonly int PlayerLayer = LayerMask.NameToLayer("Player");
-        public static readonly int HitLayerMaskComputation = HitboxLayerMask | ~(PlayerLayerMask);
-        public static readonly int HitboxLayerMask = 1 << HitboxLayer;
-        public static readonly int PlayerLayerMask = 1 << PlayerLayer;
+        public static int HitboxLayer => LayerMask.NameToLayer("Hitbox");
+        public static int PlayerLayer => LayerMask.NameToLayer("Player");
+        public static int HitLayerMaskComputation => HitboxLayerMask | (~PlayerLayerMask);
+        public static int HitboxLayerMask => 1 << HitboxLayer;
+        public static int PlayerLayerMask => 1 << PlayerLayer;
 
         IDamageable Source { get; }
         Collider Collider { get; }

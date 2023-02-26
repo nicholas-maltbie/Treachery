@@ -101,13 +101,11 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 
                 // Don't let the player hit him/her self.
-                if (checkHitbox.Source == player)
+                if (checkHitbox != null && checkHitbox.Source == player)
                 {
                     continue;
                 }
-
-                // Check if we are trying to punch through a wall
-                if (checkHitbox == null && !hit.collider.isTrigger)
+                else if (checkHitbox == null && !hit.collider.isTrigger)
                 {
                     break;
                 }
