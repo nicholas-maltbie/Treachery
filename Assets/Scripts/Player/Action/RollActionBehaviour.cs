@@ -18,6 +18,7 @@
 // SOFTWARE.
 
 using System;
+using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
@@ -25,50 +26,47 @@ using UnityEngine;
 namespace nickmaltbie.Treachery.Player.Action
 {
     /// <summary>
-    /// Dodge action that can be performed by a player.
+    /// Roll action that can be performed by a player.
     /// </summary>
     [RequireComponent(typeof(KCCMovementEngine))]
-    [RequireComponent(typeof(IMovementActor))]
-    public class DodgeActionBehaviour : AbstractActionBehaviour<FixedMovementAction>
+    [RequireComponent(typeof(ICameraControls))]
+    public class RollActionBehaviour : AbstractActionBehaviour<FixedMovementAction>
     {
         [SerializeField]
-        private float dodgeDuration = 1.0f;
+        private float rollDuration = 1.0f;
 
         [SerializeField]
-        private float dodgeDistance = 3.5f;
-
-        private IMovementActor _movementActor;
-        private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
+        private float rollDistance = 5.5f;
 
         public override FixedMovementAction SetupAction()
         {
             var action = new FixedMovementAction(
                 BufferedInput,
                 Actor,
-                dodgeDuration,
+                rollDuration,
                 GetComponent<KCCMovementEngine>())
             {
-                dodgeDist = dodgeDistance,
+                dodgeDist = rollDistance,
             };
-            action.OnPerform += OnDodge;
+            action.OnPerform += OnRoll;
             action.OnComplete += OnComplete;
             return action;
         }
 
-        private void OnDodge(object source, EventArgs args)
+        private void OnRoll(object source, EventArgs args)
         {
-            Action.MoveDirection = MovementActor.GetDesiredMovement().normalized;
-            Actor.RaiseEvent(DodgeStart.Instance);
+            Action.MoveDirection = GetComponent<ICameraControls>().PlayerHeading * Vector3.forward;
+            Actor.RaiseEvent(RollStart.Instance);
         }
 
         private void OnComplete(object source, bool interrupted)
         {
-            Actor.RaiseEvent(DodgeStop.Instance);
+            Actor.RaiseEvent(RollStop.Instance);
         }
 
         public override void CleanupAction(FixedMovementAction action)
         {
-            action.OnPerform -= OnDodge;
+            action.OnPerform -= OnRoll;
             action.OnComplete -= OnComplete;
         }
     }

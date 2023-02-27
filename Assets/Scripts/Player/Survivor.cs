@@ -32,7 +32,6 @@ using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Player.Action;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -176,13 +175,6 @@ namespace nickmaltbie.Treachery.Player
         public Vector3 Velocity { get; protected set; }
 
         /// <summary>
-        /// Animation movement for the player
-        /// </summary>
-        private NetworkVariable<Vector2> animationMove = new NetworkVariable<Vector2>(
-            readPerm: NetworkVariableReadPermission.Everyone,
-            writePerm: NetworkVariableWritePermission.Owner);
-
-        /// <summary>
         /// One who deals damage is this.
         /// </summary>
         public GameObject Source => gameObject;
@@ -253,11 +245,21 @@ namespace nickmaltbie.Treachery.Player
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
-        [OnEnterState(nameof(OnStartDodge))]
+        [OnEnterState(nameof(SetAnimationInMoveDirection))]
         [LockMovementAnimation]
         [DamagePassthrough]
         [BlockAllAction]
         public class DodgeState : State { }
+
+        [Animation(RollAnimState, 0.1f, true, 0.5f)]
+        [TransitionFromAnyState(typeof(RollStart))]
+        [Transition(typeof(RollStop), typeof(IdleState))]
+        [OnFixedUpdate(nameof(RollMovement))]
+        [OnEnterState(nameof(RotateTowardsViewport))]
+        [LockMovementAnimation]
+        [DamagePassthrough]
+        [BlockAllAction]
+        public class RollState : State { }
 
         [Animation(BlockAnimState, 0.1f, true, 0.5f)]
         [BlockAllAction]
@@ -268,6 +270,7 @@ namespace nickmaltbie.Treachery.Player
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         [TransitionFromAnyState(typeof(PunchEvent))]
         [BlockAction(PlayerAction.Punch, PlayerAction.Roll)]
+        [OnEnterState(nameof(RotateTowardsViewport))]
         public class PunchingState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
@@ -405,9 +408,6 @@ namespace nickmaltbie.Treachery.Player
                 ReadPlayerInput();
             }
 
-            AttachedAnimator.SetFloat("MoveX", animationMove.Value.x);
-            AttachedAnimator.SetFloat("MoveY", animationMove.Value.y);
-
             base.Update();
         }
 
@@ -431,9 +431,10 @@ namespace nickmaltbie.Treachery.Player
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
+            GetComponent<RotateTowardsMovement>().Locked = locked;
             if (!locked)
             {
-                UpdateAnimationState(moveVector);
+                GetComponent<RotateTowardsMovement>().UpdateAnimationState(HorizPlaneView * InputMovement);
             }
 
             bool moving = InputMovement.magnitude >= KCCUtils.Epsilon;
@@ -453,33 +454,31 @@ namespace nickmaltbie.Treachery.Player
             }
         }
 
-        public void UpdateAnimationState(Vector3 moveVector, bool smooth = true)
+        public void SetAnimationInMoveDirection()
         {
-            float smoothValue = 4 * unityService.deltaTime;
-            if (!smooth)
-            {
-                smoothValue = 1.0f;
-            }
-
-            float moveX = AttachedAnimator.GetFloat("MoveX");
-            float moveY = AttachedAnimator.GetFloat("MoveY");
-            moveX = Mathf.Lerp(moveX, moveVector.x, smoothValue);
-            moveY = Mathf.Lerp(moveY, moveVector.y, smoothValue);
-            animationMove.Value = new Vector2(moveX, moveY);
-        }
-
-        public void OnStartDodge()
-        {
-            Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-            UpdateAnimationState(move, false);
+            GetComponent<RotateTowardsMovement>().UpdateAnimationState(HorizPlaneView * InputMovement, false);
         }
 
         public void DodgeMovement()
         {
-            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
-            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            FixedMovementAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
+            Vector3 dodgeMovement = (dodgeAction?.MoveDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
             MovementEngine.MovePlayer(
                 dodgeMovement,
+                Velocity * unityService.fixedDeltaTime);
+        }
+
+        public void RotateTowardsViewport()
+        {
+            GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(HorizPlaneView.eulerAngles.y, 360 * 3);
+        }
+
+        public void RollMovement()
+        {
+            FixedMovementAction rollAction = GetComponent<RollActionBehaviour>()?.Action;
+            Vector3 movement = (rollAction?.MoveDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            MovementEngine.MovePlayer(
+                movement,
                 Velocity * unityService.fixedDeltaTime);
         }
 

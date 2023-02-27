@@ -24,9 +24,9 @@ using UnityEngine;
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     /// <summary>
-    /// Dodge action that can be performed by a player.
+    /// FixedMovement action that can be performed by a player.
     /// </summary>
-    public class DodgeAction : TimedConditionalAction<PlayerAction>
+    public class FixedMovementAction : TimedConditionalAction<PlayerAction>
     {
         public static float DodgeSpeedFactor(float x)
         {
@@ -47,7 +47,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         /// <summary>
         /// Direction player is moving while dodging.
         /// </summary>
-        public Vector3 DodgeDirection
+        public Vector3 MoveDirection
         {
             get => _dodgeDirection.normalized * DodgeSpeedFactor(elapsed / duration) * dodgeDist / duration;
             set => _dodgeDirection = value;
@@ -58,7 +58,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         /// </summary>
         private KCCMovementEngine movementEngine;
 
-        public DodgeAction(
+        public FixedMovementAction(
             BufferedInput bufferedInput,
             IActionActor<PlayerAction> actor,
             float duration,
