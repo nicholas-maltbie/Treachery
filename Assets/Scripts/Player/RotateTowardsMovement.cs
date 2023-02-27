@@ -124,6 +124,11 @@ namespace nickmaltbie.Treachery.Player
             Vector3 playerHeading = AttachedAnimator.transform.forward;
             var relative = Quaternion.FromToRotation(playerHeading, movementDir);
             Vector3 relativeMovement = relative * Vector3.forward;
+            if (movementDir.magnitude <= KCCUtils.Epsilon)
+            {
+                relativeMovement = Vector3.zero;
+            }
+
             AttachedAnimator.SetFloat("MoveX", relativeMovement.x);
             AttachedAnimator.SetFloat("MoveY", relativeMovement.z);
             animationMove.Value = new Vector2(relativeMovement.x, relativeMovement.z);
