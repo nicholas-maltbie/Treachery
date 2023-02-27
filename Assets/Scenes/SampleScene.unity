@@ -4217,6 +4217,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableSphere (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 542210302449983828, guid: 6daf1726da80a2c408666a2cf341ad5b, type: 3}
+      propertyPath: m_Radius
+      value: 1.1
+      objectReference: {fileID: 0}
     - target: {fileID: 542210302449983830, guid: 6daf1726da80a2c408666a2cf341ad5b, type: 3}
       propertyPath: m_RootOrder
       value: 15
