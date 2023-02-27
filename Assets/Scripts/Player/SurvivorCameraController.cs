@@ -75,7 +75,7 @@ namespace nickmaltbie.Treachery.Player
         /// <param name="go">GameObject associated with the camera controller.</param>
         /// <param name="cameraControls">Camera controls object.</param>
         /// <param name="deltaTime">delta time for updating the camera controller.</param>
-        public static void UpdateCameraController(
+        public void UpdateCameraController(
             CameraConfig config,
             GameObject go,
             IManagedCamera cameraControls,
@@ -135,7 +135,7 @@ namespace nickmaltbie.Treachery.Player
 
                 if (config.thirdPersonCharacterBase != null)
                 {
-                    CameraUtils.UpdateThirdPersonCameraBase(cameraDirection, config, go, cameraControls, deltaTime);
+                    UpdateThirdPersonCameraBase(cameraDirection, config, go, cameraControls, deltaTime);
                 }
             }
 
@@ -150,7 +150,7 @@ namespace nickmaltbie.Treachery.Player
         /// <param name="go">Game object for the character position.</param>
         /// <param name="cameraControls">Camera controls associated with the player.</param>
         /// <param name="deltaTime">delta time for updating player opacity.</param>
-        public static void UpdateThirdPersonCameraBase(
+        public void UpdateThirdPersonCameraBase(
             Vector3 cameraDirection,
             CameraConfig config,
             GameObject go,

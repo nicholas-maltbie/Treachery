@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: -2950086063906863614}
   - component: {fileID: 2366107581240859178}
   - component: {fileID: 4874349058441904053}
+  - component: {fileID: 7848041172871861759}
   m_Layer: 7
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -261,8 +262,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 958f6019d666515419c7bf4b6a76110a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationVersion: v1.0.0
   stepHeight: 0.35
   maxWalkAngle: 60
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
 --- !u!114 &-2618219780861503884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,6 +422,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eefad53b258de904b9ef8bc1904c131c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7848041172871861759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03c361905d91754ca91eebc00443634, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationRate: 180
+  avatarBase: {fileID: 1735611322576967626}
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0

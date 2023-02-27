@@ -176,13 +176,6 @@ namespace nickmaltbie.Treachery.Player
         public Vector3 Velocity { get; protected set; }
 
         /// <summary>
-        /// Animation movement for the player
-        /// </summary>
-        private NetworkVariable<Vector2> animationMove = new NetworkVariable<Vector2>(
-            readPerm: NetworkVariableReadPermission.Everyone,
-            writePerm: NetworkVariableWritePermission.Owner);
-
-        /// <summary>
         /// One who deals damage is this.
         /// </summary>
         public GameObject Source => gameObject;
@@ -277,6 +270,7 @@ namespace nickmaltbie.Treachery.Player
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         [TransitionFromAnyState(typeof(PunchEvent))]
         [BlockAction(PlayerAction.Punch, PlayerAction.Roll)]
+        [OnEnterState(nameof(RotateTowardsViewport))]
         public class PunchingState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
@@ -414,9 +408,6 @@ namespace nickmaltbie.Treachery.Player
                 ReadPlayerInput();
             }
 
-            AttachedAnimator.SetFloat("MoveX", animationMove.Value.x);
-            AttachedAnimator.SetFloat("MoveY", animationMove.Value.y);
-
             base.Update();
         }
 
@@ -440,9 +431,10 @@ namespace nickmaltbie.Treachery.Player
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
+            GetComponent<RotateTowardsMovement>().Locked = locked;
             if (!locked)
             {
-                UpdateAnimationState(moveVector);
+                GetComponent<RotateTowardsMovement>().UpdateAnimationState(HorizPlaneView * InputMovement);
             }
 
             bool moving = InputMovement.magnitude >= KCCUtils.Epsilon;
@@ -462,25 +454,9 @@ namespace nickmaltbie.Treachery.Player
             }
         }
 
-        public void UpdateAnimationState(Vector3 moveVector, bool smooth = true)
-        {
-            float smoothValue = 4 * unityService.deltaTime;
-            if (!smooth)
-            {
-                smoothValue = 1.0f;
-            }
-
-            float moveX = AttachedAnimator.GetFloat("MoveX");
-            float moveY = AttachedAnimator.GetFloat("MoveY");
-            moveX = Mathf.Lerp(moveX, moveVector.x, smoothValue);
-            moveY = Mathf.Lerp(moveY, moveVector.y, smoothValue);
-            animationMove.Value = new Vector2(moveX, moveY);
-        }
-
         public void SetAnimationInMoveDirection()
         {
-            Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-            UpdateAnimationState(move, false);
+            GetComponent<RotateTowardsMovement>().UpdateAnimationState(HorizPlaneView * InputMovement, false);
         }
 
         public void DodgeMovement()
@@ -490,6 +466,11 @@ namespace nickmaltbie.Treachery.Player
             MovementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
+        }
+
+        public void RotateTowardsViewport()
+        {
+            GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(HorizPlaneView.eulerAngles.y, 360 * 3);
         }
 
         public void RollMovement()
