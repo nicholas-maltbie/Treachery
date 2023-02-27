@@ -94,7 +94,10 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
 
                 // Don't let the player hit him/her self.
-                if (checkHitbox != null && checkHitbox.Source == source)
+                // Also ignore disabled hitboxes or hitboxes with passthrough set.
+                bool ignoreHitbox = checkHitbox != null &&
+                    (checkHitbox.Source == source || checkHitbox.Disabled || (checkHitbox.Source?.Passthrough ?? false));
+                if (ignoreHitbox)
                 {
                     continue;
                 }
@@ -105,7 +108,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                     didHit = true;
                     return null;
                 }
-                else if (!checkHitbox.Disabled)
+                else
                 {
                     // we had a valid hit, return this hitbox.
                     firstHit = hit;
