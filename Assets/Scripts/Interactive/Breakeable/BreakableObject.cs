@@ -147,7 +147,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
             if (brokenState.Value == BreakableObjectState.Fixed)
             {
                 fixedSpawn ??= GameObject.Instantiate(fixedPrefab, transform.position, transform.rotation, transform);
-                foreach (var hitbox in GetComponentsInChildren<GenericHitbox>())
+                foreach (GenericHitbox hitbox in GetComponentsInChildren<GenericHitbox>())
                 {
                     hitbox.Disabled = false;
                 }
@@ -161,7 +161,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
             if (brokenState.Value == BreakableObjectState.Broken)
             {
                 brokenSpawn ??= GameObject.Instantiate(brokenPrefab, transform.position, transform.rotation, transform);
-                foreach (var hitbox in GetComponentsInChildren<GenericHitbox>())
+                foreach (GenericHitbox hitbox in GetComponentsInChildren<GenericHitbox>())
                 {
                     hitbox.Disabled = true;
                 }

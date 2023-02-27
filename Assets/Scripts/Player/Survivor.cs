@@ -382,7 +382,7 @@ namespace nickmaltbie.Treachery.Player
                 Velocity = Vector3.zero;
             }
 
-            var damageable = GetComponent<Damageable>();
+            Damageable damageable = GetComponent<Damageable>();
             InvulnerableAttribute.UpdateDamageableState(CurrentState, damageable);
             DamagePassthroughAttribute.UpdateDamageableState(CurrentState, damageable);
             base.FixedUpdate();

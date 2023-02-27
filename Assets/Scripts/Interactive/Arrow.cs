@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
@@ -145,7 +144,7 @@ namespace nickmaltbie.Treachery.Interactive
             }
             else
             {
-                var arrowDamageEvent = IHitbox.DamageEventFromHit(hit, hitbox, arrowDamage, normal, DamageType.Piercing);
+                DamageEvent arrowDamageEvent = IHitbox.DamageEventFromHit(hit, hitbox, arrowDamage, normal, DamageType.Piercing);
                 Fired = false;
                 hitbox.Source.ApplyDamage(arrowDamageEvent);
                 SpawnPincushionArrowOnDamageClientRpc(arrowDamageEvent);

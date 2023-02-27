@@ -71,7 +71,7 @@ namespace nickmaltbie.Treachery.Environment
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            var damageable = GetComponent<Damageable>();
+            Damageable damageable = GetComponent<Damageable>();
             InvulnerableAttribute.UpdateDamageableState(CurrentState, damageable);
             DamagePassthroughAttribute.UpdateDamageableState(CurrentState, damageable);
         }
