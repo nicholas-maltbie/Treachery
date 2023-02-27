@@ -22,6 +22,7 @@ namespace nickmaltbie.Treachery.Player
 {
     public interface IMovementActor
     {
+        Vector3 InputMovement { get; }
         Vector3 GetDesiredMovement();
     }
 }

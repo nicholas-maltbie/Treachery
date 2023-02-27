@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "com.community.netcode.transport.websocket": "git+https://github.com/nicholas-maltbie/multiplayer-community-contributions?path=/Transports/com.community.netcode.transport.websocket#webgl-patch",
-    "com.nickmaltbie.openkcc": "1.3.3",
+    "com.nickmaltbie.openkcc": "git+https://github.com/nicholas-maltbie/OpenKCC/tree/release/latest#release/latest",
     "com.nickmaltbie.openkcc.cinemachine": "1.3.3",
     "com.nickmaltbie.openkcc.netcode": "1.3.3",
     "com.nickmaltbie.recolorshaderunity": "1.0.0",

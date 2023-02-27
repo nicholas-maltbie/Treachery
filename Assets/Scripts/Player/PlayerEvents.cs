@@ -55,4 +55,16 @@ namespace nickmaltbie.Treachery.Player
         public static DodgeStop Instance = new DodgeStop();
         private DodgeStop() { }
     }
+
+    public class RollStart : IEvent
+    {
+        public static RollStart Instance = new RollStart();
+        private RollStart() { }
+    }
+
+    public class RollStop : IEvent
+    {
+        public static RollStop Instance = new RollStop();
+        private RollStop() { }
+    }
 }

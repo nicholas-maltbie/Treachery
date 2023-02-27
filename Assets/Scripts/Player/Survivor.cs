@@ -253,11 +253,20 @@ namespace nickmaltbie.Treachery.Player
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
-        [OnEnterState(nameof(OnStartDodge))]
+        [OnEnterState(nameof(SetAnimationInMoveDirection))]
         [LockMovementAnimation]
         [DamagePassthrough]
         [BlockAllAction]
         public class DodgeState : State { }
+
+        [Animation(RollAnimState, 0.1f, true, 0.5f)]
+        [TransitionFromAnyState(typeof(RollStart))]
+        [Transition(typeof(DodgeStop), typeof(IdleState))]
+        [OnFixedUpdate(nameof(RollMovement))]
+        [OnEnterState(nameof(SetAnimationInMoveDirection))]
+        [LockMovementAnimation]
+        [BlockAllAction]
+        public class RollState : State { }
 
         [Animation(BlockAnimState, 0.1f, true, 0.5f)]
         [BlockAllAction]
@@ -468,13 +477,22 @@ namespace nickmaltbie.Treachery.Player
             animationMove.Value = new Vector2(moveX, moveY);
         }
 
-        public void OnStartDodge()
+        public void SetAnimationInMoveDirection()
         {
             Vector2 move = MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             UpdateAnimationState(move, false);
         }
 
         public void DodgeMovement()
+        {
+            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
+            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            MovementEngine.MovePlayer(
+                dodgeMovement,
+                Velocity * unityService.fixedDeltaTime);
+        }
+
+        public void RollMovement()
         {
             DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
             Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
