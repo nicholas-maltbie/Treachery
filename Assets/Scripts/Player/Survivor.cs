@@ -255,6 +255,7 @@ namespace nickmaltbie.Treachery.Player
         [OnFixedUpdate(nameof(DodgeMovement))]
         [OnEnterState(nameof(OnStartDodge))]
         [LockMovementAnimation]
+        [DamagePassthrough]
         [BlockAllAction]
         public class DodgeState : State { }
 
@@ -278,11 +279,13 @@ namespace nickmaltbie.Treachery.Player
 
         [Animation(DeadAnimState, 0.35f, true)]
         [Transition(typeof(PlayerReviveEvent), typeof(RevivingState))]
+        [Invulnerable]
         [BlockAllAction]
         public class DeadState : State { }
 
         [Animation(RevivingAnimState, 1.0f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f)]
+        [Invulnerable]
         [BlockAllAction]
         public class RevivingState : State { }
 
@@ -379,6 +382,9 @@ namespace nickmaltbie.Treachery.Player
                 Velocity = Vector3.zero;
             }
 
+            Damageable damageable = GetComponent<Damageable>();
+            InvulnerableAttribute.UpdateDamageableState(CurrentState, damageable);
+            DamagePassthroughAttribute.UpdateDamageableState(CurrentState, damageable);
             base.FixedUpdate();
         }
 

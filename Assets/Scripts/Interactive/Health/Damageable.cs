@@ -44,6 +44,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public float MaxHealth => maxHealth.Value;
         public float CurrentHealth => currentHealth.Value;
+        public bool Invulnerable { get; set; } = false;
+        public bool Passthrough { get; set; } = false;
 
         private void AdjustHealth(float change)
         {
@@ -99,7 +101,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
             float adjust = damageEvent.amount;
             if (damageEvent.type == EventType.Damage)
             {
-                if (!IsAlive())
+                if (!IsAlive() || Invulnerable)
                 {
                     return;
                 }

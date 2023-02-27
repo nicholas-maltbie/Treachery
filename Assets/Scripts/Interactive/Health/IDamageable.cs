@@ -29,7 +29,16 @@ namespace nickmaltbie.Treachery.Interactive.Health
         float GetRemainingHealth();
         float GetMaxHealth();
         float GetHealthPercentage();
+
+        /// <summary>
+        /// Is this damageable entity still alive.
+        /// </summary>
         bool IsAlive();
+
+        /// <summary>
+        /// Should attacks passthrough this damageable entity due to dodging.
+        /// </summary>
+        bool Passthrough { get; }
 
         event EventHandler<OnDamagedEvent> OnDamageEvent;
         event EventHandler OnResetHealth;

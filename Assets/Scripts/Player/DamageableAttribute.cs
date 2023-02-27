@@ -16,43 +16,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using nickmaltbie.Treachery.Interactive.Health;
-using UnityEngine;
 
-namespace nickmaltbie.Treachery.Interactive.Hitbox
+namespace nickmaltbie.Treachery.Player
 {
-    [RequireComponent(typeof(Collider))]
-    public class GenericHitbox : MonoBehaviour, IHitbox
+    public class DamagePassthroughAttribute : Attribute
     {
-        [SerializeField]
-        public Damageable damageable;
-        public bool isTriggerCollider = true;
-
-        public Collider Collider => GetComponent<Collider>();
-        public virtual bool IsCritical => false;
-
-        public IDamageable Source => damageable;
-
-        public bool disabledOverride = false;
-        public string HitboxId { get; private set; }
-        public bool Disabled
+        public static void UpdateDamageableState(Type currentState, Damageable damageable)
         {
-            get => disabledOverride || Source.Passthrough;
-            set => disabledOverride = value;
+            if (Attribute.GetCustomAttribute(currentState, typeof(DamagePassthroughAttribute)) is DamagePassthroughAttribute)
+            {
+                damageable.Passthrough = true;
+            }
+            else
+            {
+                damageable.Passthrough = false;
+            }
         }
+    }
 
-        public void Awake()
+    public class InvulnerableAttribute : Attribute
+    {
+        public static void UpdateDamageableState(Type currentState, Damageable damageable)
         {
-            gameObject.layer = IHitbox.HitboxLayer;
-            Collider.isTrigger = isTriggerCollider;
-
-            // If damageable is null, find in parent
-            damageable ??= GetComponentInParent<Damageable>();
-        }
-
-        public void Start()
-        {
-            HitboxId = damageable?.AddHitbox(this, gameObject.name) ?? string.Empty;
+            if (Attribute.GetCustomAttribute(currentState, typeof(InvulnerableAttribute)) is InvulnerableAttribute)
+            {
+                damageable.Invulnerable = true;
+            }
+            else
+            {
+                damageable.Invulnerable = false;
+            }
         }
     }
 }

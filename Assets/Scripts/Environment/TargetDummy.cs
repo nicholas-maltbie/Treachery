@@ -58,6 +58,7 @@ namespace nickmaltbie.Treachery.Environment
 
         [Animation(RevivingAnimState, 1.0f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f)]
+        [Invulnerable]
         public class RevivingState : State { }
 
         public void Awake()
@@ -65,6 +66,14 @@ namespace nickmaltbie.Treachery.Environment
             IDamageable damageable = GetComponent<IDamageable>();
             damageable.OnDamageEvent += OnDamage;
             gameObject.AddComponent<ReviveEventManager>();
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            Damageable damageable = GetComponent<Damageable>();
+            InvulnerableAttribute.UpdateDamageableState(CurrentState, damageable);
+            DamagePassthroughAttribute.UpdateDamageableState(CurrentState, damageable);
         }
 
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
