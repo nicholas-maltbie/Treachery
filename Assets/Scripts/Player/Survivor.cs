@@ -32,7 +32,6 @@ using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Player.Action;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
