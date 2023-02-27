@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 5297545829931420426}
   - component: {fileID: -3116674992473226055}
   - component: {fileID: 420403279906431496}
+  - component: {fileID: 386502574218454059}
   - component: {fileID: -2950086063906863614}
   - component: {fileID: 2366107581240859178}
   - component: {fileID: 4874349058441904053}
@@ -332,8 +333,8 @@ MonoBehaviour:
   inputActionReference: {fileID: -6602405483767582039, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.5
   bufferTime: 0.05
-  dodgeDuration: 1
-  dodgeDistance: 3.5
+  dodgeDuration: 0.5
+  dodgeDistance: 2.5
 --- !u!114 &-3116674992473226055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,6 +367,23 @@ MonoBehaviour:
   cooldown: 0.05
   bufferTime: 0.05
   jumpVelocity: 6.5
+--- !u!114 &386502574218454059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 836cc103961a48d448e64b05fc740c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 2471668840286584323, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.05
+  bufferTime: 0.05
+  rollDuration: 1
+  rollDistance: 5.5
 --- !u!114 &-2950086063906863614
 MonoBehaviour:
   m_ObjectHideFlags: 0

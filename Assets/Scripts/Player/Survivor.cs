@@ -254,10 +254,11 @@ namespace nickmaltbie.Treachery.Player
 
         [Animation(RollAnimState, 0.1f, true, 0.5f)]
         [TransitionFromAnyState(typeof(RollStart))]
-        [Transition(typeof(DodgeStop), typeof(IdleState))]
+        [Transition(typeof(RollStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(RollMovement))]
-        [OnEnterState(nameof(SetAnimationInMoveDirection))]
+        [OnEnterState(nameof(RotateTowardsViewport))]
         [LockMovementAnimation]
+        [DamagePassthrough]
         [BlockAllAction]
         public class RollState : State { }
 
@@ -461,8 +462,8 @@ namespace nickmaltbie.Treachery.Player
 
         public void DodgeMovement()
         {
-            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
-            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            FixedMovementAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
+            Vector3 dodgeMovement = (dodgeAction?.MoveDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
             MovementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
@@ -475,10 +476,10 @@ namespace nickmaltbie.Treachery.Player
 
         public void RollMovement()
         {
-            DodgeAction dodgeAction = GetComponent<DodgeActionBehaviour>()?.Action;
-            Vector3 dodgeMovement = (dodgeAction?.DodgeDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
+            FixedMovementAction rollAction = GetComponent<RollActionBehaviour>()?.Action;
+            Vector3 movement = (rollAction?.MoveDirection ?? Vector3.zero) * unityService.fixedDeltaTime;
             MovementEngine.MovePlayer(
-                dodgeMovement,
+                movement,
                 Velocity * unityService.fixedDeltaTime);
         }
 
