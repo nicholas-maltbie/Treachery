@@ -169,6 +169,7 @@ namespace nickmaltbie.Treachery.Player
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
+        [Transition(typeof(BlockStart), typeof(BlockIdleState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         public class IdleState : State { }
@@ -188,11 +189,12 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
-        [BlockAction(PlayerAction.Punch)]
+        [BlockAction(PlayerAction.Punch, PlayerAction.Block)]
         public class LandingState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
+        [Transition(typeof(BlockStart), typeof(BlockMoveState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StartSprintEvent), typeof(SprintingState))]
@@ -201,6 +203,7 @@ namespace nickmaltbie.Treachery.Player
 
         [Animation(SprintingAnimState, 0.1f, true)]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
+        [Transition(typeof(BlockStart), typeof(BlockMoveState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StopSprintEvent), typeof(WalkingState))]
@@ -208,7 +211,6 @@ namespace nickmaltbie.Treachery.Player
         public class SprintingState : State { }
 
         [Animation(IdleAnimState, 0.1f, true)]
-        [TransitionFromAnyState(typeof(BlockStart))]
         [Transition(typeof(StartMoveInput), typeof(BlockMoveState))]
         [Transition(typeof(BlockStop), typeof(IdleState))]
         [BlockEnabled]

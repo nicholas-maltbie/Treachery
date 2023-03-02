@@ -938,7 +938,7 @@ MonoBehaviour:
   verticalOffset: -0.02
   elbowSpacing: 0.25
   elbowVerticalOffset: 0.6
-  transitionTime: 0.45
+  transitionTime: 0.2
 --- !u!95 &5025415980018636554 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 6003613737157852260, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}

@@ -50,6 +50,22 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class AllowActionAttribute : AbstractBlockActionAttribute
+    {
+        protected PlayerAction[] actions;
+
+        public AllowActionAttribute(params PlayerAction[] actions)
+        {
+            this.actions = actions;
+        }
+
+        protected override bool ActionBlocked(PlayerAction action)
+        {
+            return !actions.Contains(action);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class BlockActionAttribute : AbstractBlockActionAttribute
     {
         protected PlayerAction[] actions;
