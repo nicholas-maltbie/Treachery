@@ -19,7 +19,7 @@
 using nickmaltbie.Treachery.Interactive;
 using UnityEngine;
 
-namespace nickmaltbie.Treachery.Environment
+namespace nickmaltbie.Treachery.Animation
 {
     public enum DominantHand
     {

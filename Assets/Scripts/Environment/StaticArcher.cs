@@ -21,6 +21,7 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
+using nickmaltbie.Treachery.Animation;
 using nickmaltbie.Treachery.Interactive;
 using Unity.Netcode;
 using UnityEngine;
