@@ -29,6 +29,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
     {
         public static readonly SHA256 hash = SHA256.Create();
         private Dictionary<string, IHitbox> hitboxLookup = new Dictionary<string, IHitbox>();
+        public float DamageMultiplier { get; set; } = 1.0f;
 
         public NetworkVariable<float> maxHealth = new NetworkVariable<float>(
             value: 100,
@@ -106,7 +107,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
                     return;
                 }
 
-                adjust *= -1;
+                adjust *= -DamageMultiplier;
             }
 
             float previousHealth = currentHealth.Value;
@@ -149,6 +150,34 @@ namespace nickmaltbie.Treachery.Interactive.Health
             else
             {
                 return null;
+            }
+        }
+    }
+
+    public class DamageMultiplierAttribute : Attribute
+    {
+        public float multiplier = 1.0f;
+
+        public static float GetDamageMultiplier(Type state)
+        {
+            if (Attribute.GetCustomAttribute(state, typeof(DamageMultiplierAttribute)) is DamageMultiplierAttribute mul)
+            {
+                return mul.multiplier;
+            }
+
+            return 1.0f;
+        }
+
+        public static void UpdateDamageMultiplier(Type state, Damageable damageable)
+        {
+            damageable.DamageMultiplier = GetDamageMultiplier(state);
+        }
+
+        public static void UpdateDamageMultiplier(Type state, GameObject player)
+        {
+            if (player.GetComponent<Damageable>() is Damageable damageable)
+            {
+                UpdateDamageMultiplier(state, damageable);
             }
         }
     }
