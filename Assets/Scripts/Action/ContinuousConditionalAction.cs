@@ -16,10 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.StateMachineUnity.Event;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action
@@ -66,6 +63,7 @@ namespace nickmaltbie.Treachery.Action
             {
                 base.actor.RaiseEvent(raiseOnStopped);
             }
+
             Performing = false;
         }
 
@@ -75,6 +73,7 @@ namespace nickmaltbie.Treachery.Action
             {
                 base.actor.RaiseEvent(raiseOnPerformed);
             }
+
             Performing = true;
         }
     }

@@ -21,7 +21,6 @@ using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Player;
-using UnityEngine;
 
 using static nickmaltbie.Treachery.Player.PlayerAnimStates;
 

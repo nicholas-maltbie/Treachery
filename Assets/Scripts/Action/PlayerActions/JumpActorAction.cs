@@ -18,7 +18,6 @@
 
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
-using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

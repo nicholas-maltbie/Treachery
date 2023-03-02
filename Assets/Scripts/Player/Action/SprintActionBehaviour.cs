@@ -27,7 +27,7 @@ namespace nickmaltbie.Treachery.Player.Action
     {
         public override void CleanupAction(ContinuousConditionalAction<PlayerAction> action)
         {
-            
+
         }
 
         public override ContinuousConditionalAction<PlayerAction> SetupAction()

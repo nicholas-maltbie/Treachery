@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using Unity.Netcode;

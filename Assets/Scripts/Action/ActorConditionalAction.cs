@@ -18,7 +18,6 @@
 
 using System;
 using nickmaltbie.OpenKCC.Character.Action;
-using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,7 +42,7 @@ namespace nickmaltbie.Treachery.Action
         public ActorConditionalAction(InputActionReference inputAction, IActionActor<TAction> actor, TAction actionType, float cooldown = 0.0f, bool performWhileHeld = false)
         {
             base.condition = Condition;
-            this.inputActionReference = inputAction;
+            inputActionReference = inputAction;
             this.actionType = actionType;
             this.actor = actor;
             this.cooldown = cooldown;
