@@ -44,9 +44,10 @@ namespace nickmaltbie.Treachery.Player.Action
         public override JumpActorAction SetupAction()
         {
             var jumpAction = new JumpActorAction(
-                BufferedInput,
+                inputActionReference,
                 Actor,
-                GetComponent<KCCMovementEngine>())
+                GetComponent<KCCMovementEngine>(),
+                cooldown)
             {
                 jumpVelocity = jumpVelocity,
                 maxJumpAngle = 85.0f,

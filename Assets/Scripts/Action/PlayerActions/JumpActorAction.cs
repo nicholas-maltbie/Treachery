@@ -20,6 +20,7 @@ using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
@@ -50,10 +51,11 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         private KCCMovementEngine movementEngine;
 
         public JumpActorAction(
-            BufferedInput bufferedInput,
+            InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
-            KCCMovementEngine movementEngine)
-            : base(bufferedInput, actor, PlayerAction.Jump)
+            KCCMovementEngine movementEngine,
+            float cooldown = 0.0f)
+            : base(actionReference, actor, PlayerAction.Jump, cooldown, true)
         {
             this.movementEngine = movementEngine;
             JumpedWhileSliding = false;
@@ -99,17 +101,17 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         /// Can the player jump based on their current state.
         /// </summary>
         /// <returns>True if the player can jump, false otherwise.</returns>
-        protected override bool CanPerform()
+        protected override bool Condition()
         {
             KCCGroundedState kccGrounded = movementEngine.GroundedState;
             bool canJump = kccGrounded.StandingOnGround && kccGrounded.Angle <= maxJumpAngle;
             if (canJump && !kccGrounded.Sliding)
             {
-                return base.CanPerform();
+                return base.Condition();
             }
             else if (canJump)
             {
-                return !JumpedWhileSliding && base.CanPerform();
+                return !JumpedWhileSliding && base.Condition();
             }
 
             return false;

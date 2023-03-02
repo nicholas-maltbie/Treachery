@@ -39,11 +39,12 @@ namespace nickmaltbie.Treachery.Player.Action
         public override PunchAttackAction SetupAction()
         {
             var punchAttack = new PunchAttackAction(
-                BufferedInput,
+                inputActionReference,
                 Actor,
                 GetComponent<IDamageable>(),
                 transform,
-                GetComponent<ICameraControls>()
+                GetComponent<ICameraControls>(),
+                cooldown
             )
             {
                 attackBaseOffset = viewSource?.localPosition ?? Vector3.zero,

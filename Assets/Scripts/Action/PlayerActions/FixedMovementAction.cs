@@ -18,8 +18,8 @@
 // SOFTWARE.
 
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
@@ -59,11 +59,13 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         private KCCMovementEngine movementEngine;
 
         public FixedMovementAction(
-            BufferedInput bufferedInput,
+            InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
             float duration,
-            KCCMovementEngine movementEngine)
-            : base(bufferedInput, actor, PlayerAction.Dodge, duration)
+            KCCMovementEngine movementEngine,
+            float cooldown = 0.0f,
+            bool performWhileHeld = false)
+            : base(actionReference, actor, PlayerAction.Dodge, duration, cooldown, performWhileHeld)
         {
             this.movementEngine = movementEngine;
         }
@@ -77,11 +79,11 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         /// Can the player attack based on current state.
         /// </summary>
         /// <returns>True if the player can jump, false otherwise.</returns>
-        protected override bool CanPerform()
+        protected override bool Condition()
         {
             OpenKCC.Character.Config.KCCGroundedState kccGrounded = movementEngine.GroundedState;
             bool grounded = kccGrounded.StandingOnGround && !kccGrounded.Sliding;
-            return base.CanPerform() && grounded;
+            return base.Condition() && grounded;
         }
     }
 }

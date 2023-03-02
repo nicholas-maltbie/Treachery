@@ -19,6 +19,7 @@
 using System;
 using nickmaltbie.OpenKCC.Input;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action
 {
@@ -40,11 +41,13 @@ namespace nickmaltbie.Treachery.Action
         public EventHandler<bool> OnComplete;
 
         protected TimedConditionalAction(
-            BufferedInput bufferedInput,
+            InputActionReference actionReference,
             IActionActor<TAction> actor,
             TAction actionType,
-            float duration)
-            : base(bufferedInput, actor, actionType)
+            float duration,
+            float cooldown = 0.0f,
+            bool performWhileHeld = false)
+            : base(actionReference, actor, actionType, cooldown, performWhileHeld)
         {
             this.duration = duration;
         }
@@ -55,10 +58,11 @@ namespace nickmaltbie.Treachery.Action
             base.Update();
             if (performing)
             {
+                ResetCooldown();
                 elapsed += Time.deltaTime;
                 if (elapsed >= duration)
                 {
-                    BufferedInput.Reset();
+                    ResetCooldown();
                     performing = false;
                     OnComplete?.Invoke(this, false);
                 }
@@ -74,9 +78,8 @@ namespace nickmaltbie.Treachery.Action
             if (performing)
             {
                 performing = false;
-                elapsed = 0.0f;
+                ResetCooldown();
                 OnComplete?.Invoke(this, true);
-                BufferedInput.Reset();
                 return true;
             }
 

@@ -41,10 +41,11 @@ namespace nickmaltbie.Treachery.Player.Action
         public override FixedMovementAction SetupAction()
         {
             var action = new FixedMovementAction(
-                BufferedInput,
+                inputActionReference,
                 Actor,
                 rollDuration,
-                GetComponent<KCCMovementEngine>())
+                GetComponent<KCCMovementEngine>(),
+                cooldown)
             {
                 dodgeDist = rollDistance,
             };
