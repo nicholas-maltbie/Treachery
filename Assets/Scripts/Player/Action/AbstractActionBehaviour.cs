@@ -34,9 +34,6 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float cooldown = 0.0f;
 
-        [SerializeField]
-        public float bufferTime = 0.05f;
-
         private IActionActor<PlayerAction> _actor;
 
         public IActionActor<PlayerAction> Actor => _actor ??= GetComponent<IActionActor<PlayerAction>>();

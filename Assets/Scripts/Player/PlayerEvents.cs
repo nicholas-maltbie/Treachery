@@ -67,4 +67,16 @@ namespace nickmaltbie.Treachery.Player
         public static RollStop Instance = new RollStop();
         private RollStop() { }
     }
+
+    public class BlockStart : IEvent
+    {
+        public static BlockStart Instance = new BlockStart();
+        private BlockStart() { }
+    }
+
+    public class BlockStop : IEvent
+    {
+        public static BlockStop Instance = new BlockStop();
+        private BlockStop() { }
+    }
 }

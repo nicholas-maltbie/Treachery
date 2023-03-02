@@ -16,15 +16,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.OpenKCC.Character;
+using nickmaltbie.OpenKCC.Character.Config;
+using nickmaltbie.Treachery.Player;
+using UnityEngine.InputSystem;
+
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
-    public enum PlayerAction
+    public class BlockActorAction : ContinuousConditionalAction<PlayerAction>
     {
-        Jump,
-        Dodge,
-        Punch,
-        Block,
-        Roll,
-        Sprint,
+        /// <summary>
+        /// MovementEngine for the player.
+        /// </summary>
+        private KCCMovementEngine movementEngine;
+
+        public BlockActorAction(
+            InputActionReference actionReference,
+            IActionActor<PlayerAction> actor,
+            KCCMovementEngine movementEngine)
+            : base(actionReference, actor, PlayerAction.Block, BlockStart.Instance, BlockStop.Instance)
+        {
+            this.movementEngine = movementEngine;
+        }
+
+        /// <summary>
+        /// Can the player jump based on their current state.
+        /// </summary>
+        /// <returns>True if the player can jump, false otherwise.</returns>
+        protected override bool Condition()
+        {
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
+            return base.Condition() && kccGrounded.StandingOnGround && !kccGrounded.Sliding;
+        }
     }
 }

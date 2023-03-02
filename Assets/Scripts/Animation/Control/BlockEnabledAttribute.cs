@@ -16,7 +16,7 @@ namespace nickmaltbie.Treachery.Animation.Control
             blockAnimator.enableBlock = GetBlockState(state);
         }
 
-        public static void UpdateBlockState(Type state, Component player)
+        public static void UpdateBlockState(Type state, GameObject player)
         {
             if (player.GetComponentInChildren<BlockAnimator>() is BlockAnimator anim)
             {

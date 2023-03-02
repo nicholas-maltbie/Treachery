@@ -34,8 +34,8 @@ namespace nickmaltbie.Treachery.Action
 
         protected InputActionReference inputActionReference;
         protected InputAction overrideInputAction;
+        protected IActionActor<TAction> actor;
 
-        private IActionActor<TAction> actor;
         private float cooldown;
         private bool performWhileHeld;
         private float elapsedSincePerformed = Mathf.Infinity;
@@ -86,7 +86,7 @@ namespace nickmaltbie.Treachery.Action
 
         protected abstract void Perform();
 
-        public void Setup()
+        public virtual void Setup()
         {
             InputAction?.Enable();
             InputAction.performed += _ => AttemptIfPossible();

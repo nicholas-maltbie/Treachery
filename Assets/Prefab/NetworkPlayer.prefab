@@ -56,6 +56,8 @@ GameObject:
   - component: {fileID: 386502574218454059}
   - component: {fileID: -2950086063906863614}
   - component: {fileID: 2366107581240859178}
+  - component: {fileID: 411798885196726263}
+  - component: {fileID: 5157845365457512275}
   - component: {fileID: 4874349058441904053}
   - component: {fileID: 7848041172871861759}
   - component: {fileID: 7590240513597693028}
@@ -301,10 +303,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedAnimator: {fileID: 5025415980018636554}
   moveActionReference: {fileID: 8130185064591157487, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
-  sprintActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   walkingSpeed: 7.5
   attackSpeed: 3.5
   sprintSpeed: 10
+  blockSpeed: 2.5
   minimumActionDelay: 1
   viewSource: {fileID: 1928389238472999755}
 --- !u!114 &-7457895822324968746
@@ -334,7 +336,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: -6602405483767582039, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.5
-  bufferTime: 0.05
   dodgeDuration: 0.5
   dodgeDistance: 2.5
 --- !u!114 &-3116674992473226055
@@ -351,7 +352,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.5
-  bufferTime: 0.05
   viewSource: {fileID: 1928389238472999755}
 --- !u!114 &420403279906431496
 MonoBehaviour:
@@ -367,7 +367,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.05
-  bufferTime: 0.05
   jumpVelocity: 6.5
 --- !u!114 &386502574218454059
 MonoBehaviour:
@@ -383,7 +382,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: 2471668840286584323, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.05
-  bufferTime: 0.05
   rollDuration: 1
   rollDistance: 5.5
 --- !u!114 &-2950086063906863614
@@ -430,6 +428,34 @@ MonoBehaviour:
     ditherDistance: 1
     thirdPersonCharacterBase: {fileID: 1735611322576967626}
     transitionTime: 0.1
+--- !u!114 &411798885196726263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abdb963c451619b469399080902600ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0
+--- !u!114 &5157845365457512275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e31c87c9a793e94f951639dde0a1ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: -7955040404540225284, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0
 --- !u!114 &4874349058441904053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -910,8 +936,8 @@ MonoBehaviour:
   forwardOffset: 0.24
   spacing: 0.06
   verticalOffset: -0.02
-  elbowSpacing: 0.12
-  elbowVerticalOffset: 0.3
+  elbowSpacing: 0.25
+  elbowVerticalOffset: 0.6
   transitionTime: 0.45
 --- !u!95 &5025415980018636554 stripped
 Animator:

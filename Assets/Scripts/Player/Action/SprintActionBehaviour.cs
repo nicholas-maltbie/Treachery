@@ -1,3 +1,4 @@
+
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -16,15 +17,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Action.PlayerActions
+using nickmaltbie.OpenKCC.Character.Events;
+using nickmaltbie.Treachery.Action;
+using nickmaltbie.Treachery.Action.PlayerActions;
+
+namespace nickmaltbie.Treachery.Player.Action
 {
-    public enum PlayerAction
+    public class SprintActionBehaviour : AbstractActionBehaviour<ContinuousConditionalAction<PlayerAction>>
     {
-        Jump,
-        Dodge,
-        Punch,
-        Block,
-        Roll,
-        Sprint,
+        public override void CleanupAction(ContinuousConditionalAction<PlayerAction> action)
+        {
+            
+        }
+
+        public override ContinuousConditionalAction<PlayerAction> SetupAction()
+        {
+            return new ContinuousConditionalAction<PlayerAction>(
+                inputActionReference,
+                Actor,
+                PlayerAction.Sprint,
+                StartSprintEvent.Instance,
+                StopSprintEvent.Instance);
+        }
     }
 }
