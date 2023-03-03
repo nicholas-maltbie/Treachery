@@ -77,8 +77,11 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// <inheritdoc/>
         public void ExhaustStamina(float amount)
         {
-            AdjustStamina(-amount);
-            lastStaminaSpendTime = Time.time;
+            if (amount > 0)
+            {
+                AdjustStamina(-amount);
+                lastStaminaSpendTime = Time.time;
+            }
         }
 
         /// <inheritdoc/>
@@ -106,6 +109,21 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
             {
                 RestoreStamina(staminaRestoreRate * Time.fixedDeltaTime);
             }
+        }
+
+        public bool SpendStamina(IStaminaAction action)
+        {
+            return SpendStamina(action.Cost);
+        }
+
+        public bool HasEnoughStamina(float amount)
+        {
+            return RemainingStamina >= amount;
+        }
+
+        public bool HasEnoughStamina(IStaminaAction action)
+        {
+            return RemainingStamina >= action.Cost;
         }
     }
 }

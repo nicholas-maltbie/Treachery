@@ -32,6 +32,7 @@ using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Animation.Control;
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player.Action;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -45,6 +46,8 @@ namespace nickmaltbie.Treachery.Player
     /// </summary>
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Damageable))]
+    [RequireComponent(typeof(StaminaMeter))]
     [DefaultExecutionOrder(1000)]
     public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor
     {

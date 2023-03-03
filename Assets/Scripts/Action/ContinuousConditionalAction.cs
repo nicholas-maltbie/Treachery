@@ -17,6 +17,8 @@
 // SOFTWARE.
 
 using nickmaltbie.StateMachineUnity.Event;
+using nickmaltbie.Treachery.Interactive.Stamina;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action
@@ -28,18 +30,22 @@ namespace nickmaltbie.Treachery.Action
     {
         protected IEvent raiseOnPerformed;
         protected IEvent raiseOnStopped;
+        protected float staminaCostRate;
         public bool Performing { get; protected set; }
 
         public ContinuousConditionalAction(
             InputActionReference actionReference,
             IActionActor<TAction> actor,
+            IStaminaMeter stamina,
             TAction actionType,
+            float staminaCostRate,
             IEvent raiseOnPerformed = null,
             IEvent raiseOnStopped = null)
-            : base(actionReference, actor, actionType, 0, true)
+            : base(actionReference, actor, stamina, actionType, 0, staminaCostRate * Time.deltaTime, true)
         {
             this.raiseOnPerformed = raiseOnPerformed;
             this.raiseOnStopped = raiseOnStopped;
+            this.staminaCostRate = staminaCostRate;
         }
 
         public override void Setup()
@@ -76,5 +82,7 @@ namespace nickmaltbie.Treachery.Action
 
             Performing = true;
         }
+
+        protected override float StaminaCost => this.staminaCostRate * Time.deltaTime;
     }
 }

@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -42,11 +43,13 @@ namespace nickmaltbie.Treachery.Action
         protected TimedConditionalAction(
             InputActionReference actionReference,
             IActionActor<TAction> actor,
+            IStaminaMeter stamina,
             TAction actionType,
             float duration,
             float cooldown = 0.0f,
+            float staminaCost = 0.0f,
             bool performWhileHeld = false)
-            : base(actionReference, actor, actionType, cooldown, performWhileHeld)
+            : base(actionReference, actor, stamina, actionType, cooldown, staminaCost, performWhileHeld)
         {
             this.duration = duration;
         }

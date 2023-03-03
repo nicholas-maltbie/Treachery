@@ -36,6 +36,7 @@ namespace nickmaltbie.Treachery.Player.Action
             return new BlockActorAction(
                 inputActionReference,
                 Actor,
+                Stamina,
                 GetComponent<KCCMovementEngine>());
         }
     }

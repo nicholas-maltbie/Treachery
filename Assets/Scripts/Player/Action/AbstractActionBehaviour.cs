@@ -18,6 +18,7 @@
 
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,6 +26,7 @@ using UnityEngine.InputSystem;
 namespace nickmaltbie.Treachery.Player.Action
 {
     [RequireComponent(typeof(IActionActor<PlayerAction>))]
+    [RequireComponent(typeof(IStaminaMeter))]
     public abstract class AbstractActionBehaviour<TConditionalAction> : NetworkBehaviour where TConditionalAction : ActorConditionalAction<PlayerAction>
     {
         [SerializeField]
@@ -34,8 +36,11 @@ namespace nickmaltbie.Treachery.Player.Action
         public float cooldown = 0.0f;
 
         private IActionActor<PlayerAction> _actor;
-
         public IActionActor<PlayerAction> Actor => _actor ??= GetComponent<IActionActor<PlayerAction>>();
+
+        private IStaminaMeter _stamina;
+        public IStaminaMeter Stamina => _stamina ??= GetComponent<IStaminaMeter>();
+
         public TConditionalAction Action { get; private set; }
 
         public abstract TConditionalAction SetupAction();
