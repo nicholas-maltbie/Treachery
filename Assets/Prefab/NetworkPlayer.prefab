@@ -62,6 +62,7 @@ GameObject:
   - component: {fileID: 7848041172871861759}
   - component: {fileID: 7590240513597693028}
   - component: {fileID: 8659606099551949071}
+  - component: {fileID: 856254383511053882}
   m_Layer: 7
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -513,6 +514,20 @@ MonoBehaviour:
     _json: '{"nest":{"source":"Macro","macro":0,"embed":null}}'
     _objectReferences:
     - {fileID: 11400000, guid: a83e6b268c4905e4da98bd2dc7b82fb7, type: 2}
+--- !u!114 &856254383511053882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc110cb092f75342b00f8edc52874c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staminaRestoreRate: 3.5
+  cooldownBeforeRestore: 1
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0
