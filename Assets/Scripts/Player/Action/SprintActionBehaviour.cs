@@ -37,12 +37,6 @@ namespace nickmaltbie.Treachery.Player.Action
 
         }
 
-        public new void Update()
-        {
-            base.Update();
-            UnityEngine.Debug.Log($"Has enough stamina to sprint:{Stamina.HasEnoughStamina(Action)}");
-        }
-
         public override ContinuousConditionalAction<PlayerAction> SetupAction()
         {
             return new ContinuousConditionalAction<PlayerAction>(
