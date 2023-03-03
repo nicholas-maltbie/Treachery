@@ -18,6 +18,7 @@
 
 using System;
 using nickmaltbie.OpenKCC.Character.Action;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,7 +27,7 @@ namespace nickmaltbie.Treachery.Action
     /// <summary>
     /// Action that can be performed by an IActionActor.
     /// </summary>
-    public abstract class ActorConditionalAction<TAction> : ConditionalAction
+    public abstract class ActorConditionalAction<TAction> : ConditionalAction, IStaminaAction
     {
         public EventHandler OnPerform;
         private TAction actionType;
@@ -34,12 +35,21 @@ namespace nickmaltbie.Treachery.Action
         protected InputActionReference inputActionReference;
         protected InputAction overrideInputAction;
         protected IActionActor<TAction> actor;
+        protected IStaminaMeter stamina;
 
+        private float staminaCost;
         private float cooldown;
         private bool performWhileHeld;
         private float elapsedSincePerformed = Mathf.Infinity;
 
-        public ActorConditionalAction(InputActionReference inputAction, IActionActor<TAction> actor, TAction actionType, float cooldown = 0.0f, bool performWhileHeld = false)
+        public ActorConditionalAction(
+            InputActionReference inputAction,
+            IActionActor<TAction> actor,
+            IStaminaMeter stamina,
+            TAction actionType,
+            float cooldown = 0.0f,
+            float staminaCost = 0.0f,
+            bool performWhileHeld = false)
         {
             base.condition = Condition;
             inputActionReference = inputAction;
@@ -47,6 +57,8 @@ namespace nickmaltbie.Treachery.Action
             this.actor = actor;
             this.cooldown = cooldown;
             this.performWhileHeld = performWhileHeld;
+            this.stamina = stamina;
+            this.staminaCost = staminaCost;
         }
 
         protected InputAction InputAction
@@ -74,6 +86,7 @@ namespace nickmaltbie.Treachery.Action
         {
             if (CanPerform)
             {
+                stamina.SpendStamina(this);
                 Perform();
                 OnPerform?.Invoke(this, EventArgs.Empty);
                 ResetCooldown();
@@ -93,7 +106,13 @@ namespace nickmaltbie.Treachery.Action
 
         protected virtual bool Condition()
         {
-            return elapsedSincePerformed >= cooldown && actor.CanPerform(actionType);
+            return elapsedSincePerformed >= cooldown &&
+                stamina.HasEnoughStamina(this) &&
+                actor.CanPerform(actionType);
         }
+
+        protected virtual float StaminaCost => staminaCost;
+
+        public float Cost => StaminaCost;
     }
 }

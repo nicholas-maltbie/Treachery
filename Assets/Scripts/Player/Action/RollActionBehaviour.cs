@@ -38,14 +38,20 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         private float rollDistance = 5.5f;
 
+        [SerializeField]
+        public float staminaCost = 33.3f;
+
         public override FixedMovementAction SetupAction()
         {
             var action = new FixedMovementAction(
                 inputActionReference,
                 Actor,
-                rollDuration,
+                Stamina,
                 GetComponent<KCCMovementEngine>(),
-                cooldown)
+                PlayerAction.Roll,
+                rollDuration,
+                cooldown,
+                staminaCost)
             {
                 dodgeDist = rollDistance,
             };

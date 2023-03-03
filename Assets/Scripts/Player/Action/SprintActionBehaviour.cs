@@ -20,11 +20,18 @@
 using nickmaltbie.OpenKCC.Character.Events;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
 {
     public class SprintActionBehaviour : AbstractActionBehaviour<ContinuousConditionalAction<PlayerAction>>
     {
+        [SerializeField]
+        public float staminaCostRate = 10.0f;
+
+        [SerializeField]
+        public float minStaminaToStart = 10.0f;
+
         public override void CleanupAction(ContinuousConditionalAction<PlayerAction> action)
         {
 
@@ -35,7 +42,10 @@ namespace nickmaltbie.Treachery.Player.Action
             return new ContinuousConditionalAction<PlayerAction>(
                 inputActionReference,
                 Actor,
+                Stamina,
                 PlayerAction.Sprint,
+                staminaCostRate,
+                minStaminaToStart,
                 StartSprintEvent.Instance,
                 StopSprintEvent.Instance);
         }

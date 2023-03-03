@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -57,11 +58,13 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         public PunchAttackAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
+            IStaminaMeter stamina,
             IDamageable player,
             Transform playerPosition,
             ICameraControls viewHeading,
-            float cooldown = 0.0f)
-            : base(actionReference, actor, PlayerAction.Punch, cooldown, true)
+            float cooldown = 0.0f,
+            float staminaCost = 0.0f)
+            : base(actionReference, actor, stamina, PlayerAction.Punch, cooldown, staminaCost, true)
         {
             this.player = player;
             this.playerPosition = playerPosition;

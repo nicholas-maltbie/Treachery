@@ -37,6 +37,9 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         private float dodgeDistance = 3.5f;
 
+        [SerializeField]
+        private float staminaCost = 20.0f;
+
         private IMovementActor _movementActor;
         private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
 
@@ -45,9 +48,12 @@ namespace nickmaltbie.Treachery.Player.Action
             var action = new FixedMovementAction(
                 inputActionReference,
                 Actor,
-                dodgeDuration,
+                Stamina,
                 GetComponent<KCCMovementEngine>(),
-                cooldown)
+                PlayerAction.Dodge,
+                dodgeDuration,
+                cooldown,
+                staminaCost)
             {
                 dodgeDist = dodgeDistance,
             };

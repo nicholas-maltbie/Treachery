@@ -18,6 +18,7 @@
 
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player;
 using UnityEngine.InputSystem;
 
@@ -33,8 +34,9 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         public BlockActorAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
+            IStaminaMeter stamina,
             KCCMovementEngine movementEngine)
-            : base(actionReference, actor, PlayerAction.Block, BlockStart.Instance, BlockStop.Instance)
+            : base(actionReference, actor, stamina, PlayerAction.Block, 0.0f, 0.0f, BlockStart.Instance, BlockStop.Instance)
         {
             this.movementEngine = movementEngine;
         }

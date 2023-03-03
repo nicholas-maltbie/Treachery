@@ -18,6 +18,7 @@
 // SOFTWARE.
 
 using nickmaltbie.OpenKCC.Character;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -61,11 +62,14 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         public FixedMovementAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
-            float duration,
+            IStaminaMeter stamina,
             KCCMovementEngine movementEngine,
+            PlayerAction action,
+            float duration,
             float cooldown = 0.0f,
+            float staminaCost = 0.0f,
             bool performWhileHeld = false)
-            : base(actionReference, actor, PlayerAction.Dodge, duration, cooldown, performWhileHeld)
+            : base(actionReference, actor, stamina, action, duration, cooldown, staminaCost, performWhileHeld)
         {
             this.movementEngine = movementEngine;
         }

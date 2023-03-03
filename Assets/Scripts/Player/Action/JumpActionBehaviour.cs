@@ -38,6 +38,9 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float jumpVelocity = 6.5f;
 
+        [SerializeField]
+        public float staminaCost = 10.0f;
+
         private IJumping _jumping;
         private IJumping Jumping => _jumping ??= GetComponent<IJumping>();
 
@@ -46,8 +49,10 @@ namespace nickmaltbie.Treachery.Player.Action
             var jumpAction = new JumpActorAction(
                 inputActionReference,
                 Actor,
+                Stamina,
                 GetComponent<KCCMovementEngine>(),
-                cooldown)
+                cooldown,
+                staminaCost)
             {
                 jumpVelocity = jumpVelocity,
                 maxJumpAngle = 85.0f,

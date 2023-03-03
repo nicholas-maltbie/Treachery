@@ -18,6 +18,7 @@
 
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -52,9 +53,11 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         public JumpActorAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
+            IStaminaMeter stamina,
             KCCMovementEngine movementEngine,
-            float cooldown = 0.0f)
-            : base(actionReference, actor, PlayerAction.Jump, cooldown, true)
+            float cooldown = 0.0f,
+            float staminaCost = 0.0f)
+            : base(actionReference, actor, stamina, PlayerAction.Jump, cooldown, staminaCost, true)
         {
             this.movementEngine = movementEngine;
             JumpedWhileSliding = false;

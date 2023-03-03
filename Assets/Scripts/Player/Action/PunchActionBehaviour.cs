@@ -36,15 +36,20 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public Transform viewSource;
 
+        [SerializeField]
+        public float staminaCost = 10.0f;
+
         public override PunchAttackAction SetupAction()
         {
             var punchAttack = new PunchAttackAction(
                 inputActionReference,
                 Actor,
+                Stamina,
                 GetComponent<IDamageable>(),
                 transform,
                 GetComponent<ICameraControls>(),
-                cooldown
+                cooldown,
+                staminaCost
             )
             {
                 attackBaseOffset = viewSource?.localPosition ?? Vector3.zero,
