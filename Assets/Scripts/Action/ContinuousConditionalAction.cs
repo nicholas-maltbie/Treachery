@@ -31,6 +31,7 @@ namespace nickmaltbie.Treachery.Action
         protected IEvent raiseOnPerformed;
         protected IEvent raiseOnStopped;
         protected float staminaCostRate;
+        protected float staminaRequiredToStart;
         public bool Performing { get; protected set; }
 
         public ContinuousConditionalAction(
@@ -39,6 +40,7 @@ namespace nickmaltbie.Treachery.Action
             IStaminaMeter stamina,
             TAction actionType,
             float staminaCostRate,
+            float staminaRequiredToStart,
             IEvent raiseOnPerformed = null,
             IEvent raiseOnStopped = null)
             : base(actionReference, actor, stamina, actionType, 0, staminaCostRate * Time.deltaTime, true)
@@ -46,6 +48,7 @@ namespace nickmaltbie.Treachery.Action
             this.raiseOnPerformed = raiseOnPerformed;
             this.raiseOnStopped = raiseOnStopped;
             this.staminaCostRate = staminaCostRate;
+            this.staminaRequiredToStart = staminaRequiredToStart;
         }
 
         public override void Setup()
@@ -56,16 +59,19 @@ namespace nickmaltbie.Treachery.Action
 
         public override void Update()
         {
-            base.Update();
-            if (!InputAction?.IsPressed() ?? false || !CanPerform)
+            if ((!InputAction?.IsPressed() ?? false) || !CanPerform)
             {
                 NotPerformed();
+            }
+            else
+            {
+                base.Update();
             }
         }
 
         protected virtual void NotPerformed()
         {
-            if (raiseOnPerformed != null)
+            if (raiseOnStopped != null)
             {
                 base.actor.RaiseEvent(raiseOnStopped);
             }
@@ -84,5 +90,17 @@ namespace nickmaltbie.Treachery.Action
         }
 
         protected override float StaminaCost => this.staminaCostRate * Time.deltaTime;
+
+        protected override bool Condition()
+        {
+            if (Performing)
+            {
+                return base.Condition();
+            }
+            else
+            {
+                return base.Condition() && base.stamina.HasEnoughStamina(staminaRequiredToStart);
+            }
+        }
     }
 }

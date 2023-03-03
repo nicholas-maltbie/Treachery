@@ -29,9 +29,18 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float staminaCostRate = 10.0f;
 
+        [SerializeField]
+        public float minStaminaToStart = 10.0f;
+
         public override void CleanupAction(ContinuousConditionalAction<PlayerAction> action)
         {
 
+        }
+
+        public new void Update()
+        {
+            base.Update();
+            UnityEngine.Debug.Log($"Has enough stamina to sprint:{Stamina.HasEnoughStamina(Action)}");
         }
 
         public override ContinuousConditionalAction<PlayerAction> SetupAction()
@@ -42,6 +51,7 @@ namespace nickmaltbie.Treachery.Player.Action
                 Stamina,
                 PlayerAction.Sprint,
                 staminaCostRate,
+                minStaminaToStart,
                 StartSprintEvent.Instance,
                 StopSprintEvent.Instance);
         }

@@ -36,7 +36,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             IActionActor<PlayerAction> actor,
             IStaminaMeter stamina,
             KCCMovementEngine movementEngine)
-            : base(actionReference, actor, stamina, PlayerAction.Block, 0.0f, BlockStart.Instance, BlockStop.Instance)
+            : base(actionReference, actor, stamina, PlayerAction.Block, 0.0f, 0.0f, BlockStart.Instance, BlockStop.Instance)
         {
             this.movementEngine = movementEngine;
         }
