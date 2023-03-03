@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using nickmaltbie.OpenKCC.CameraControls;
-using nickmaltbie.OpenKCC.Input;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
@@ -55,12 +55,13 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         /// Setup this attack action.
         /// </summary>
         public PunchAttackAction(
-            BufferedInput bufferedInput,
+            InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
             IDamageable player,
             Transform playerPosition,
-            ICameraControls viewHeading)
-            : base(bufferedInput, actor, PlayerAction.Punch)
+            ICameraControls viewHeading,
+            float cooldown = 0.0f)
+            : base(actionReference, actor, PlayerAction.Punch, cooldown, true)
         {
             this.player = player;
             this.playerPosition = playerPosition;

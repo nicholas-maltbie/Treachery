@@ -1,3 +1,4 @@
+
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -16,55 +17,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
 {
-    /// <summary>
-    /// Dodge action that can be performed by a player.
-    /// </summary>
-    [RequireComponent(typeof(IJumping))]
     [RequireComponent(typeof(KCCMovementEngine))]
-    public class JumpActionBehaviour : AbstractActionBehaviour<JumpActorAction>
+    public class BlockActionBehaviour : AbstractActionBehaviour<BlockActorAction>
     {
-        /// <summary>
-        /// Velocity of player jump.
-        /// </summary>
-        [Tooltip("Velocity of player jump.")]
-        [SerializeField]
-        public float jumpVelocity = 6.5f;
-
-        private IJumping _jumping;
-        private IJumping Jumping => _jumping ??= GetComponent<IJumping>();
-
-        public override JumpActorAction SetupAction()
+        public override void CleanupAction(BlockActorAction action)
         {
-            var jumpAction = new JumpActorAction(
+
+        }
+
+        public override BlockActorAction SetupAction()
+        {
+            return new BlockActorAction(
                 inputActionReference,
                 Actor,
-                GetComponent<KCCMovementEngine>(),
-                cooldown)
-            {
-                jumpVelocity = jumpVelocity,
-                maxJumpAngle = 85.0f,
-                jumpAngleWeightFactor = 0.0f,
-            };
-            jumpAction.OnPerform += OnJump;
-            return jumpAction;
-        }
-
-        private void OnJump(object source, EventArgs args)
-        {
-            Jumping.ApplyJump(jumpVelocity * Action.JumpDirection());
-        }
-
-        public override void CleanupAction(JumpActorAction action)
-        {
-            action.OnPerform -= OnJump;
+                GetComponent<KCCMovementEngine>());
         }
     }
 }

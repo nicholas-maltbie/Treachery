@@ -16,15 +16,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Action.PlayerActions
+using UnityEngine;
+
+namespace nickmaltbie.Treachery.Utils
 {
-    public enum PlayerAction
+    public static class MathUtils
     {
-        Jump,
-        Dodge,
-        Punch,
-        Block,
-        Roll,
-        Sprint,
+        public static float SmoothValue(float x)
+        {
+            if (x <= 0)
+            {
+                return 0;
+            }
+            else if (x >= 1)
+            {
+                return 1.0f;
+            }
+            else
+            {
+                return Mathf.Sin(Mathf.PI * (x - 0.5f) / 2) + 0.5f;
+            }
+        }
     }
 }

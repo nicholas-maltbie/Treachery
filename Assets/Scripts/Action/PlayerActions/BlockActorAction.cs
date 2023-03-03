@@ -1,4 +1,3 @@
-
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -18,72 +17,36 @@
 // SOFTWARE.
 
 using nickmaltbie.OpenKCC.Character;
-using UnityEngine;
+using nickmaltbie.OpenKCC.Character.Config;
+using nickmaltbie.Treachery.Player;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
-    /// <summary>
-    /// FixedMovement action that can be performed by a player.
-    /// </summary>
-    public class FixedMovementAction : TimedConditionalAction<PlayerAction>
+    public class BlockActorAction : ContinuousConditionalAction<PlayerAction>
     {
-        public static float DodgeSpeedFactor(float x)
-        {
-            float val = (x * 0.5f) * 2;
-            return Mathf.Exp(-(val * val));
-        }
-
-        /// <summary>
-        /// Speed at which the player moves while dodging.
-        /// </summary>
-        public float dodgeDist;
-
-        /// <summary>
-        /// Direction the dodge is moving in.
-        /// </summary>
-        private Vector3 _dodgeDirection;
-
-        /// <summary>
-        /// Direction player is moving while dodging.
-        /// </summary>
-        public Vector3 MoveDirection
-        {
-            get => _dodgeDirection.normalized * DodgeSpeedFactor(elapsed / duration) * dodgeDist / duration;
-            set => _dodgeDirection = value;
-        }
-
         /// <summary>
         /// MovementEngine for the player.
         /// </summary>
         private KCCMovementEngine movementEngine;
 
-        public FixedMovementAction(
+        public BlockActorAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,
-            float duration,
-            KCCMovementEngine movementEngine,
-            float cooldown = 0.0f,
-            bool performWhileHeld = false)
-            : base(actionReference, actor, PlayerAction.Dodge, duration, cooldown, performWhileHeld)
+            KCCMovementEngine movementEngine)
+            : base(actionReference, actor, PlayerAction.Block, BlockStart.Instance, BlockStop.Instance)
         {
             this.movementEngine = movementEngine;
         }
 
-        protected override void Perform()
-        {
-            base.Perform();
-        }
-
         /// <summary>
-        /// Can the player attack based on current state.
+        /// Can the player jump based on their current state.
         /// </summary>
         /// <returns>True if the player can jump, false otherwise.</returns>
         protected override bool Condition()
         {
-            OpenKCC.Character.Config.KCCGroundedState kccGrounded = movementEngine.GroundedState;
-            bool grounded = kccGrounded.StandingOnGround && !kccGrounded.Sliding;
-            return base.Condition() && grounded;
+            KCCGroundedState kccGrounded = movementEngine.GroundedState;
+            return base.Condition() && kccGrounded.StandingOnGround && !kccGrounded.Sliding;
         }
     }
 }

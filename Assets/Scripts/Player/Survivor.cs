@@ -30,6 +30,7 @@ using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Animation.Control;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Player.Action;
 using UnityEngine;
@@ -72,13 +73,6 @@ namespace nickmaltbie.Treachery.Player
         [SerializeField]
         public InputActionReference moveActionReference;
 
-        /// <summary>
-        /// Action reference for sprinting.
-        /// </summary>
-        [Tooltip("Action reference for moving the player")]
-        [SerializeField]
-        public InputActionReference sprintActionReference;
-
         [Header("Movement Settings")]
 
         /// <summary>
@@ -101,6 +95,13 @@ namespace nickmaltbie.Treachery.Player
         [Tooltip("Speed of player when sprinting")]
         [SerializeField]
         public float sprintSpeed = 10.0f;
+
+        /// <summary>
+        /// Speed of player when blocking.
+        /// </summary>
+        [Tooltip("Speed of player when blocking")]
+        [SerializeField]
+        public float blockSpeed = 2.5f;
 
         /// <summary>
         /// Minimum delay between actions.
@@ -147,26 +148,12 @@ namespace nickmaltbie.Treachery.Player
         private InputAction overrideMoveAction;
 
         /// <summary>
-        /// Override move action for testing.
-        /// </summary>
-        private InputAction overrideSprintAction;
-
-        /// <summary>
         /// Gets the move action associated with this kcc.
         /// </summary>
         public InputAction MoveAction
         {
             get => overrideMoveAction ?? moveActionReference?.action;
             set => overrideMoveAction = value;
-        }
-
-        /// <summary>
-        /// Gets the move action associated with this kcc.
-        /// </summary>
-        public InputAction SprintAction
-        {
-            get => overrideSprintAction ?? sprintActionReference?.action;
-            set => overrideSprintAction = value;
         }
 
         /// <summary>
@@ -182,6 +169,7 @@ namespace nickmaltbie.Treachery.Player
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
+        [Transition(typeof(BlockStart), typeof(BlockIdleState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         public class IdleState : State { }
@@ -201,11 +189,12 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
-        [BlockAction(PlayerAction.Punch)]
+        [BlockAction(PlayerAction.Punch, PlayerAction.Block)]
         public class LandingState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
+        [Transition(typeof(BlockStart), typeof(BlockMoveState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StartSprintEvent), typeof(SprintingState))]
@@ -214,11 +203,27 @@ namespace nickmaltbie.Treachery.Player
 
         [Animation(SprintingAnimState, 0.1f, true)]
         [Transition(typeof(StopMoveInput), typeof(IdleState))]
+        [Transition(typeof(BlockStart), typeof(BlockMoveState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(StopSprintEvent), typeof(WalkingState))]
         [MovementSettings(SpeedConfig = nameof(sprintSpeed))]
         public class SprintingState : State { }
+
+        [Animation(IdleAnimState, 0.1f, true)]
+        [Transition(typeof(StartMoveInput), typeof(BlockMoveState))]
+        [Transition(typeof(BlockStop), typeof(IdleState))]
+        [BlockEnabled]
+        [DamageMultiplier(multiplier = 0.5f)]
+        public class BlockIdleState : State { }
+
+        [Animation(WalkingAnimState, 0.1f, true)]
+        [Transition(typeof(StopMoveInput), typeof(BlockIdleState))]
+        [Transition(typeof(BlockStop), typeof(WalkingState))]
+        [BlockEnabled]
+        [MovementSettings(SpeedConfig = nameof(blockSpeed))]
+        [DamageMultiplier(multiplier = 0.5f)]
+        public class BlockMoveState : State { }
 
         [Animation(SlidingAnimState, 0.35f, true)]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
@@ -326,7 +331,6 @@ namespace nickmaltbie.Treachery.Player
             GetComponent<Rigidbody>().isKinematic = true;
             SetupInputs();
 
-            SprintAction?.Enable();
             MoveAction?.Enable();
         }
 
@@ -408,6 +412,8 @@ namespace nickmaltbie.Treachery.Player
                 ReadPlayerInput();
             }
 
+            BlockEnabledAttribute.UpdateBlockState(CurrentState, gameObject);
+            DamageMultiplierAttribute.UpdateDamageMultiplier(CurrentState, gameObject);
             base.Update();
         }
 
@@ -440,18 +446,6 @@ namespace nickmaltbie.Treachery.Player
             bool moving = InputMovement.magnitude >= KCCUtils.Epsilon;
             IEvent moveEvent = moving ? StartMoveInput.Instance as IEvent : StopMoveInput.Instance as IEvent;
             RaiseEvent(moveEvent);
-
-            if (moving)
-            {
-                if (SprintAction?.IsPressed() ?? false)
-                {
-                    RaiseEvent(StartSprintEvent.Instance);
-                }
-                else
-                {
-                    RaiseEvent(StopSprintEvent.Instance);
-                }
-            }
         }
 
         public void SetAnimationInMoveDirection()

@@ -18,7 +18,8 @@
 
 using System;
 using nickmaltbie.OpenKCC.Character.Action;
-using nickmaltbie.OpenKCC.Input;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action
 {
@@ -29,31 +30,53 @@ namespace nickmaltbie.Treachery.Action
     {
         public EventHandler OnPerform;
         private TAction actionType;
-        private IActionActor<TAction> actor;
 
-        protected BufferedInput BufferedInput { get; private set; }
+        protected InputActionReference inputActionReference;
+        protected InputAction overrideInputAction;
+        protected IActionActor<TAction> actor;
 
-        public ActorConditionalAction(BufferedInput bufferedInput, IActionActor<TAction> actor, TAction actionType)
+        private float cooldown;
+        private bool performWhileHeld;
+        private float elapsedSincePerformed = Mathf.Infinity;
+
+        public ActorConditionalAction(InputActionReference inputAction, IActionActor<TAction> actor, TAction actionType, float cooldown = 0.0f, bool performWhileHeld = false)
         {
-            base.condition = CanPerform;
-            BufferedInput = bufferedInput;
+            base.condition = Condition;
+            inputActionReference = inputAction;
             this.actionType = actionType;
             this.actor = actor;
+            this.cooldown = cooldown;
+            this.performWhileHeld = performWhileHeld;
+        }
+
+        protected InputAction InputAction
+        {
+            get => overrideInputAction ?? inputActionReference.action;
+            set => overrideInputAction = value;
         }
 
         public override void Update()
         {
-            BufferedInput.Update();
             base.Update();
+            elapsedSincePerformed += Time.deltaTime;
+            if (performWhileHeld && (InputAction?.IsPressed() ?? false))
+            {
+                AttemptIfPossible();
+            }
+        }
+
+        protected void ResetCooldown()
+        {
+            elapsedSincePerformed = 0.0f;
         }
 
         public bool AttemptIfPossible()
         {
-            if (CanPerform() && BufferedInput.Pressed)
+            if (CanPerform)
             {
                 Perform();
                 OnPerform?.Invoke(this, EventArgs.Empty);
-                BufferedInput.Reset();
+                ResetCooldown();
                 return true;
             }
 
@@ -62,14 +85,15 @@ namespace nickmaltbie.Treachery.Action
 
         protected abstract void Perform();
 
-        public void Setup()
+        public virtual void Setup()
         {
-            BufferedInput.InputAction?.Enable();
+            InputAction?.Enable();
+            InputAction.performed += _ => AttemptIfPossible();
         }
 
-        protected new virtual bool CanPerform()
+        protected virtual bool Condition()
         {
-            return actor.CanPerform(actionType);
+            return elapsedSincePerformed >= cooldown && actor.CanPerform(actionType);
         }
     }
 }

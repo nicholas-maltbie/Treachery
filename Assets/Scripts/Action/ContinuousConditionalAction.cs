@@ -16,8 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using UnityEngine;
+using nickmaltbie.StateMachineUnity.Event;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action
@@ -25,69 +24,57 @@ namespace nickmaltbie.Treachery.Action
     /// <summary>
     /// Action that can be performed by an IActionActor.
     /// </summary>
-    public abstract class TimedConditionalAction<TAction> : ActorConditionalAction<TAction>
+    public class ContinuousConditionalAction<TAction> : ActorConditionalAction<TAction>
     {
-        private bool performing = false;
-        public float duration = 1.0f;
-        protected float elapsed = Mathf.Infinity;
-        public bool IsPerforming => performing && elapsed <= duration;
+        protected IEvent raiseOnPerformed;
+        protected IEvent raiseOnStopped;
+        public bool Performing { get; protected set; }
 
-        /// <summary>
-        /// Action to invoke when the player completed this action.
-        /// Returns a bool, if true the action was interrupted, if false,
-        /// the action completed normally.
-        /// </summary>
-        public EventHandler<bool> OnComplete;
-
-        protected TimedConditionalAction(
+        public ContinuousConditionalAction(
             InputActionReference actionReference,
             IActionActor<TAction> actor,
             TAction actionType,
-            float duration,
-            float cooldown = 0.0f,
-            bool performWhileHeld = false)
-            : base(actionReference, actor, actionType, cooldown, performWhileHeld)
+            IEvent raiseOnPerformed = null,
+            IEvent raiseOnStopped = null)
+            : base(actionReference, actor, actionType, 0, true)
         {
-            this.duration = duration;
+            this.raiseOnPerformed = raiseOnPerformed;
+            this.raiseOnStopped = raiseOnStopped;
         }
 
-        /// <inheritdoc/>
+        public override void Setup()
+        {
+            base.Setup();
+            InputAction.canceled += _ => NotPerformed();
+        }
+
         public override void Update()
         {
             base.Update();
-            if (performing)
+            if (!InputAction?.IsPressed() ?? false || !CanPerform)
             {
-                ResetCooldown();
-                elapsed += Time.deltaTime;
-                if (elapsed >= duration)
-                {
-                    ResetCooldown();
-                    performing = false;
-                    OnComplete?.Invoke(this, false);
-                }
-            }
-            else
-            {
-                elapsed = 0.0f;
+                NotPerformed();
             }
         }
 
-        public bool Interrupt()
+        protected virtual void NotPerformed()
         {
-            if (performing)
+            if (raiseOnPerformed != null)
             {
-                performing = false;
-                ResetCooldown();
-                OnComplete?.Invoke(this, true);
-                return true;
+                base.actor.RaiseEvent(raiseOnStopped);
             }
 
-            return false;
+            Performing = false;
         }
 
         protected override void Perform()
         {
-            performing = true;
+            if (raiseOnPerformed != null)
+            {
+                base.actor.RaiseEvent(raiseOnPerformed);
+            }
+
+            Performing = true;
         }
     }
 }

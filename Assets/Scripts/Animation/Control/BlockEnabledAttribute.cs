@@ -16,15 +16,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Action.PlayerActions
+using System;
+using UnityEngine;
+
+namespace nickmaltbie.Treachery.Animation.Control
 {
-    public enum PlayerAction
+    public class BlockEnabledAttribute : Attribute
     {
-        Jump,
-        Dodge,
-        Punch,
-        Block,
-        Roll,
-        Sprint,
+        public static bool GetBlockState(Type state)
+        {
+            return Attribute.GetCustomAttribute(state, typeof(BlockEnabledAttribute)) is BlockEnabledAttribute;
+        }
+
+        public static void UpdateBlockState(Type state, BlockAnimator blockAnimator)
+        {
+            blockAnimator.enableBlock = GetBlockState(state);
+        }
+
+        public static void UpdateBlockState(Type state, GameObject player)
+        {
+            if (player.GetComponentInChildren<BlockAnimator>() is BlockAnimator anim)
+            {
+                UpdateBlockState(state, anim);
+            }
+        }
     }
 }
