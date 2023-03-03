@@ -339,6 +339,7 @@ MonoBehaviour:
   cooldown: 0.5
   dodgeDuration: 0.5
   dodgeDistance: 2.5
+  staminaCost: 20
 --- !u!114 &-3116674992473226055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,6 +355,7 @@ MonoBehaviour:
   inputActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.5
   viewSource: {fileID: 1928389238472999755}
+  staminaCost: 10
 --- !u!114 &420403279906431496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,6 +371,7 @@ MonoBehaviour:
   inputActionReference: {fileID: 1481124759659193975, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0.05
   jumpVelocity: 6.5
+  staminaCost: 10
 --- !u!114 &386502574218454059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,6 +388,7 @@ MonoBehaviour:
   cooldown: 0.05
   rollDuration: 1
   rollDistance: 5.5
+  staminaCost: 33.3
 --- !u!114 &-2950086063906863614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,6 +447,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: -6424176782126915535, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   cooldown: 0
+  staminaCostRate: 10
+  minStaminaToStart: 10
 --- !u!114 &5157845365457512275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,7 +532,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc110cb092f75342b00f8edc52874c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staminaRestoreRate: 3.5
+  staminaRestoreRate: 10
+  cooldownSmoothTime: 3
   cooldownBeforeRestore: 1
 --- !u!1001 &1651910495456193390
 PrefabInstance:

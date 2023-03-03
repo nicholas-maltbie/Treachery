@@ -1,4 +1,5 @@
 
+using nickmaltbie.Treachery.Utils;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,6 +31,11 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// Rate at which stamina is restored in units per second.
         /// </summary>
         public float staminaRestoreRate = 10.0f;
+
+        /// <summary>
+        /// Smooth time after cooldown passes.
+        /// </summary>
+        public float cooldownSmoothTime = 5.0f;
 
         /// <summary>
         /// Cooldown in time that the user has to wait before stamina will start
@@ -107,7 +113,16 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
 
             if (Time.time >= lastStaminaSpendTime + cooldownBeforeRestore)
             {
-                RestoreStamina(staminaRestoreRate * Time.fixedDeltaTime);
+                if (cooldownSmoothTime > 0)
+                {
+                    float factor = (Time.time - lastStaminaSpendTime - cooldownBeforeRestore) / cooldownSmoothTime;
+                    float smoothed = MathUtils.SmoothValue(factor);
+                    RestoreStamina(staminaRestoreRate * smoothed * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    RestoreStamina(staminaRestoreRate * Time.fixedDeltaTime);
+                }
             }
         }
 
