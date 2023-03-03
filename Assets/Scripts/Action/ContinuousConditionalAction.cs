@@ -89,7 +89,7 @@ namespace nickmaltbie.Treachery.Action
             Performing = true;
         }
 
-        protected override float StaminaCost => this.staminaCostRate * Time.deltaTime;
+        protected override float StaminaCost => staminaCostRate * Time.deltaTime;
 
         protected override bool Condition()
         {

@@ -20,7 +20,6 @@
 using System;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.Treachery.Action.PlayerActions;
-using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
