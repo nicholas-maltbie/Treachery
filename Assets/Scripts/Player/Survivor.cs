@@ -263,7 +263,7 @@ namespace nickmaltbie.Treachery.Player
         [TransitionFromAnyState(typeof(RollStart))]
         [Transition(typeof(RollStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(RollMovement))]
-        [OnEnterState(nameof(RotateTowardsViewport))]
+        [OnEnterState(nameof(RotateTowardsMoveDirection))]
         [LockMovementAnimation]
         [DamagePassthrough]
         [BlockAllAction]
@@ -463,6 +463,13 @@ namespace nickmaltbie.Treachery.Player
             MovementEngine.MovePlayer(
                 dodgeMovement,
                 Velocity * unityService.fixedDeltaTime);
+        }
+
+        public void RotateTowardsMoveDirection()
+        {
+            Vector3 rotatedMovementForward = HorizPlaneView * InputMovement;
+            var angle = Quaternion.LookRotation(rotatedMovementForward, MovementEngine.Up);
+            GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(angle.eulerAngles.y, 360 * 3);
         }
 
         public void RotateTowardsViewport()

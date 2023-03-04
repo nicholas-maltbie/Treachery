@@ -41,6 +41,9 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float staminaCost = 33.3f;
 
+        private IMovementActor _movementActor;
+        private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
+
         public override FixedMovementAction SetupAction()
         {
             var action = new FixedMovementAction(
@@ -62,7 +65,7 @@ namespace nickmaltbie.Treachery.Player.Action
 
         private void OnRoll(object source, EventArgs args)
         {
-            Action.MoveDirection = GetComponent<ICameraControls>().PlayerHeading * Vector3.forward;
+            Action.MoveDirection = MovementActor.GetDesiredMovement().normalized;
             Actor.RaiseEvent(RollStart.Instance);
         }
 

@@ -532,8 +532,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc110cb092f75342b00f8edc52874c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staminaRestoreRate: 10
-  cooldownSmoothTime: 3
+  staminaRestoreRate: 20
+  cooldownSmoothTime: 5
   cooldownBeforeRestore: 1
 --- !u!1001 &1651910495456193390
 PrefabInstance:

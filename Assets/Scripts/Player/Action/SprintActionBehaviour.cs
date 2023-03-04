@@ -17,6 +17,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Events;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
@@ -24,7 +25,9 @@ using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
 {
-    public class SprintActionBehaviour : AbstractActionBehaviour<ContinuousConditionalAction<PlayerAction>>
+    [RequireComponent(typeof(KCCMovementEngine))]
+    [RequireComponent(typeof(IMovementActor))]
+    public class SprintActionBehaviour : AbstractActionBehaviour<SprintAction>
     {
         [SerializeField]
         public float staminaCostRate = 10.0f;
@@ -32,22 +35,21 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float minStaminaToStart = 10.0f;
 
-        public override void CleanupAction(ContinuousConditionalAction<PlayerAction> action)
+        public override void CleanupAction(SprintAction action)
         {
 
         }
 
-        public override ContinuousConditionalAction<PlayerAction> SetupAction()
+        public override SprintAction SetupAction()
         {
-            return new ContinuousConditionalAction<PlayerAction>(
+            return new SprintAction(
                 inputActionReference,
                 Actor,
+                GetComponent<KCCMovementEngine>(),
+                GetComponent<IMovementActor>(),
                 Stamina,
-                PlayerAction.Sprint,
                 staminaCostRate,
-                minStaminaToStart,
-                StartSprintEvent.Instance,
-                StopSprintEvent.Instance);
+                minStaminaToStart);
         }
     }
 }

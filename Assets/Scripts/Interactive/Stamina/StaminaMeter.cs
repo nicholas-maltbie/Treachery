@@ -132,7 +132,7 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
             {
                 if (cooldownSmoothTime > 0)
                 {
-                    float factor = (Time.time - lastStaminaSpendTime - cooldownBeforeRestore) / cooldownSmoothTime;
+                    float factor = (Time.time - lastStaminaSpendTime) / cooldownSmoothTime;
                     float smoothed = MathUtils.SmoothValue(factor);
                     RestoreStamina(staminaRestoreRate * smoothed * Time.fixedDeltaTime);
                 }
