@@ -18,8 +18,6 @@
 // SOFTWARE.
 
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Character.Events;
-using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
 

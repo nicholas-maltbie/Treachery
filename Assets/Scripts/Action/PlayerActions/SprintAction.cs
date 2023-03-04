@@ -18,18 +18,12 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Character.Config;
 using nickmaltbie.OpenKCC.Character.Events;
 using nickmaltbie.OpenKCC.Utils;
-using nickmaltbie.StateMachineUnity.Event;
-using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
@@ -40,8 +34,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
     [Serializable]
     public class SprintAction : ContinuousConditionalAction<PlayerAction>
     {
-        IMovementActor player;
-        KCCMovementEngine movementEngine;
+        private IMovementActor player;
+        private KCCMovementEngine movementEngine;
 
         public SprintAction(
             InputActionReference actionReference,
@@ -50,8 +44,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             IMovementActor player,
             IStaminaMeter stamina,
             float staminaCostRate,
-            float staminaRequiredToStart) :
-            base(actionReference, actor, stamina, PlayerAction.Sprint, staminaCostRate, staminaRequiredToStart, StartSprintEvent.Instance, StopSprintEvent.Instance)
+            float staminaRequiredToStart)
+            : base(actionReference, actor, stamina, PlayerAction.Sprint, staminaCostRate, staminaRequiredToStart, StartSprintEvent.Instance, StopSprintEvent.Instance)
         {
             this.player = player;
             this.movementEngine = movementEngine;
