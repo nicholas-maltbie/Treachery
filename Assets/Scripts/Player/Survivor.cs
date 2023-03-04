@@ -467,9 +467,8 @@ namespace nickmaltbie.Treachery.Player
 
         public void RotateTowardsMoveDirection()
         {
-            Vector3 rotatedMovementForward = HorizPlaneView * InputMovement;
-            var angle = Quaternion.LookRotation(rotatedMovementForward, MovementEngine.Up);
-            GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(angle.eulerAngles.y, 360 * 3);
+            RollActionBehaviour roll = GetComponent<RollActionBehaviour>();
+            GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(roll.RollRotation, 360 * 3);
         }
 
         public void RotateTowardsViewport()

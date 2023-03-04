@@ -66,7 +66,7 @@ namespace nickmaltbie.Treachery.Player.Action
             Action = SetupAction();
         }
 
-        public void Start()
+        public virtual void Start()
         {
             if (IsOwner)
             {
@@ -74,7 +74,7 @@ namespace nickmaltbie.Treachery.Player.Action
             }
         }
 
-        public void Update()
+        public virtual void Update()
         {
             if (IsOwner)
             {
