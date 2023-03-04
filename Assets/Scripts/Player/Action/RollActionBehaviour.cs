@@ -20,6 +20,7 @@
 using System;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
+using nickmaltbie.OpenKCC.Utils;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace nickmaltbie.Treachery.Player.Action
     /// </summary>
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(ICameraControls))]
+    [RequireComponent(typeof(IMovementActor))]
     public class RollActionBehaviour : AbstractActionBehaviour<FixedMovementAction>
     {
         [SerializeField]
@@ -41,13 +43,25 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public float staminaCost = 33.3f;
 
+        private IMovementActor _movementActor;
+        private IMovementActor MovementActor => _movementActor ??= GetComponent<IMovementActor>();
+
+        private ICameraControls _cameraControls;
+        private ICameraControls CameraControls => _cameraControls ??= GetComponent<ICameraControls>();
+
+        private KCCMovementEngine _movementEngine;
+        private KCCMovementEngine MovementEngine => _movementEngine ??= GetComponent<KCCMovementEngine>();
+
+        public Vector3 RollDirection { get; private set; }
+        public float RollRotation { get; private set; }
+
         public override FixedMovementAction SetupAction()
         {
             var action = new FixedMovementAction(
                 inputActionReference,
                 Actor,
                 Stamina,
-                GetComponent<KCCMovementEngine>(),
+                MovementEngine,
                 PlayerAction.Roll,
                 rollDuration,
                 cooldown,
@@ -60,9 +74,22 @@ namespace nickmaltbie.Treachery.Player.Action
             return action;
         }
 
+        public override void Update()
+        {
+            base.Update();
+            Vector3 movement = MovementActor.GetDesiredMovement();
+            if (movement.magnitude > KCCUtils.Epsilon)
+            {
+                Vector3 rotatedMovementForward = CameraControls.PlayerHeading * MovementActor.InputMovement;
+                var angle = Quaternion.LookRotation(rotatedMovementForward, MovementEngine.Up);
+                RollRotation = angle.eulerAngles.y;
+                RollDirection = movement.normalized;
+            }
+        }
+
         private void OnRoll(object source, EventArgs args)
         {
-            Action.MoveDirection = GetComponent<ICameraControls>().PlayerHeading * Vector3.forward;
+            Action.MoveDirection = RollDirection;
             Actor.RaiseEvent(RollStart.Instance);
         }
 
