@@ -293,8 +293,7 @@ namespace nickmaltbie.Treachery.Equipment
             if (IsOwner)
             {
                 EquipmentLoadout loadout = loadouts[slot];
-                bool didEquip = loadout.EquipItem(equipmentId, transform, library);
-                UnityEngine.Debug.Log($"Attempting to equip item with id:{equipmentId}. didEquip:{didEquip}");
+                loadout.EquipItem(equipmentId, transform, library);
                 loadout.UpdateItemPositions(manager);
             }
         }

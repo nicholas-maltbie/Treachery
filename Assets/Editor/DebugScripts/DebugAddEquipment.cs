@@ -51,7 +51,7 @@ namespace nickmaltbie.Treachery.DebugScripts
                 if (GUILayout.Button("Add Item to Loadout"))
                 {
                     IEquipment selected = equipment[_selected];
-                    loadout.AddItemToLoadout(selected.EquipmentId, 0);
+                    loadout.AddItemToLoadout(selected.EquipmentId, loadout.CurrentSelected);
                 }
             }
         }
