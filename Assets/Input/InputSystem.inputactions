@@ -389,7 +389,7 @@
                 {
                     "name": "",
                     "id": "00b18b61-6601-4180-96cb-64ee7d5855c4",
-                    "path": "*/{Forward}",
+                    "path": "<Mouse>/forwardButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -400,7 +400,7 @@
                 {
                     "name": "",
                     "id": "0a12cbe3-c053-42ef-804e-900a7831f7b3",
-                    "path": "*/{Back}",
+                    "path": "<Mouse>/backButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

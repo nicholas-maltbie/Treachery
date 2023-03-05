@@ -71,6 +71,11 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             this.viewHeading = viewHeading;
         }
 
+        protected override bool Condition()
+        {
+            return base.Condition();
+        }
+
         public Quaternion PlayerHeading()
         {
             if (viewHeading is IManagedCamera cameraController)
