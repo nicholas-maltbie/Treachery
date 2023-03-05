@@ -18,7 +18,6 @@
 
 using System.Linq;
 using nickmaltbie.Treachery.Equipment;
-using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -40,7 +39,7 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             if (loadout.GetComponent<NetworkObject>().IsOwner && loadout.GetComponent<NetworkObject>().IsSpawned)
             {
-                var library = loadout.library;
+                EquipmentLibrary library = loadout.library;
                 equipment ??= library.EnumerateEquipment().ToArray();
                 equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
                 _selected = EditorGUILayout.Popup(

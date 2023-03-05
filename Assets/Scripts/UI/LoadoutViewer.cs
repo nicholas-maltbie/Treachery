@@ -19,7 +19,6 @@
 using nickmaltbie.Treachery.Equipment;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace nickmaltbie.Treachery.UI
 {
@@ -37,8 +36,8 @@ namespace nickmaltbie.Treachery.UI
             }
 
             spawned = new LoadoutSlotView[loadout.MaxLoadouts];
-            
-            for (int i = 0 ;i < loadout.MaxLoadouts; i++)
+
+            for (int i = 0; i < loadout.MaxLoadouts; i++)
             {
                 spawned[i] = GameObject.Instantiate(slotViewPrefab, transform);
                 RectTransform rect = spawned[i].GetComponent<RectTransform>();
@@ -63,14 +62,14 @@ namespace nickmaltbie.Treachery.UI
 
         public void Update()
         {
-            var localPlayer = NetworkManager.Singleton?.SpawnManager?.GetLocalPlayerObject();
+            NetworkObject localPlayer = NetworkManager.Singleton?.SpawnManager?.GetLocalPlayerObject();
             if (localPlayer == null)
             {
                 TearDown();
                 return;
             }
 
-            var playerLoadout = localPlayer.GetComponent<PlayerLoadout>();
+            PlayerLoadout playerLoadout = localPlayer.GetComponent<PlayerLoadout>();
             Setup(playerLoadout);
 
             if (playerLoadout)

@@ -1,3 +1,20 @@
+// Copyright (C) 2023 Nicholas Maltbie
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute,
+// sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+// BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 using System;
 using System.Linq;
@@ -62,11 +79,11 @@ namespace nickmaltbie.Treachery.Equipment
             {
                 case ItemType.Main:
                     bool hasMain = Main != null;
-                    this.UpdateMainItem(IEquipment.EmptyEquipmentId, null, null);
+                    UpdateMainItem(IEquipment.EmptyEquipmentId, null, null);
                     return hasMain;
                 case ItemType.Offhand:
                     bool hasOffhand = Offhand != null;
-                    this.UpdateOffhandItem(IEquipment.EmptyEquipmentId, null, null);
+                    UpdateOffhandItem(IEquipment.EmptyEquipmentId, null, null);
                     return hasOffhand;
             }
 
@@ -121,7 +138,7 @@ namespace nickmaltbie.Treachery.Equipment
                 Main.transform.localPosition = Vector3.zero;
                 Main.transform.localRotation = Quaternion.identity;
             }
-            
+
             if (Offhand != null)
             {
                 Offhand.transform.SetParent(manager.GetOffHand);
@@ -331,8 +348,8 @@ namespace nickmaltbie.Treachery.Equipment
 
         public void OnLoadoutSelected(int previousLoadout, int currentLoadout)
         {
-            EquipmentLoadout previous = this.loadouts[previousLoadout];
-            EquipmentLoadout current = this.loadouts[currentLoadout];
+            EquipmentLoadout previous = loadouts[previousLoadout];
+            EquipmentLoadout current = loadouts[currentLoadout];
 
             previous.SetActive(false);
             current.SetActive(true);
@@ -341,7 +358,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public void OnLoadoutModified(NetworkListEvent<NetworkEquipmentLoadout> changeEvent)
         {
-            EquipmentLoadout modified = this.loadouts[changeEvent.Index];
+            EquipmentLoadout modified = loadouts[changeEvent.Index];
             modified.UpdateFromNetworkState(changeEvent.Value, transform, library);
             modified.UpdateItemPositions(manager);
         }

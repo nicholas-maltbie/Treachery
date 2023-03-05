@@ -24,8 +24,8 @@ namespace nickmaltbie.Treachery.UI
 {
     public class LoadoutSlotView : MonoBehaviour
     {
-        int mainItemId = IEquipment.EmptyEquipmentId;
-        int offhandItemId = IEquipment.EmptyEquipmentId;
+        private int mainItemId = IEquipment.EmptyEquipmentId;
+        private int offhandItemId = IEquipment.EmptyEquipmentId;
 
         public Sprite emptyItemSlot;
         public Image selectedBorder;
@@ -50,7 +50,7 @@ namespace nickmaltbie.Treachery.UI
                     mainItemSlot.sprite = loadout.MainItem.ItemIcon;
                 }
 
-                this.mainItemId = loadout.MainItemId;
+                mainItemId = loadout.MainItemId;
             }
 
             if (loadout.OffhandItemId != offhandItemId)
@@ -64,7 +64,7 @@ namespace nickmaltbie.Treachery.UI
                     secondaryItemSlot.sprite = loadout.OffhandItem.ItemIcon;
                 }
 
-                this.offhandItemId = loadout.MainItemId;
+                offhandItemId = loadout.MainItemId;
             }
         }
     }
