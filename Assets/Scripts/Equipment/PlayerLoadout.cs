@@ -304,7 +304,20 @@ namespace nickmaltbie.Treachery.Equipment
         {
             for (int i = 0; i < MaxLoadouts; i++)
             {
-                networkLoadouts[i] = loadouts[i];
+                if (!networkLoadouts[i].Equals(loadouts[i]))
+                {
+                    networkLoadouts[i] = loadouts[i];
+                }
+            }
+        }
+
+        public void Start()
+        {
+            for (int i = 0; i < loadouts.Length; i++)
+            {
+                loadouts[i].UpdateFromNetworkState(networkLoadouts[i], transform, library);
+                loadouts[i].SetActive(i == CurrentSelected);
+                loadouts[i].UpdateItemPositions(manager);
             }
         }
 

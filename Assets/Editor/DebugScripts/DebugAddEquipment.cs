@@ -38,7 +38,7 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             var loadout = target as PlayerLoadout;
 
-            if (NetworkManager.Singleton?.IsServer ?? false && loadout.GetComponent<NetworkObject>().IsSpawned)
+            if (loadout.GetComponent<NetworkObject>().IsOwner && loadout.GetComponent<NetworkObject>().IsSpawned)
             {
                 var library = loadout.library;
                 equipment ??= library.EnumerateEquipment().ToArray();
