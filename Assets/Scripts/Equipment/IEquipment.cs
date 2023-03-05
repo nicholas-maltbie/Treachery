@@ -18,6 +18,7 @@
 
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
@@ -44,10 +45,8 @@ namespace nickmaltbie.Treachery.Equipment
         ItemType ItemType { get; }
         EquipmentWeight Weight { get; }
         bool CanHold { get; }
-        void Use(IActionActor<PlayerAction> actor);
-        void UpdateOnOut();
-        void OnTakeOut();
-        void OnPutAway();
-        void UpdateEquippedState(bool state);
+        ActorConditionalAction<PlayerAction> ItemAction { get; }
+        void PerformAction();
+        void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter meter);
     }
 }

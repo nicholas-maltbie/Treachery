@@ -101,3 +101,4 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 7a32dd583a9a2954f8465ad4a7fd266e, type: 3}
   itemType: 0
   equipmentWeight: 0
+  itemActionLibrary: {fileID: 11400000, guid: 3f2d60eb1da9ace46ab9fe92f6a3a51e, type: 2}

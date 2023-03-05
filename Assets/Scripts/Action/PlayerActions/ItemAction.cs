@@ -1,3 +1,4 @@
+
 // Copyright (C) 2023 Nicholas Maltbie
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -16,17 +17,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Action;
-using nickmaltbie.Treachery.Action.PlayerActions;
+using System;
+using System.Collections.Generic;
+using nickmaltbie.OpenKCC.CameraControls;
+using nickmaltbie.Treachery.Equipment;
+using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Hitbox;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace nickmaltbie.Treachery.Equipment
+namespace nickmaltbie.Treachery.Action.PlayerActions
 {
-    public class BasicItem : AbstractEquipment
+    public class ItemAction : ActorConditionalAction<PlayerAction>
     {
-        public override void PerformAction()
+        private IEquipment equipment;
+
+        public ItemAction(
+            InputActionReference actionReference,
+            IActionActor<PlayerAction> actor,
+            IStaminaMeter stamina,
+            IEquipment equipment,
+            PlayerAction action,
+            float cooldown = 0.0f,
+            float staminaCost = 0.0f,
+            bool performWhileHeld = false)
+            : base(actionReference, actor, stamina, action, cooldown, staminaCost, performWhileHeld)
         {
-            UnityEngine.Debug.Log($"Performing action for item: {gameObject.name}");
+            this.equipment = equipment;
+        }
+
+        protected override void Perform()
+        {
+            this.equipment.PerformAction();
         }
     }
 }

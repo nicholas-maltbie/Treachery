@@ -33,9 +33,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Fire",
+                    "name": "Primary",
                     "type": "Button",
                     "id": "e1d5dee9-5e26-4579-9d27-657776fa136c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Secondary",
+                    "type": "Button",
+                    "id": "01a25cdf-5d98-4554-adc9-3157e14407e5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -90,15 +99,6 @@
                     "name": "Roll",
                     "type": "Button",
                     "id": "77989998-98d1-48dc-ad57-55defc8ec749",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Block",
-                    "type": "Button",
-                    "id": "01a25cdf-5d98-4554-adc9-3157e14407e5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -272,7 +272,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Fire",
+                    "action": "Primary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -388,17 +388,6 @@
                 },
                 {
                     "name": "",
-                    "id": "e41b5a7e-0396-4263-bb63-e25c2b1d61cb",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Block",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "00b18b61-6601-4180-96cb-64ee7d5855c4",
                     "path": "*/{Forward}",
                     "interactions": "",
@@ -451,6 +440,17 @@
                     "action": "ScrollLoadout",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "e41b5a7e-0396-4263-bb63-e25c2b1d61cb",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

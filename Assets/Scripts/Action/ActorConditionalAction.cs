@@ -41,6 +41,7 @@ namespace nickmaltbie.Treachery.Action
         private float cooldown;
         private bool performWhileHeld;
         private float elapsedSincePerformed = Mathf.Infinity;
+        private bool enabled = false;
 
         public ActorConditionalAction(
             InputActionReference inputAction,
@@ -101,14 +102,21 @@ namespace nickmaltbie.Treachery.Action
         public virtual void Setup()
         {
             InputAction?.Enable();
+            enabled = true;
             InputAction.performed += _ => AttemptIfPossible();
+        }
+
+        public virtual void SetActive(bool state)
+        {
+            enabled = state;
         }
 
         protected virtual bool Condition()
         {
             return elapsedSincePerformed >= cooldown &&
                 stamina.HasEnoughStamina(this) &&
-                actor.CanPerform(actionType);
+                actor.CanPerform(actionType) &&
+                enabled;
         }
 
         protected virtual float StaminaCost => staminaCost;

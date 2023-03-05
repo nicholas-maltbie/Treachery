@@ -18,7 +18,9 @@
 
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Equipment
 {
@@ -41,6 +43,9 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public EquipmentWeight equipmentWeight;
 
+        [SerializeField]
+        public ItemActionLibrary itemActionLibrary;
+
         public bool InHand { get; private set; }
 
         public int EquipmentId => equipmentId;
@@ -55,18 +60,15 @@ namespace nickmaltbie.Treachery.Equipment
 
         public bool CanHold => true;
 
-        public abstract void OnPutAway();
+        public ActorConditionalAction<PlayerAction> ItemAction { get; protected set; }
 
-        public abstract void OnTakeOut();
+        protected InputActionReference InputAction => itemActionLibrary.GetActionReference(ItemType);
 
-        public void UpdateEquippedState(bool state)
+        public virtual void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
-            InHand = state;
+            ItemAction = new ItemAction(InputAction, actor, stamina, this, ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem);
+            ItemAction.Setup();
         }
-
-        public abstract void UpdateOnOut();
-
-        public abstract void Use(IActionActor<PlayerAction> actor);
 
         public void OnValidate()
         {
@@ -75,5 +77,7 @@ namespace nickmaltbie.Treachery.Equipment
                 equipmentId = random.Next();
             }
         }
+
+        public abstract void PerformAction();
     }
 }

@@ -18,6 +18,9 @@
 
 using System;
 using System.Linq;
+using nickmaltbie.Treachery.Action;
+using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -73,24 +76,39 @@ namespace nickmaltbie.Treachery.Equipment
         public bool HasOffhand => Offhand != null;
         public bool CahEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
+        private EquipmentLibrary library;
+        private Transform parent;
+        private IActionActor<PlayerAction> actor;
+        private IStaminaMeter stamina;
+        private bool isOwner;
+
+        public EquipmentLoadout(EquipmentLibrary library, Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, bool isOwner)
+        {
+            this.library = library;
+            this.parent = parent;
+            this.actor = actor;
+            this.stamina = stamina;
+            this.isOwner = isOwner;
+        }
+
         public bool RemoveItem(ItemType itemType)
         {
             switch (itemType)
             {
                 case ItemType.Main:
                     bool hasMain = Main != null;
-                    UpdateMainItem(IEquipment.EmptyEquipmentId, null, null);
+                    UpdateMainItem(IEquipment.EmptyEquipmentId);
                     return hasMain;
                 case ItemType.Offhand:
                     bool hasOffhand = Offhand != null;
-                    UpdateOffhandItem(IEquipment.EmptyEquipmentId, null, null);
+                    UpdateOffhandItem(IEquipment.EmptyEquipmentId);
                     return hasOffhand;
             }
 
             return false;
         }
 
-        public bool EquipItem(int equipmentId, Transform parent, EquipmentLibrary library)
+        public bool EquipItem(int equipmentId)
         {
             IEquipment equipment = library.GetEquipment(equipmentId);
             if (!CanEquip(equipment))
@@ -100,11 +118,11 @@ namespace nickmaltbie.Treachery.Equipment
 
             if (equipment.ItemType == ItemType.Main)
             {
-                UpdateMainItem(equipmentId, parent, library);
+                UpdateMainItem(equipmentId);
             }
             else if (equipment.ItemType == ItemType.Offhand)
             {
-                UpdateOffhandItem(equipmentId, parent, library);
+                UpdateOffhandItem(equipmentId);
             }
 
             return true;
@@ -128,6 +146,9 @@ namespace nickmaltbie.Treachery.Equipment
             activeState = state;
             Main?.SetActive(state);
             Offhand?.SetActive(state);
+
+            MainItem?.ItemAction.SetActive(state);
+            OffhandItem?.ItemAction.SetActive(state);
         }
 
         public void UpdateItemPositions(EquipmentManager manager)
@@ -147,13 +168,13 @@ namespace nickmaltbie.Treachery.Equipment
             }
         }
 
-        public void UpdateFromNetworkState(NetworkEquipmentLoadout loadout, Transform parent, EquipmentLibrary library)
+        public void UpdateFromNetworkState(NetworkEquipmentLoadout loadout)
         {
-            UpdateMainItem(loadout.mainItemId, parent, library);
-            UpdateOffhandItem(loadout.offhandItemId, parent, library);
+            UpdateMainItem(loadout.mainItemId);
+            UpdateOffhandItem(loadout.offhandItemId);
         }
 
-        public void UpdateOffhandItem(int equipmentId, Transform parent, EquipmentLibrary library)
+        public void UpdateOffhandItem(int equipmentId)
         {
             if (Offhand != null && OffhandItem.EquipmentId != equipmentId)
             {
@@ -166,10 +187,16 @@ namespace nickmaltbie.Treachery.Equipment
                 GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
                 Offhand = GameObject.Instantiate(prefab, parent);
                 Offhand.SetActive(activeState);
+
+                if (isOwner)
+                {
+                    OffhandItem?.SetupItemAction(actor, stamina);
+                    OffhandItem?.ItemAction?.SetActive(activeState);
+                }
             }
         }
 
-        public void UpdateMainItem(int equipmentId, Transform parent, EquipmentLibrary library)
+        public void UpdateMainItem(int equipmentId)
         {
             if (Main != null && MainItem.EquipmentId != equipmentId)
             {
@@ -182,6 +209,12 @@ namespace nickmaltbie.Treachery.Equipment
                 GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
                 Main = GameObject.Instantiate(prefab, parent);
                 Main.SetActive(activeState);
+
+                if (isOwner)
+                {
+                    MainItem?.SetupItemAction(actor, stamina);
+                    MainItem?.ItemAction?.SetActive(activeState);
+                }
             }
         }
     }
@@ -229,15 +262,23 @@ namespace nickmaltbie.Treachery.Equipment
 
         public void Awake()
         {
-            loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout()).ToArray();
             networkLoadouts = new NetworkList<NetworkEquipmentLoadout>(
                 Enumerable.Range(0, MaxLoadouts).Select(_ => new NetworkEquipmentLoadout()),
                 readPerm: NetworkVariableReadPermission.Everyone,
                 writePerm: NetworkVariableWritePermission.Owner);
             currentLoadout.OnValueChanged += OnLoadoutSelected;
             networkLoadouts.OnListChanged += OnLoadoutModified;
+        }
 
-            loadouts[0].SetActive(true);
+        public void Start()
+        {
+            loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout(
+                library,
+                transform,
+                GetComponent<IActionActor<PlayerAction>>(),
+                GetComponent<IStaminaMeter>(),
+                IsOwner)).ToArray();
+            loadouts[CurrentSelected].SetActive(true);
 
             incrementLoadoutSelection.action.Enable();
             decrementLoadoutSelection.action.Enable();
@@ -278,13 +319,22 @@ namespace nickmaltbie.Treachery.Equipment
                     DecrementLoadout();
                 }
             };
+
+            for (int i = 0; i < loadouts.Length; i++)
+            {
+                loadouts[i].UpdateFromNetworkState(networkLoadouts[i]);
+                loadouts[i].SetActive(i == CurrentSelected);
+                loadouts[i].UpdateItemPositions(manager);
+            }
         }
 
         private void IncrementLoadout() => ChangeSelectedLoadout((CurrentSelected + 1) % MaxLoadouts);
         private void DecrementLoadout() => ChangeSelectedLoadout((CurrentSelected - 1 + MaxLoadouts) % MaxLoadouts);
 
         public EquipmentLoadout CurrentLoadout => loadouts[CurrentSelected];
-        public EquipmentLoadout GetLoadout(int idx) => loadouts[idx];
+        public EquipmentLoadout GetLoadout(int idx) => loadouts != null ?
+            loadouts[idx] :
+            new EquipmentLoadout(library, transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), false);
 
         public int CurrentSelected => currentLoadout.Value;
 
@@ -312,7 +362,7 @@ namespace nickmaltbie.Treachery.Equipment
             if (IsOwner)
             {
                 EquipmentLoadout loadout = loadouts[slot];
-                loadout.EquipItem(equipmentId, transform, library);
+                loadout.EquipItem(equipmentId);
                 loadout.UpdateItemPositions(manager);
             }
         }
@@ -328,21 +378,18 @@ namespace nickmaltbie.Treachery.Equipment
             }
         }
 
-        public void Start()
-        {
-            for (int i = 0; i < loadouts.Length; i++)
-            {
-                loadouts[i].UpdateFromNetworkState(networkLoadouts[i], transform, library);
-                loadouts[i].SetActive(i == CurrentSelected);
-                loadouts[i].UpdateItemPositions(manager);
-            }
-        }
-
         public void Update()
         {
             if (IsOwner)
             {
                 SynchronizeLoadouts();
+                for (int i = 0; i < loadouts.Length; i++)
+                {
+                    ActorConditionalAction<PlayerAction> mainAction = loadouts[i].MainItem?.ItemAction;
+                    ActorConditionalAction<PlayerAction> offhandAction = loadouts[i].OffhandItem?.ItemAction;
+                    mainAction?.Update();
+                    offhandAction?.Update();
+                }
             }
         }
 
@@ -359,7 +406,7 @@ namespace nickmaltbie.Treachery.Equipment
         public void OnLoadoutModified(NetworkListEvent<NetworkEquipmentLoadout> changeEvent)
         {
             EquipmentLoadout modified = loadouts[changeEvent.Index];
-            modified.UpdateFromNetworkState(changeEvent.Value, transform, library);
+            modified.UpdateFromNetworkState(changeEvent.Value);
             modified.UpdateItemPositions(manager);
         }
     }
