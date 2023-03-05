@@ -16,17 +16,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.Treachery.Equipment;
 using nickmaltbie.Treachery.Interactive;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Animation
 {
-    public enum DominantHand
-    {
-        RightHanded,
-        LeftHanded,
-    }
-
     [RequireComponent(typeof(Animator))]
     public class ArrowAimHelper : MonoBehaviour
     {
