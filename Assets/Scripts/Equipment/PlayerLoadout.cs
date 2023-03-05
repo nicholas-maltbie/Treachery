@@ -24,10 +24,10 @@ namespace nickmaltbie.Treachery.Equipment
             serializer.SerializeValue(ref offhandItemId);
         }
 
-        public void Synchronize(EquipmentLoadout loadout)
+        public NetworkEquipmentLoadout(int mainItemId = IEquipment.EmptyEquipmentId, int offhandItemId = IEquipment.EmptyEquipmentId)
         {
-            this.mainItemId = loadout.MainItem?.EquipmentId ?? IEquipment.EmptyEquipmentId;
-            this.offhandItemId = loadout.OffhandItem?.EquipmentId ?? IEquipment.EmptyEquipmentId;
+            this.mainItemId = mainItemId;
+            this.offhandItemId = offhandItemId;
         }
     }
 
@@ -140,10 +140,11 @@ namespace nickmaltbie.Treachery.Equipment
         {
             if (Offhand != null && OffhandItem.EquipmentId != equipmentId)
             {
-                GameObject.Destroy(Main);
+                GameObject.Destroy(Offhand);
+                Offhand = null;
             }
 
-            if (Offhand == null && equipmentId != IEquipment.EmptyEquipmentId)
+            if (Offhand == null && equipmentId != IEquipment.EmptyEquipmentId && library.HasEquipment(equipmentId))
             {
                 GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
                 Offhand = GameObject.Instantiate(prefab, parent);
@@ -156,9 +157,10 @@ namespace nickmaltbie.Treachery.Equipment
             if (Main != null && MainItem.EquipmentId != equipmentId)
             {
                 GameObject.Destroy(Main);
+                Main = null;
             }
 
-            if (Main == null && equipmentId != IEquipment.EmptyEquipmentId)
+            if (Main == null && equipmentId != IEquipment.EmptyEquipmentId && library.HasEquipment(equipmentId))
             {
                 GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
                 Main = GameObject.Instantiate(prefab, parent);
@@ -264,7 +266,7 @@ namespace nickmaltbie.Treachery.Equipment
         private void IncrementLoadout() => ChangeSelectedLoadout((CurrentSelected + 1) % MaxLoadouts);
         private void DecrementLoadout() => ChangeSelectedLoadout((CurrentSelected - 1 + MaxLoadouts) % MaxLoadouts);
 
-        public EquipmentLoadout CurrentLoadout => loadouts[currentLoadout.Value];
+        public EquipmentLoadout CurrentLoadout => loadouts[CurrentSelected];
         public EquipmentLoadout GetLoadout(int idx) => loadouts[idx];
 
         public int CurrentSelected => currentLoadout.Value;
@@ -302,7 +304,7 @@ namespace nickmaltbie.Treachery.Equipment
         {
             for (int i = 0; i < MaxLoadouts; i++)
             {
-                networkLoadouts[i].Synchronize(loadouts[i]);
+                networkLoadouts[i] = loadouts[i];
             }
         }
 
