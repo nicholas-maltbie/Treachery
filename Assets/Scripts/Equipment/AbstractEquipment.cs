@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
@@ -6,14 +8,16 @@ namespace nickmaltbie.Treachery.Equipment
 {
     public abstract class AbstractEquipment : MonoBehaviour, IEquipment
     {
+        private static System.Random random = new System.Random();
+
         [SerializeField]
-        public int equipmentId;
+        public int equipmentId = IEquipment.EmptyEquipmentId;
 
         [SerializeField]
         public GameObject itemPrefab;
 
         [SerializeField]
-        public Texture2D itemIcon;
+        public Sprite itemIcon;
 
         [SerializeField]
         public ItemType itemType = ItemType.Main;
@@ -27,7 +31,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public GameObject HeldPrefab => itemPrefab;
 
-        public Texture2D ItemIcon => itemIcon;
+        public Sprite ItemIcon => itemIcon;
 
         public ItemType ItemType => itemType;
 
@@ -47,5 +51,13 @@ namespace nickmaltbie.Treachery.Equipment
         public abstract void UpdateOnOut();
 
         public abstract void Use(IActionActor<PlayerAction> actor);
+
+        public void OnValidate()
+        {
+            if (equipmentId == IEquipment.EmptyEquipmentId)
+            {
+                equipmentId = random.Next();
+            }
+        }
     }
 }

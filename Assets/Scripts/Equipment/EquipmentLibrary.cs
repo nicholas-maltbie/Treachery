@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
 {
+    [CreateAssetMenu(fileName = "EquipmentLibrary", menuName = "ScriptableObjects/EquipmentLibrary", order = 1)]
     public class EquipmentLibrary : ScriptableObject
     {
         [SerializeField]
-        public IEquipment[] equipment;
+        private GameObject[] equipment;
 
         private Dictionary<int, IEquipment> _equipmentLookup;
 
@@ -18,6 +19,12 @@ namespace nickmaltbie.Treachery.Equipment
             Initialize();
         }
 
+        public IEnumerable<IEquipment> EnumerateEquipment()
+        {
+            Initialize();
+            return _equipmentLookup.Values;
+        }
+
         public void Initialize()
         {
             if (_equipmentLookup != null)
@@ -25,7 +32,9 @@ namespace nickmaltbie.Treachery.Equipment
                 return;
             }
 
-            _equipmentLookup = equipment.ToDictionary(equipment => equipment.EquipmentId);
+            _equipmentLookup = equipment
+                .Select(equip => equip.GetComponent<IEquipment>())
+                .ToDictionary(equipment => equipment.EquipmentId);
         }
 
         public bool HasEquipment(int id)

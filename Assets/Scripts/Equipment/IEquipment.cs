@@ -24,7 +24,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         int EquipmentId { get; }
         GameObject HeldPrefab { get; }
-        Texture2D ItemIcon { get; }
+        Sprite ItemIcon { get; }
         ItemType ItemType { get; }
         EquipmentWeight Weight { get; }
         bool CanHold { get; }
