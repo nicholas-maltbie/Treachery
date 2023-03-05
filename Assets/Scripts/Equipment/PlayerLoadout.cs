@@ -3,6 +3,8 @@ using System;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace nickmaltbie.Treachery.Equipment
 {
@@ -113,7 +115,6 @@ namespace nickmaltbie.Treachery.Equipment
 
         public void UpdateItemPositions(EquipmentManager manager)
         {
-            UnityEngine.Debug.Log($"Loadout attempting to update item positions with manager. Main:{Main} Offhand:{Offhand}");
             if (Main != null)
             {
                 Main.transform.SetParent(manager.GetMainHand);
@@ -177,12 +178,35 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public EquipmentManager manager;
 
+        public InputActionReference incrementLoadoutSelection;
+        public InputActionReference decrementLoadoutSelection;
+        public InputActionReference loadoutScroll;
+
         private EquipmentLoadout[] loadouts;
         private NetworkVariable<int> currentLoadout = new NetworkVariable<int>(
             value: 0,
             readPerm: NetworkVariableReadPermission.Everyone,
             writePerm: NetworkVariableWritePermission.Owner);
         private NetworkList<NetworkEquipmentLoadout> networkLoadouts;
+
+        private KeyControl GetDigitKey(int index)
+        {
+            switch (index)
+            {
+                case 0: return Keyboard.current.digit0Key;
+                case 1: return Keyboard.current.digit1Key;
+                case 2: return Keyboard.current.digit2Key;
+                case 3: return Keyboard.current.digit3Key;
+                case 4: return Keyboard.current.digit4Key;
+                case 5: return Keyboard.current.digit5Key;
+                case 6: return Keyboard.current.digit6Key;
+                case 7: return Keyboard.current.digit7Key;
+                case 8: return Keyboard.current.digit8Key;
+                case 9: return Keyboard.current.digit9Key;
+            }
+
+            return Keyboard.current.digit0Key;
+        }
 
         public void Awake()
         {
@@ -194,13 +218,66 @@ namespace nickmaltbie.Treachery.Equipment
             currentLoadout.OnValueChanged += OnLoadoutSelected;
             networkLoadouts.OnListChanged += OnLoadoutModified;
 
-            this.loadouts[0].SetActive(true);
+            loadouts[0].SetActive(true);
+
+            incrementLoadoutSelection.action.Enable();
+            decrementLoadoutSelection.action.Enable();
+            loadoutScroll.action.Enable();
+
+            for (int i = 0; i < MaxLoadouts; i++)
+            {
+                if (Keyboard.current != null)
+                {
+                    var selectSlot = new InputAction(
+                        name: $"Select Slot {i}",
+                        type: InputActionType.Button,
+                        binding: GetDigitKey(i + 1).path,
+                        interactions: "Press"
+                    );
+
+                    int selected = i;
+                    selectSlot.performed += _ =>
+                    {
+                        ChangeSelectedLoadout(selected);
+                    };
+
+                    selectSlot.Enable();
+                }
+            }
+
+            incrementLoadoutSelection.action.performed += _ => IncrementLoadout();
+            decrementLoadoutSelection.action.performed += _ => DecrementLoadout();
+            loadoutScroll.action.performed += (action) =>
+            {
+                float value = action.ReadValue<float>();
+                if (value > 0)
+                {
+                    IncrementLoadout();
+                }
+                else
+                {
+                    DecrementLoadout();
+                }
+            };
         }
+
+        private void IncrementLoadout() => ChangeSelectedLoadout((CurrentSelected + 1) % MaxLoadouts);
+        private void DecrementLoadout() => ChangeSelectedLoadout((CurrentSelected - 1 + MaxLoadouts) % MaxLoadouts);
 
         public EquipmentLoadout CurrentLoadout => loadouts[currentLoadout.Value];
         public EquipmentLoadout GetLoadout(int idx) => loadouts[idx];
 
         public int CurrentSelected => currentLoadout.Value;
+
+        public void ChangeSelectedLoadout(int selected)
+        {
+            if (!IsOwner)
+            {
+                return;
+            }
+
+            currentLoadout.Value = selected;
+        }
 
         public void RemoveItemFromLoadout(ItemType itemType, int slot)
         {

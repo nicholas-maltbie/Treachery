@@ -551,6 +551,9 @@ MonoBehaviour:
   MaxLoadouts: 3
   library: {fileID: 11400000, guid: 2e7d0282fb2e98d43bd2928f270b842e, type: 2}
   manager: {fileID: 4561035598108080147}
+  incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  decrementLoadoutSelection: {fileID: 4700168074898257696, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  loadoutScroll: {fileID: -5585577661466553000, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0
