@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Item;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player.Action;
 using Unity.Netcode;
@@ -208,6 +209,24 @@ namespace nickmaltbie.Treachery.Equipment
                 DefaultPrimaryAction.Action.SetActive(!CurrentLoadout.HasMain);
                 DefaultSecondaryAction.Action.SetActive(!CurrentLoadout.HasOffhand);
             }
+        }
+
+        [ServerRpc]
+        public void RequestPickupItemServerRpc(NetworkObjectReference pickupItem)
+        {
+            if (pickupItem.TryGet(out NetworkObject networkObject))
+            {
+                if (networkObject.GetComponent<PickupItem>() is PickupItem item)
+                {
+                    item.PickupObjectFromLoadout(this);
+                }
+            }
+        }
+
+        [ClientRpc]
+        public void EquipItemClientRpc(int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
+        {
+            loadouts[loadoutIdx].EquipItem(equipmentId);
         }
 
         public void OnLoadoutSelected(int previousLoadout, int currentLoadout)

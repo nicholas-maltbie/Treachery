@@ -127,8 +127,8 @@ namespace nickmaltbie.Treachery.Equipment
             Main?.SetActive(state);
             Offhand?.SetActive(state);
 
-            MainItem?.ItemAction.SetActive(state);
-            OffhandItem?.ItemAction.SetActive(state);
+            MainItem?.ItemAction?.SetActive(state);
+            OffhandItem?.ItemAction?.SetActive(state);
         }
 
         public void UpdateItemPositions(EquipmentManager manager)
@@ -136,14 +136,14 @@ namespace nickmaltbie.Treachery.Equipment
             if (Main != null)
             {
                 Main.transform.SetParent(manager.GetMainHand);
-                Main.transform.localPosition = Vector3.zero;
+                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
                 Main.transform.localRotation = Quaternion.identity;
             }
 
             if (Offhand != null)
             {
                 Offhand.transform.SetParent(manager.GetOffHand);
-                Offhand.transform.localPosition = Vector3.zero;
+                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
                 Offhand.transform.localRotation = Quaternion.identity;
             }
         }

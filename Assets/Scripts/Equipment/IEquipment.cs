@@ -44,6 +44,7 @@ namespace nickmaltbie.Treachery.Equipment
         Sprite ItemIcon { get; }
         ItemType ItemType { get; }
         EquipmentWeight Weight { get; }
+        string ItemName { get; }
         bool CanHold { get; }
         ActorConditionalAction<PlayerAction> ItemAction { get; }
         void PerformAction();

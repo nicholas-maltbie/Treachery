@@ -64,6 +64,8 @@ namespace nickmaltbie.Treachery.Equipment
 
         protected InputActionReference InputAction => itemActionLibrary.GetActionReference(ItemType);
 
+        public string ItemName => gameObject.name;
+
         public virtual void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
             ItemAction = new ItemAction(InputAction, actor, stamina, this, ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem);
