@@ -404,7 +404,7 @@ MonoBehaviour:
   cooldown: 0.05
   rollDuration: 1
   rollDistance: 5.5
-  staminaCost: 33.3
+  staminaCost: 30
 --- !u!114 &-2950086063906863614
 MonoBehaviour:
   m_ObjectHideFlags: 0

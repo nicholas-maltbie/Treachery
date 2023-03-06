@@ -121,6 +121,6 @@ namespace nickmaltbie.Treachery.Action
 
         protected virtual float StaminaCost => staminaCost;
 
-        public float Cost => StaminaCost;
+        public virtual float Cost => StaminaCost;
     }
 }

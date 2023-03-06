@@ -356,18 +356,7 @@
                 {
                     "name": "",
                     "id": "36f4d221-d55e-4510-80f6-b9bd884daf39",
-                    "path": "<Keyboard>/e",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dodge",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "167801ac-9385-4313-8d56-3a9d33536513",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Keyboard>/r",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
@@ -379,7 +368,7 @@
                     "name": "",
                     "id": "8dd2f5d7-d82e-4bd2-8c30-258fea6b1ed4",
                     "path": "<Keyboard>/r",
-                    "interactions": "Press",
+                    "interactions": "MultiTap",
                     "processors": "",
                     "groups": "",
                     "action": "Roll",

@@ -175,6 +175,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(BlockStart), typeof(BlockIdleState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
+        [BlockAction(PlayerAction.Roll)]
         public class IdleState : State { }
 
         [Animation(JumpAnimState, 0.1f, true)]
@@ -249,17 +250,17 @@ namespace nickmaltbie.Treachery.Player
         [BlockAllAction]
         public class LongFallingState : State { }
 
-        [Animation(DodgeAnimState, 0.1f, true, 0.5f)]
+        [Animation(DodgeAnimState, 0.1f, true)]
         [TransitionFromAnyState(typeof(DodgeStart))]
         [Transition(typeof(DodgeStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(DodgeMovement))]
         [OnEnterState(nameof(SetAnimationInMoveDirection))]
         [LockMovementAnimation]
         [DamagePassthrough]
-        [BlockAllAction]
+        [AllowAction(PlayerAction.Roll)]
         public class DodgeState : State { }
 
-        [Animation(RollAnimState, 0.1f, true, 0.5f)]
+        [Animation(RollAnimState, 0.1f, true)]
         [TransitionFromAnyState(typeof(RollStart))]
         [Transition(typeof(RollStop), typeof(IdleState))]
         [OnFixedUpdate(nameof(RollMovement))]
@@ -467,6 +468,8 @@ namespace nickmaltbie.Treachery.Player
 
         public void RotateTowardsMoveDirection()
         {
+            DodgeActionBehaviour dodge = GetComponent<DodgeActionBehaviour>();
+            dodge.Action.Interrupt();
             RollActionBehaviour roll = GetComponent<RollActionBehaviour>();
             GetComponent<RotateTowardsMovement>().SetOverrideTargetHeading(roll.RollRotation, 360 * 3);
         }
