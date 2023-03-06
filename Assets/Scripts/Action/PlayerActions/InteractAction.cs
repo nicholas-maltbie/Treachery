@@ -39,6 +39,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         private IInteractive previousInteractive;
         private GameObject player;
 
+        public IInteractive Focus => previousInteractive;
+
         public InteractAction(
             InputActionReference actionReference,
             IActionActor<PlayerAction> actor,

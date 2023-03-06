@@ -19,6 +19,7 @@
 
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive;
 using nickmaltbie.Treachery.Interactive.Health;
 using Unity.Netcode;
 using UnityEngine;
@@ -40,6 +41,8 @@ namespace nickmaltbie.Treachery.Player.Action
 
         public float interactRange = 2.0f;
         public float interactRadius = 0.1f;
+
+        public IInteractive Focus => (Action as InteractAction).Focus;
 
         public override void OnValidate()
         {

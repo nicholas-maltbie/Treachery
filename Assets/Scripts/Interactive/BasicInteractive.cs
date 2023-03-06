@@ -15,12 +15,12 @@ namespace nickmaltbie.Treachery.Interactive
 
         public void OnInteract(GameObject source)
         {
-            Debug.Log($"{source} interacted with object {ObjectName}");
+            // Debug.Log($"{source} interacted with object {ObjectName}");
         }
 
         public void SetFocusState(GameObject source, bool state)
         {
-            Debug.Log($"{ObjectName} set focus state:{state} from source:{source}");
+            // Debug.Log($"{ObjectName} set focus state:{state} from source:{source}");
         }
     }
 }
