@@ -33,7 +33,8 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
     {
         public float interactRange = 2.0f;
         public float interactRadius = 0.1f;
-        private Transform viewBase;
+        private Transform playerPos;
+        private Vector3 viewOffset;
         private ICameraControls viewHeading;
         private IInteractive previousInteractive;
         private GameObject player;
@@ -43,15 +44,17 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             IActionActor<PlayerAction> actor,
             IStaminaMeter stamina,
             GameObject player,
-            Transform viewBase,
+            Transform playerPos,
+            Vector3 viewOffset,
             ICameraControls viewHeading,
-            float cooldown = 0.1f,
+            float cooldown = 0.0f,
             float staminaCost = 0.0f)
-            : base(actionReference, actor, stamina, PlayerAction.Interact, cooldown, staminaCost, true)
+            : base(actionReference, actor, stamina, PlayerAction.Interact, cooldown, staminaCost, false)
         {
             this.player = player;
             this.viewHeading = viewHeading;
-            this.viewBase = viewBase;
+            this.playerPos = playerPos;
+            this.viewOffset = viewOffset;
         }
 
         public Quaternion PlayerHeading()
@@ -67,7 +70,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         public override void Update()
         {
             Physics.SphereCast(
-                viewBase.position,
+                playerPos.position + viewOffset,
                 interactRadius,
                 PlayerHeading() * Vector3.forward,
                 out RaycastHit hit,

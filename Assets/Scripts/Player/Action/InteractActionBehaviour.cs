@@ -34,8 +34,18 @@ namespace nickmaltbie.Treachery.Player.Action
         [SerializeField]
         public Transform viewSource;
 
+        [HideInInspector]
+        [SerializeField]
+        private Vector3 viewOffset;
+
         public float interactRange = 2.0f;
         public float interactRadius = 0.1f;
+
+        public override void OnValidate()
+        {
+            base.OnValidate();
+            viewOffset = viewSource.localPosition;
+        }
 
         public override InteractAction SetupAction()
         {
@@ -44,7 +54,8 @@ namespace nickmaltbie.Treachery.Player.Action
                 Actor,
                 Stamina,
                 gameObject,
-                viewSource,
+                transform,
+                viewOffset,
                 GetComponent<ICameraControls>())
             {
                 interactRange = interactRange,
