@@ -47,8 +47,6 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         {
             get
             {
-                UnityEngine.Debug.Log($"RollActionCost: dodgeAction.IsPerforming:{dodgeAction.IsPerforming}, dodgeAction.Cost - base.Cost:{dodgeAction.Cost - base.Cost}, base.Cost:{base.Cost}");
-
                 if (dodgeAction.IsPerforming)
                 {
                     return Mathf.Max(base.Cost - dodgeAction.Cost, 0);

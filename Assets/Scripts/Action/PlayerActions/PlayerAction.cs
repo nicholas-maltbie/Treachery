@@ -26,6 +26,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         Block,
         Roll,
         Sprint,
+        Interact,
         PrimaryItem,
         OffhandItem,
     }

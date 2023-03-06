@@ -50,6 +50,11 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
             damageable ??= GetComponentInParent<Damageable>();
         }
 
+        public void Update()
+        {
+            Collider.enabled = !Disabled;
+        }
+
         public void Start()
         {
             HitboxId = damageable?.AddHitbox(this, gameObject.name) ?? string.Empty;

@@ -54,6 +54,7 @@ GameObject:
   - component: {fileID: 5297545829931420426}
   - component: {fileID: -3116674992473226055}
   - component: {fileID: 420403279906431496}
+  - component: {fileID: 8195024873905832593}
   - component: {fileID: 386502574218454059}
   - component: {fileID: -2950086063906863614}
   - component: {fileID: 2366107581240859178}
@@ -388,6 +389,23 @@ MonoBehaviour:
   cooldown: 0.05
   jumpVelocity: 6.5
   staminaCost: 10
+--- !u!114 &8195024873905832593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 982c321530991f44ba9d26347c2faed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 715019269035726934, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.1
+  viewSource: {fileID: 1928389238472999755}
+  interactRange: 2
+  interactRadius: 0.1
 --- !u!114 &386502574218454059
 MonoBehaviour:
   m_ObjectHideFlags: 0
