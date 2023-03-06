@@ -143,7 +143,7 @@ namespace nickmaltbie.Treachery.Equipment
             if (Offhand != null)
             {
                 Offhand.transform.SetParent(manager.GetOffHand);
-                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
+                Offhand.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
                 Offhand.transform.localRotation = Quaternion.identity;
             }
         }
