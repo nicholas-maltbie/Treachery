@@ -44,6 +44,7 @@ namespace nickmaltbie.Treachery.Equipment
         public void Start()
         {
             equipmentId.OnValueChanged += UpdateEquipment;
+            UpdateEquipment(0, equipmentId.Value);
         }
 
         public void UpdateEquipment(int previous, int current)
@@ -60,8 +61,8 @@ namespace nickmaltbie.Treachery.Equipment
                 spawned = GameObject.Instantiate(equip.HeldPrefab, transform);
                 spawned.transform.localPosition = Vector3.zero;
                 spawned.transform.localRotation = Quaternion.identity;
-                equip.WorldShape.AttachCollider(gameObject);
                 GetComponent<PickupItem>().Equipment = equip;
+                equip.WorldShape.AttachCollider(gameObject);
             }
         }
 
