@@ -27,6 +27,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace nickmaltbie.Treachery.Equipment
 {
@@ -44,9 +45,13 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public EquipmentManager manager;
 
+        public InputActionReference dropItemInputAction;
         public InputActionReference incrementLoadoutSelection;
         public InputActionReference decrementLoadoutSelection;
         public InputActionReference loadoutScroll;
+
+        public Vector3 DropPosition => transform.position;
+        public Vector3 DropVelocity => Vector3.zero;
 
         private EquipmentLoadout[] loadouts;
         private NetworkVariable<int> currentLoadout = new NetworkVariable<int>(
@@ -54,6 +59,7 @@ namespace nickmaltbie.Treachery.Equipment
             readPerm: NetworkVariableReadPermission.Everyone,
             writePerm: NetworkVariableWritePermission.Owner);
         private NetworkList<NetworkEquipmentLoadout> networkLoadouts;
+        private (InputAction, Action<CallbackContext>)[] numberOptions;
 
         private KeyControl GetDigitKey(int index)
         {
@@ -80,24 +86,66 @@ namespace nickmaltbie.Treachery.Equipment
                 Enumerable.Range(0, MaxLoadouts).Select(_ => new NetworkEquipmentLoadout()),
                 readPerm: NetworkVariableReadPermission.Everyone,
                 writePerm: NetworkVariableWritePermission.Owner);
-            currentLoadout.OnValueChanged += OnLoadoutSelected;
-            networkLoadouts.OnListChanged += OnLoadoutModified;
-        }
 
-        public void Start()
-        {
             loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout(
                 library,
                 transform,
                 GetComponent<IActionActor<PlayerAction>>(),
                 GetComponent<IStaminaMeter>(),
                 IsOwner)).ToArray();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            currentLoadout.OnValueChanged -= OnLoadoutSelected;
+            networkLoadouts.OnListChanged -= OnLoadoutModified;
+            incrementLoadoutSelection.action.performed -= IncrementLoadout;
+            decrementLoadoutSelection.action.performed -= DecrementLoadout;
+            dropItemInputAction.action.performed -= DropCurrentItem;
+            loadoutScroll.action.performed -= ScrollLoadout;
+            foreach (var tuple in numberOptions)
+            {
+                tuple.Item1.performed -= tuple.Item2;
+            }
+        }
+
+        public void DropCurrentItem(CallbackContext context)
+        {
+            if (CurrentLoadout.HasOffhand)
+            {
+                DropItem(CurrentSelected, ItemType.Offhand);
+            }
+            else if (CurrentLoadout.HasMain)
+            {
+                DropItem(CurrentSelected, ItemType.Main);
+            }
+        }
+
+        public void DropItem(int idx, ItemType itemType)
+        {
+            IEquipment currentEquipment = loadouts[idx].GetItem(itemType);
+            loadouts[idx].RemoveItem(itemType);
+            DropItemServerRpc(currentEquipment.EquipmentId);
+        }
+
+        [ServerRpc]
+        public void DropItemServerRpc(int equipmentId)
+        {
+            IEquipment equipment = library.GetEquipment(equipmentId);
+            equipment.OnRemoveFromInventory(this);
+        }
+
+        public void Start()
+        {
             loadouts[CurrentSelected].SetActive(true);
 
             incrementLoadoutSelection.action.Enable();
             decrementLoadoutSelection.action.Enable();
+            dropItemInputAction.action.Enable();
             loadoutScroll.action.Enable();
 
+            numberOptions = new (InputAction, Action<CallbackContext>)[MaxLoadouts];
             for (int i = 0; i < MaxLoadouts; i++)
             {
                 if (Keyboard.current != null)
@@ -110,29 +158,24 @@ namespace nickmaltbie.Treachery.Equipment
                     );
 
                     int selected = i;
-                    selectSlot.performed += _ =>
-                    {
-                        ChangeSelectedLoadout(selected);
-                    };
+                    numberOptions[i] = (
+                        selectSlot,
+                        _ =>
+                        {
+                            ChangeSelectedLoadout(selected);
+                        });
+                    selectSlot.performed += numberOptions[i].Item2;
 
                     selectSlot.Enable();
                 }
             }
 
-            incrementLoadoutSelection.action.performed += _ => IncrementLoadout();
-            decrementLoadoutSelection.action.performed += _ => DecrementLoadout();
-            loadoutScroll.action.performed += (action) =>
-            {
-                float value = action.ReadValue<float>();
-                if (value > 0)
-                {
-                    IncrementLoadout();
-                }
-                else
-                {
-                    DecrementLoadout();
-                }
-            };
+            incrementLoadoutSelection.action.performed += IncrementLoadout;
+            decrementLoadoutSelection.action.performed += DecrementLoadout;
+            dropItemInputAction.action.performed += DropCurrentItem;
+            loadoutScroll.action.performed += ScrollLoadout;
+            currentLoadout.OnValueChanged += OnLoadoutSelected;
+            networkLoadouts.OnListChanged += OnLoadoutModified;
 
             for (int i = 0; i < loadouts.Length; i++)
             {
@@ -142,6 +185,21 @@ namespace nickmaltbie.Treachery.Equipment
             }
         }
 
+        private void ScrollLoadout(CallbackContext context)
+        {
+            float value = context.ReadValue<float>();
+            if (value > 0)
+            {
+                IncrementLoadout();
+            }
+            else
+            {
+                DecrementLoadout();
+            }
+        }
+
+        private void IncrementLoadout(CallbackContext context) => IncrementLoadout();
+        private void DecrementLoadout(CallbackContext context) => IncrementLoadout();
         private void IncrementLoadout() => ChangeSelectedLoadout((CurrentSelected + 1) % MaxLoadouts);
         private void DecrementLoadout() => ChangeSelectedLoadout((CurrentSelected - 1 + MaxLoadouts) % MaxLoadouts);
 

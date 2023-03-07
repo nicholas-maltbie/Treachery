@@ -21,6 +21,7 @@ using nickmaltbie.OpenKCC.Character.Action;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace nickmaltbie.Treachery.Action
 {
@@ -99,11 +100,22 @@ namespace nickmaltbie.Treachery.Action
 
         protected abstract void Perform();
 
+        public void Cleanup()
+        {
+            InputAction.performed -= PerformAction;
+            enabled = false;
+        }
+
+        private void PerformAction(CallbackContext context)
+        {
+            AttemptIfPossible();
+        }
+
         public virtual void Setup()
         {
             InputAction?.Enable();
             enabled = true;
-            InputAction.performed += _ => AttemptIfPossible();
+            InputAction.performed += PerformAction;
         }
 
         public virtual void SetActive(bool state)

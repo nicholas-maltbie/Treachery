@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace nickmaltbie.Treachery.Interactive.Item
 {
-    public class PickupItem : NetworkBehaviour, IInteractive
+    public class PickupItem : MonoBehaviour, IInteractive
     {
-        [SerializeField]
-        public GameObject _equipment;
+        public bool inScenePlacedItem = true;
 
-        public IEquipment Equipment => _equipment.GetComponent<IEquipment>();
+        public IEquipment Equipment { get; set; }
 
         public Sprite InteractiveIcon => Equipment.ItemIcon;
 
@@ -18,15 +17,6 @@ namespace nickmaltbie.Treachery.Interactive.Item
         public bool grabbed = false;
 
         public string InteractionText => $"Pickup item {Equipment.ItemName}";
-
-        public void OnValidate()
-        {
-            if (_equipment != null && _equipment.GetComponent<IEquipment>() == null)
-            {
-                _equipment = null;
-                Debug.Log("Equipment must have an IEquipment component attached");
-            }
-        }
 
         public bool CanInteract(GameObject source)
         {
@@ -79,7 +69,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
 
                 // Just send the grab event to the owner.
                 loadout.EquipItemClientRpc(Equipment.EquipmentId, loadout.CurrentSelected, clientRpcParams);
-                GetComponent<NetworkObject>().Despawn();
+                GetComponent<NetworkObject>().Despawn(!inScenePlacedItem);
             }
         }
 

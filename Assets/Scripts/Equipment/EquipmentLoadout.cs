@@ -54,6 +54,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public bool HasMain => Main != null;
         public bool HasOffhand => Offhand != null;
+        public bool HasOffhandAction => OffhandItem?.ItemAction != null;
         public bool CahEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
         private EquipmentLibrary library;
@@ -71,21 +72,34 @@ namespace nickmaltbie.Treachery.Equipment
             this.isOwner = isOwner;
         }
 
-        public bool RemoveItem(ItemType itemType)
+        public IEquipment GetItem(ItemType itemType)
         {
             switch (itemType)
             {
                 case ItemType.Main:
-                    bool hasMain = Main != null;
-                    UpdateMainItem(IEquipment.EmptyEquipmentId);
-                    return hasMain;
+                    return MainItem;
                 case ItemType.Offhand:
-                    bool hasOffhand = Offhand != null;
-                    UpdateOffhandItem(IEquipment.EmptyEquipmentId);
-                    return hasOffhand;
+                    return OffhandItem;
             }
 
-            return false;
+            return null;
+        }
+
+        public IEquipment RemoveItem(ItemType itemType)
+        {
+            switch (itemType)
+            {
+                case ItemType.Main:
+                    IEquipment main = MainItem;
+                    UpdateMainItem(IEquipment.EmptyEquipmentId);
+                    return main;
+                case ItemType.Offhand:
+                    IEquipment offhand = OffhandItem;
+                    UpdateOffhandItem(IEquipment.EmptyEquipmentId);
+                    return offhand;
+            }
+
+            return null;
         }
 
         public bool EquipItem(int equipmentId)
@@ -160,6 +174,7 @@ namespace nickmaltbie.Treachery.Equipment
             {
                 GameObject.Destroy(Offhand);
                 Offhand = null;
+                MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
             }
 
             if (Offhand == null && equipmentId != IEquipment.EmptyEquipmentId && library.HasEquipment(equipmentId))
@@ -172,6 +187,8 @@ namespace nickmaltbie.Treachery.Equipment
                 {
                     OffhandItem?.SetupItemAction(actor, stamina);
                     OffhandItem?.ItemAction?.SetActive(activeState);
+                    OffhandItem?.SecondaryItemAction?.SetActive(false);
+                    MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
                 }
             }
         }
@@ -194,6 +211,7 @@ namespace nickmaltbie.Treachery.Equipment
                 {
                     MainItem?.SetupItemAction(actor, stamina);
                     MainItem?.ItemAction?.SetActive(activeState);
+                    MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
                 }
             }
         }

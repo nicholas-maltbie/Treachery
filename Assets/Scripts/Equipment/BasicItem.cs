@@ -26,7 +26,7 @@ namespace nickmaltbie.Treachery.Equipment
     {
         public override void PerformAction()
         {
-            UnityEngine.Debug.Log($"Performing action for item: {gameObject.name}");
+            UnityEngine.Debug.Log($"Performing action for item: {ItemName}");
         }
     }
 }

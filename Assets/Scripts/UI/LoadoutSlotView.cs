@@ -64,7 +64,7 @@ namespace nickmaltbie.Treachery.UI
                     secondaryItemSlot.sprite = loadout.OffhandItem.ItemIcon;
                 }
 
-                offhandItemId = loadout.MainItemId;
+                offhandItemId = loadout.OffhandItemId;
             }
         }
     }

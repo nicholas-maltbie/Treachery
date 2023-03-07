@@ -18,7 +18,10 @@
 
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
+using nickmaltbie.Treachery.Interactive.Item;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using nickmaltbie.Treachery.Utils;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,6 +49,12 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public ItemActionLibrary itemActionLibrary;
 
+        [SerializeField]
+        public ColliderConfiguration itemShape;
+
+        [SerializeField]
+        public GeneratedWorldItem worldItemPrefab;
+
         public bool InHand { get; private set; }
 
         public int EquipmentId => equipmentId;
@@ -58,13 +67,21 @@ namespace nickmaltbie.Treachery.Equipment
 
         public EquipmentWeight Weight => equipmentWeight;
 
-        public bool CanHold => true;
-
         public ActorConditionalAction<PlayerAction> ItemAction { get; protected set; }
 
         protected InputActionReference InputAction => itemActionLibrary.GetActionReference(ItemType);
 
         public string ItemName => gameObject.name;
+
+        public ActorConditionalAction<PlayerAction> SecondaryItemAction => null;
+
+        public bool DisableDefaultPrimary => ItemType == ItemType.Main;
+
+        public bool DisableDefaultSecondary => ItemType == ItemType.Offhand;
+
+        public bool CanDrop => true;
+
+        public ColliderConfiguration WorldShape => itemShape;
 
         public virtual void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
@@ -80,6 +97,21 @@ namespace nickmaltbie.Treachery.Equipment
             }
         }
 
+        public void OnDestroy()
+        {
+            ItemAction?.Cleanup();
+        }
+
         public abstract void PerformAction();
+
+        public void OnRemoveFromInventory(PlayerLoadout loadout)
+        {
+            GeneratedWorldItem item = GameObject.Instantiate(worldItemPrefab, loadout.DropPosition, Quaternion.identity);
+            item.startupEquipment = equipmentId;
+            NetworkObject netObj = item.GetComponent<NetworkObject>();
+            item.GetComponent<Rigidbody>()?.AddForce(loadout.DropVelocity, ForceMode.VelocityChange);
+            item.GetComponent<PickupItem>().inScenePlacedItem = false;
+            netObj.Spawn();
+        }
     }
 }

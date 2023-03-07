@@ -102,3 +102,11 @@ MonoBehaviour:
   itemType: 0
   equipmentWeight: 0
   itemActionLibrary: {fileID: 11400000, guid: 3f2d60eb1da9ace46ab9fe92f6a3a51e, type: 2}
+  itemShape:
+    type: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0.1, y: 0.1, z: 0.1}
+    radius: 0
+    height: 0
+    capsuleDirection: 0
+  worldItemPrefab: {fileID: 8443388875160575749, guid: ae63e45ee8bea064d926c6a69320f91a, type: 3}

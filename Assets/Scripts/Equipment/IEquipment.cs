@@ -19,6 +19,7 @@
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using nickmaltbie.Treachery.Utils;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
@@ -45,9 +46,14 @@ namespace nickmaltbie.Treachery.Equipment
         ItemType ItemType { get; }
         EquipmentWeight Weight { get; }
         string ItemName { get; }
-        bool CanHold { get; }
+        bool CanDrop { get; }
         ActorConditionalAction<PlayerAction> ItemAction { get; }
+        ActorConditionalAction<PlayerAction> SecondaryItemAction { get; }
+        bool DisableDefaultPrimary { get; }
+        bool DisableDefaultSecondary { get; }
+        ColliderConfiguration WorldShape { get; }
         void PerformAction();
         void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter meter);
+        void OnRemoveFromInventory(PlayerLoadout player);
     }
 }
