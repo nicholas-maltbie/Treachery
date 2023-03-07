@@ -24,8 +24,8 @@ using UnityEngine;
 
 namespace nickmaltbie.Treachery.DebugScripts
 {
-    [CustomEditor(typeof(GeneratedWorldItem))]
-    public class GenerateWorldItemDebug : Editor
+    [CustomEditor(typeof(GeneratedItemSpawner))]
+    public class GeneratedItemSpawnerDebug : Editor
     {
         public int _selected = 0;
         public static IEquipment[] equipment;
@@ -46,7 +46,7 @@ namespace nickmaltbie.Treachery.DebugScripts
 
         public static void VerifyGenerateWorldItem()
         {
-            foreach (GeneratedWorldItem item in GameObject.FindObjectsOfType<GeneratedWorldItem>())
+            foreach (GeneratedItemSpawner item in GameObject.FindObjectsOfType<GeneratedItemSpawner>())
             {
                 item.UpdatePreviewState();
             }
@@ -57,7 +57,7 @@ namespace nickmaltbie.Treachery.DebugScripts
             DrawDefaultInspector();
             serializedObject.Update();
 
-            var item = target as GeneratedWorldItem;
+            var item = target as GeneratedItemSpawner;
 
             EquipmentLibrary library = item.library;
             equipment ??= library.EnumerateEquipment().ToArray();

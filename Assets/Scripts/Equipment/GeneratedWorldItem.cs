@@ -28,8 +28,10 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public EquipmentLibrary library;
 
-        [SerializeField]
-        public int startupEquipment = IEquipment.EmptyEquipmentId;
+        public void SetEquipment(int equipmentId)
+        {
+            this.equipmentId.Value = equipmentId;
+        }
 
         private NetworkVariable<int> equipmentId = new NetworkVariable<int>(
             value: IEquipment.EmptyEquipmentId,
@@ -39,31 +41,9 @@ namespace nickmaltbie.Treachery.Equipment
 
         private GameObject spawned;
 
-        public GameObject CurrentPreviewState { get; set; }
-        public GameObject CurrentPreview { get; set; }
-
         public void Start()
         {
-            UpdateEquipment(0, startupEquipment);
             equipmentId.OnValueChanged += UpdateEquipment;
-        }
-
-        public void OnNetworkServerSpawn()
-        {
-            if (IsServer)
-            {
-                equipmentId.Value = startupEquipment;
-            }
-        }
-
-        public GameObject PreviewPrefab()
-        {
-            if (startupEquipment != IEquipment.EmptyEquipmentId)
-            {
-                return library.GetEquipment(startupEquipment).HeldPrefab;
-            }
-
-            return null;
         }
 
         public void UpdateEquipment(int previous, int current)
@@ -85,35 +65,9 @@ namespace nickmaltbie.Treachery.Equipment
             }
         }
 
-        public void UpdatePreviewState()
+        public override void OnNetworkSpawn()
         {
-            if (Application.isPlaying)
-            {
-                return;
-            }
-
-            GameObject desiredState = PreviewPrefab();
-            if (CurrentPreviewState != desiredState)
-            {
-                if (CurrentPreview != null)
-                {
-                    GameObject.DestroyImmediate(CurrentPreview);
-                }
-
-                if (desiredState != null)
-                {
-                    CurrentPreview = GameObject.Instantiate(desiredState, transform.position, transform.rotation, transform);
-                    CurrentPreview.hideFlags = HideFlags.DontSave;
-                }
-            }
-
-            CurrentPreviewState = desiredState;
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            gameObject.SetActive(false);
-            base.OnNetworkDespawn();
+            base.OnNetworkSpawn();
         }
     }
 }

@@ -107,10 +107,9 @@ namespace nickmaltbie.Treachery.Equipment
         public void OnRemoveFromInventory(PlayerLoadout loadout)
         {
             GeneratedWorldItem item = GameObject.Instantiate(worldItemPrefab, loadout.DropPosition, Quaternion.identity);
-            item.startupEquipment = equipmentId;
             NetworkObject netObj = item.GetComponent<NetworkObject>();
             item.GetComponent<Rigidbody>()?.AddForce(loadout.DropVelocity, ForceMode.VelocityChange);
-            item.GetComponent<PickupItem>().inScenePlacedItem = false;
+            item.SetEquipment(equipmentId);
             netObj.Spawn();
         }
     }

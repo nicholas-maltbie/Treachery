@@ -7,8 +7,6 @@ namespace nickmaltbie.Treachery.Interactive.Item
 {
     public class PickupItem : MonoBehaviour, IInteractive
     {
-        public bool inScenePlacedItem = true;
-
         public IEquipment Equipment { get; set; }
 
         public Sprite InteractiveIcon => Equipment.ItemIcon;
@@ -69,7 +67,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
 
                 // Just send the grab event to the owner.
                 loadout.EquipItemClientRpc(Equipment.EquipmentId, loadout.CurrentSelected, clientRpcParams);
-                GetComponent<NetworkObject>().Despawn(!inScenePlacedItem);
+                GetComponent<NetworkObject>().Despawn();
             }
         }
 
