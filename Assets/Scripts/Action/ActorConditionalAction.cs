@@ -21,6 +21,7 @@ using nickmaltbie.OpenKCC.Character.Action;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace nickmaltbie.Treachery.Action
 {
@@ -41,6 +42,7 @@ namespace nickmaltbie.Treachery.Action
         private float cooldown;
         private bool performWhileHeld;
         private float elapsedSincePerformed = Mathf.Infinity;
+        private bool enabled = false;
 
         public ActorConditionalAction(
             InputActionReference inputAction,
@@ -98,21 +100,39 @@ namespace nickmaltbie.Treachery.Action
 
         protected abstract void Perform();
 
+        public void Cleanup()
+        {
+            InputAction.performed -= PerformAction;
+            enabled = false;
+        }
+
+        private void PerformAction(CallbackContext context)
+        {
+            AttemptIfPossible();
+        }
+
         public virtual void Setup()
         {
             InputAction?.Enable();
-            InputAction.performed += _ => AttemptIfPossible();
+            enabled = true;
+            InputAction.performed += PerformAction;
+        }
+
+        public virtual void SetActive(bool state)
+        {
+            enabled = state;
         }
 
         protected virtual bool Condition()
         {
             return elapsedSincePerformed >= cooldown &&
                 stamina.HasEnoughStamina(this) &&
-                actor.CanPerform(actionType);
+                actor.CanPerform(actionType) &&
+                enabled;
         }
 
         protected virtual float StaminaCost => staminaCost;
 
-        public float Cost => StaminaCost;
+        public virtual float Cost => StaminaCost;
     }
 }

@@ -48,11 +48,13 @@ GameObject:
   - component: {fileID: 3057974211939587652}
   - component: {fileID: 1755217166684006379}
   - component: {fileID: -2618219780861503884}
+  - component: {fileID: 856254383511053882}
   - component: {fileID: 937339341664039498}
   - component: {fileID: -7457895822324968746}
   - component: {fileID: 5297545829931420426}
   - component: {fileID: -3116674992473226055}
   - component: {fileID: 420403279906431496}
+  - component: {fileID: 8195024873905832593}
   - component: {fileID: 386502574218454059}
   - component: {fileID: -2950086063906863614}
   - component: {fileID: 2366107581240859178}
@@ -62,7 +64,7 @@ GameObject:
   - component: {fileID: 7848041172871861759}
   - component: {fileID: 7590240513597693028}
   - component: {fileID: 8659606099551949071}
-  - component: {fileID: 856254383511053882}
+  - component: {fileID: 2241755074560627964}
   m_Layer: 7
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -290,6 +292,21 @@ MonoBehaviour:
     m_InternalValue: 100
   currentHealth:
     m_InternalValue: 100
+--- !u!114 &856254383511053882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc110cb092f75342b00f8edc52874c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staminaRestoreRate: 20
+  cooldownSmoothTime: 5
+  cooldownBeforeRestore: 1
 --- !u!114 &937339341664039498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,6 +389,24 @@ MonoBehaviour:
   cooldown: 0.05
   jumpVelocity: 6.5
   staminaCost: 10
+--- !u!114 &8195024873905832593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 982c321530991f44ba9d26347c2faed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputActionReference: {fileID: 715019269035726934, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  cooldown: 0.1
+  viewSource: {fileID: 1928389238472999755}
+  viewOffset: {x: 0, y: 1.7, z: 0}
+  interactRange: 2
+  interactRadius: 0.1
 --- !u!114 &386502574218454059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,7 +423,7 @@ MonoBehaviour:
   cooldown: 0.05
   rollDuration: 1
   rollDistance: 5.5
-  staminaCost: 33.3
+  staminaCost: 30
 --- !u!114 &-2950086063906863614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -520,7 +555,7 @@ MonoBehaviour:
     _json: '{"nest":{"source":"Macro","macro":0,"embed":null}}'
     _objectReferences:
     - {fileID: 11400000, guid: 7017f43e1d2521e4daaa73d6c9461fab, type: 2}
---- !u!114 &856254383511053882
+--- !u!114 &2241755074560627964
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -529,12 +564,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1928389238801210305}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dc110cb092f75342b00f8edc52874c6, type: 3}
+  m_Script: {fileID: 11500000, guid: 317b11fbc2aa79a45a40e9c6b855557e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staminaRestoreRate: 20
-  cooldownSmoothTime: 5
-  cooldownBeforeRestore: 1
+  MaxLoadouts: 3
+  library: {fileID: 11400000, guid: 2e7d0282fb2e98d43bd2928f270b842e, type: 2}
+  manager: {fileID: 4561035598108080147}
+  dropItemInputAction: {fileID: -8197223153440005221, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  decrementLoadoutSelection: {fileID: 4700168074898257696, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  loadoutScroll: {fileID: -5585577661466553000, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
 --- !u!1001 &1651910495456193390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -961,6 +1000,19 @@ MonoBehaviour:
   elbowSpacing: 0.25
   elbowVerticalOffset: 0.6
   transitionTime: 0.2
+--- !u!114 &4561035598108080147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735611322576967626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd59f5057be7fcb40a115195f7c94727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dominantHand: 0
 --- !u!95 &5025415980018636554 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 6003613737157852260, guid: f6d6faa006fc12b4b8b1925b4f33944a, type: 3}

@@ -28,6 +28,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         public static int HitboxLayer => LayerMask.NameToLayer("Hitbox");
         public static int PlayerLayer => LayerMask.NameToLayer("Player");
         public static int HitLayerMaskComputation => HitboxLayerMask | (~PlayerLayerMask);
+        public static int HitboxAndPlayerLayerMask => HitboxLayerMask | PlayerLayerMask;
         public static int HitboxLayerMask => 1 << HitboxLayer;
         public static int PlayerLayerMask => 1 << PlayerLayer;
 

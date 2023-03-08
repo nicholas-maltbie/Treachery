@@ -56,6 +56,12 @@ namespace nickmaltbie.Treachery.Player.Action
             ValidateAction();
         }
 
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Action.Cleanup();
+        }
+
         public void ValidateAction()
         {
             if (Action != null)

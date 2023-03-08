@@ -32,7 +32,7 @@ namespace nickmaltbie.Treachery.Player.Action
     [RequireComponent(typeof(KCCMovementEngine))]
     [RequireComponent(typeof(ICameraControls))]
     [RequireComponent(typeof(IMovementActor))]
-    public class RollActionBehaviour : AbstractActionBehaviour<FixedMovementAction>
+    public class RollActionBehaviour : AbstractActionBehaviour<RollMovementAction>
     {
         [SerializeField]
         private float rollDuration = 1.0f;
@@ -55,14 +55,14 @@ namespace nickmaltbie.Treachery.Player.Action
         public Vector3 RollDirection { get; private set; }
         public float RollRotation { get; private set; }
 
-        public override FixedMovementAction SetupAction()
+        public override RollMovementAction SetupAction()
         {
-            var action = new FixedMovementAction(
+            var action = new RollMovementAction(
                 inputActionReference,
                 Actor,
                 Stamina,
                 MovementEngine,
-                PlayerAction.Roll,
+                GetComponent<DodgeActionBehaviour>().Action,
                 rollDuration,
                 cooldown,
                 staminaCost)
@@ -98,7 +98,7 @@ namespace nickmaltbie.Treachery.Player.Action
             Actor.RaiseEvent(RollStop.Instance);
         }
 
-        public override void CleanupAction(FixedMovementAction action)
+        public override void CleanupAction(RollMovementAction action)
         {
             action.OnPerform -= OnRoll;
             action.OnComplete -= OnComplete;

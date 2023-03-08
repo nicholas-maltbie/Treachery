@@ -25,7 +25,7 @@
                 },
                 {
                     "name": "Interact",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "0ed934b6-561e-48cb-a120-77501fb43610",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -33,9 +33,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Fire",
+                    "name": "Primary",
                     "type": "Button",
                     "id": "e1d5dee9-5e26-4579-9d27-657776fa136c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Secondary",
+                    "type": "Button",
+                    "id": "01a25cdf-5d98-4554-adc9-3157e14407e5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -96,9 +105,36 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Block",
+                    "name": "NextLoadout",
                     "type": "Button",
-                    "id": "01a25cdf-5d98-4554-adc9-3157e14407e5",
+                    "id": "19006367-e096-48ac-9adf-11312876dd01",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PreviousLoadout",
+                    "type": "Button",
+                    "id": "6f73c2d2-9e01-4098-a4df-eedef2a0f75e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ScrollLoadout",
+                    "type": "Value",
+                    "id": "a87e35f5-a87e-4501-9f23-2c70b0fe475c",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DropItem",
+                    "type": "Button",
+                    "id": "1ce28bd7-c58c-45f0-ae8c-a478fc611eaa",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -231,7 +267,7 @@
                     "name": "",
                     "id": "86271871-d551-4590-abd0-57cb348c0fbb",
                     "path": "<Keyboard>/e",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
@@ -245,7 +281,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Fire",
+                    "action": "Primary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -295,17 +331,6 @@
                 },
                 {
                     "name": "",
-                    "id": "65be4679-cf19-42f2-ba82-87a224159c07",
-                    "path": "<Mouse>/scroll",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Zoom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "79281fae-79f8-483c-adff-07fd9910180b",
                     "path": "<Mouse>/leftButton",
                     "interactions": "Press",
@@ -329,18 +354,7 @@
                 {
                     "name": "",
                     "id": "36f4d221-d55e-4510-80f6-b9bd884daf39",
-                    "path": "<Keyboard>/e",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dodge",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "167801ac-9385-4313-8d56-3a9d33536513",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Keyboard>/r",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
@@ -352,7 +366,7 @@
                     "name": "",
                     "id": "8dd2f5d7-d82e-4bd2-8c30-258fea6b1ed4",
                     "path": "<Keyboard>/r",
-                    "interactions": "Press",
+                    "interactions": "MultiTap",
                     "processors": "",
                     "groups": "",
                     "action": "Roll",
@@ -361,12 +375,133 @@
                 },
                 {
                     "name": "",
+                    "id": "00b18b61-6601-4180-96cb-64ee7d5855c4",
+                    "path": "<Mouse>/forwardButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NextLoadout",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0a12cbe3-c053-42ef-804e-900a7831f7b3",
+                    "path": "<Mouse>/backButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PreviousLoadout",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Mouse Whell",
+                    "id": "90d2f522-bcc5-43cc-97d7-5321c4443203",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "",
+                    "action": "ScrollLoadout",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "c992a3d9-879b-4092-ae14-21edeb7bbf1d",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollLoadout",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "2960cf09-3ff6-4b12-8db5-1636d23e9998",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollLoadout",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
                     "id": "e41b5a7e-0396-4263-bb63-e25c2b1d61cb",
                     "path": "<Mouse>/rightButton",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Block",
+                    "action": "Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Manual Zoom",
+                    "id": "601304a6-8599-4d68-b899-51be45aa62d2",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "75bed328-50c1-47b5-b122-1aa453408555",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "04f30341-5e2c-4b44-9e28-b15293944c34",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "f30cf99c-175d-4183-a10f-12c5250e5c54",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "b7a147f1-3ad5-48bb-a1c4-462e4990002c",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f5710432-d86f-4bbf-a2c7-f3468ab80b4d",
+                    "path": "<Keyboard>/q",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 1108537858}
   - component: {fileID: 1108537857}
   m_Layer: 5
-  m_Name: Segmented UI Bar
+  m_Name: SegmentedUIBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

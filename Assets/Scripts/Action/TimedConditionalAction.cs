@@ -75,13 +75,19 @@ namespace nickmaltbie.Treachery.Action
             }
         }
 
-        public bool Interrupt()
+        public bool Interrupt(bool restoreStamina = false)
         {
             if (performing)
             {
                 performing = false;
                 ResetCooldown();
                 OnComplete?.Invoke(this, true);
+
+                if (restoreStamina)
+                {
+                    stamina.RestoreStamina(Cost);
+                }
+
                 return true;
             }
 

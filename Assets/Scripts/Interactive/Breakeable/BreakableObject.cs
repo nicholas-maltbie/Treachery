@@ -191,7 +191,7 @@ namespace nickmaltbie.Treachery.Interactive.Breakeable
                 if (desiredState != null)
                 {
                     CurrentPreview = GameObject.Instantiate(desiredState, transform.position, transform.rotation, transform);
-                    CurrentPreview.hideFlags = HideFlags.HideAndDontSave;
+                    CurrentPreview.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;
                 }
             }
 
