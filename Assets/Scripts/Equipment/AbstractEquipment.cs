@@ -18,7 +18,6 @@
 
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
-using nickmaltbie.Treachery.Interactive.Item;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Utils;
 using Unity.Netcode;

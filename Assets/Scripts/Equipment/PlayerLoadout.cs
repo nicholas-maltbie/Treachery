@@ -100,7 +100,7 @@ namespace nickmaltbie.Treachery.Equipment
             decrementLoadoutSelection.action.performed -= DecrementLoadout;
             dropItemInputAction.action.performed -= DropCurrentItem;
             loadoutScroll.action.performed -= ScrollLoadout;
-            foreach (var tuple in numberOptions)
+            foreach ((InputAction, Action<CallbackContext>) tuple in numberOptions)
             {
                 tuple.Item1.performed -= tuple.Item2;
             }
@@ -159,7 +159,8 @@ namespace nickmaltbie.Treachery.Equipment
                         _ =>
                         {
                             ChangeSelectedLoadout(selected);
-                        });
+                        }
+                    );
                     selectSlot.performed += numberOptions[i].Item2;
 
                     selectSlot.Enable();

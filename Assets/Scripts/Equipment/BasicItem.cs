@@ -16,10 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using nickmaltbie.Treachery.Action;
-using nickmaltbie.Treachery.Action.PlayerActions;
-using UnityEngine;
-
 namespace nickmaltbie.Treachery.Equipment
 {
     public class BasicItem : AbstractEquipment

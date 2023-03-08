@@ -85,7 +85,7 @@ namespace nickmaltbie.Treachery.Action
 
                 if (restoreStamina)
                 {
-                    this.stamina.RestoreStamina(Cost);
+                    stamina.RestoreStamina(Cost);
                 }
 
                 return true;

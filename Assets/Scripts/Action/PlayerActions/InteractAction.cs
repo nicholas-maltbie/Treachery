@@ -17,11 +17,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Interactive;
-using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using UnityEngine;
@@ -80,7 +77,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 ~IHitbox.HitboxAndPlayerLayerMask,
                 QueryTriggerInteraction.Ignore);
             IInteractive nextInteractive = hit.collider?.GetComponent<IInteractive>();
-            
+
             if (nextInteractive != previousInteractive)
             {
                 previousInteractive?.SetFocusState(player, false);

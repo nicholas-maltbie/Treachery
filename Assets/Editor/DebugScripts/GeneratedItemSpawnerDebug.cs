@@ -18,7 +18,6 @@
 
 using System.Linq;
 using nickmaltbie.Treachery.Equipment;
-using nickmaltbie.Treachery.Interactive.Breakeable;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,7 +38,7 @@ namespace nickmaltbie.Treachery.DebugScripts
             EditorApplication.update += VerifyGenerateWorldItem;
         }
 
-        void OnEnable()
+        public void OnEnable()
         {
             startupEquipment = serializedObject.FindProperty("startupEquipment");
         }
@@ -72,7 +71,7 @@ namespace nickmaltbie.Treachery.DebugScripts
                     }
                 }
             }
-            
+
             EditorGUI.BeginChangeCheck();
             _selected = EditorGUILayout.Popup(
                 new GUIContent("Select Equipment"),

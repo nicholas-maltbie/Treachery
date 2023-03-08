@@ -20,8 +20,6 @@
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive;
-using nickmaltbie.Treachery.Interactive.Health;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player.Action
