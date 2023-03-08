@@ -31,6 +31,11 @@ namespace nickmaltbie.Treachery.Equipment
 
         private bool spawned = false;
 
+        public void Start()
+        {
+            NetworkManager.Singleton.OnServerStarted += ResetState;
+        }
+
         public void Update()
         {
             if (IsServer && !spawned)
@@ -40,7 +45,6 @@ namespace nickmaltbie.Treachery.Equipment
                 netObj.Spawn();
                 item.SetEquipment(startupEquipment);
                 spawned = true;
-                NetworkManager.Singleton.OnServerStarted += ResetState;
             }
         }
 
