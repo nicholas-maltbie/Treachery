@@ -39,8 +39,7 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             if (loadout.GetComponent<NetworkObject>().IsOwner && loadout.GetComponent<NetworkObject>().IsSpawned)
             {
-                EquipmentLibrary library = loadout.library;
-                equipment ??= library.EnumerateEquipment().ToArray();
+                equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
                 equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
                 _selected = EditorGUILayout.Popup(
                     new GUIContent("Select Equipment"),

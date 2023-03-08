@@ -25,9 +25,6 @@ namespace nickmaltbie.Treachery.Equipment
     [RequireComponent(typeof(PickupItem))]
     public class GeneratedWorldItem : NetworkBehaviour
     {
-        [SerializeField]
-        public EquipmentLibrary library;
-
         public void SetEquipment(int equipmentId)
         {
             this.equipmentId.Value = equipmentId;
@@ -57,7 +54,7 @@ namespace nickmaltbie.Treachery.Equipment
 
             if (current != IEquipment.EmptyEquipmentId)
             {
-                IEquipment equip = library.GetEquipment(current);
+                IEquipment equip = EquipmentLibrary.Singleton.GetEquipment(current);
                 spawned = GameObject.Instantiate(equip.HeldPrefab, transform);
                 spawned.transform.localPosition = Vector3.zero;
                 spawned.transform.localRotation = Quaternion.identity;

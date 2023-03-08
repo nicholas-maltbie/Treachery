@@ -59,10 +59,9 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             var item = target as GeneratedItemSpawner;
 
-            EquipmentLibrary library = item.library;
-            equipment ??= library.EnumerateEquipment().ToArray();
+            equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
             equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
-            if (library.HasEquipment(item.startupEquipment))
+            if (EquipmentLibrary.Singleton?.HasEquipment(item.startupEquipment) ?? false)
             {
                 for (int i = 0; i < equipment.Length; i++)
                 {
@@ -86,10 +85,10 @@ namespace nickmaltbie.Treachery.DebugScripts
                 startupEquipment.intValue = item.startupEquipment;
                 serializedObject.ApplyModifiedProperties();
 
-                if (item.library?.HasEquipment(item.startupEquipment) ?? false)
+                if (EquipmentLibrary.Singleton?.HasEquipment(item.startupEquipment) ?? false)
                 {
-                    IEquipment equipment = item.library.GetEquipment(item.startupEquipment);
-                    equipment.WorldShape.AttachCollider(item.gameObject, destroyImmediate: true);
+                    IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(item.startupEquipment);
+                    equipment.WorldShape.AttachCollider(item.CurrentPreview.gameObject, destroyImmediate: true);
                 }
             }
         }

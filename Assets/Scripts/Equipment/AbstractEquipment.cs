@@ -52,9 +52,6 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public ColliderConfiguration itemShape;
 
-        [SerializeField]
-        public GeneratedWorldItem worldItemPrefab;
-
         public bool InHand { get; private set; }
 
         public int EquipmentId => equipmentId;
@@ -106,11 +103,11 @@ namespace nickmaltbie.Treachery.Equipment
 
         public void OnRemoveFromInventory(PlayerLoadout loadout)
         {
-            GeneratedWorldItem item = GameObject.Instantiate(worldItemPrefab, loadout.DropPosition, Quaternion.identity);
+            GeneratedWorldItem item = GameObject.Instantiate(EquipmentLibrary.Singleton.WorldItemPrefab, loadout.DropPosition, Quaternion.identity);
             NetworkObject netObj = item.GetComponent<NetworkObject>();
             item.GetComponent<Rigidbody>()?.AddForce(loadout.DropVelocity, ForceMode.VelocityChange);
-            item.SetEquipment(equipmentId);
             netObj.Spawn();
+            item.SetEquipment(equipmentId);
         }
     }
 }

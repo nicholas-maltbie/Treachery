@@ -16,61 +16,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
 {
-    [CreateAssetMenu(fileName = "EquipmentLibrary", menuName = "ScriptableObjects/EquipmentLibrary", order = 1)]
-    public class EquipmentLibrary : ScriptableObject
+    public class SetupEquipment : MonoBehaviour
     {
-        public static EquipmentLibrary Singleton { get; internal set; }
-
         [SerializeField]
-        private GameObject worldItemPrefab;
+        public EquipmentLibrary library;
 
+        [HideInInspector]
         [SerializeField]
-        private GameObject[] equipment;
+        private bool isSingleton = false;
 
-        private Dictionary<int, IEquipment> _equipmentLookup;
-
-        public GeneratedWorldItem WorldItemPrefab => worldItemPrefab?.GetComponent<GeneratedWorldItem>();
-
-        public void Reinitialize()
+        public void OnValidate()
         {
-            _equipmentLookup = null;
-            Initialize();
-        }
-
-        public IEnumerable<IEquipment> EnumerateEquipment()
-        {
-            Initialize();
-            return _equipmentLookup.Values;
-        }
-
-        public void Initialize()
-        {
-            if (_equipmentLookup != null)
+            if (EquipmentLibrary.Singleton == null || isSingleton)
             {
-                return;
+                EquipmentLibrary.Singleton = library;
+                isSingleton = true;
             }
-
-            _equipmentLookup = equipment
-                .Select(equip => equip.GetComponent<IEquipment>())
-                .ToDictionary(equipment => equipment.EquipmentId);
         }
 
-        public bool HasEquipment(int id)
+        public void Awake()
         {
-            Initialize();
-            return _equipmentLookup.ContainsKey(id);
+            if (EquipmentLibrary.Singleton == null || isSingleton)
+            {
+                EquipmentLibrary.Singleton = library;
+                isSingleton = true;
+            }
+            else
+            {
+                GameObject.Destroy(this);
+            }
         }
 
-        public IEquipment GetEquipment(int id)
+        public void OnDestroy()
         {
-            Initialize();
-            return _equipmentLookup[id];
+            if (isSingleton)
+            {
+                EquipmentLibrary.Singleton = null;
+            }
         }
     }
 }

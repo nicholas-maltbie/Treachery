@@ -40,9 +40,6 @@ namespace nickmaltbie.Treachery.Equipment
         public int MaxLoadouts = 3;
 
         [SerializeField]
-        public EquipmentLibrary library;
-
-        [SerializeField]
         public EquipmentManager manager;
 
         public InputActionReference dropItemInputAction;
@@ -88,7 +85,6 @@ namespace nickmaltbie.Treachery.Equipment
                 writePerm: NetworkVariableWritePermission.Owner);
 
             loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout(
-                library,
                 transform,
                 GetComponent<IActionActor<PlayerAction>>(),
                 GetComponent<IStaminaMeter>(),
@@ -132,7 +128,7 @@ namespace nickmaltbie.Treachery.Equipment
         [ServerRpc]
         public void DropItemServerRpc(int equipmentId)
         {
-            IEquipment equipment = library.GetEquipment(equipmentId);
+            IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
             equipment.OnRemoveFromInventory(this);
         }
 
@@ -206,7 +202,7 @@ namespace nickmaltbie.Treachery.Equipment
         public EquipmentLoadout CurrentLoadout => loadouts[CurrentSelected];
         public EquipmentLoadout GetLoadout(int idx) => loadouts != null ?
             loadouts[idx] :
-            new EquipmentLoadout(library, transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), false);
+            new EquipmentLoadout(transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), false);
 
         public int CurrentSelected => currentLoadout.Value;
 

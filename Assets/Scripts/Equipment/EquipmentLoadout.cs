@@ -57,15 +57,13 @@ namespace nickmaltbie.Treachery.Equipment
         public bool HasOffhandAction => OffhandItem?.ItemAction != null;
         public bool CahEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
-        private EquipmentLibrary library;
         private Transform parent;
         private IActionActor<PlayerAction> actor;
         private IStaminaMeter stamina;
         private bool isOwner;
 
-        public EquipmentLoadout(EquipmentLibrary library, Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, bool isOwner)
+        public EquipmentLoadout(Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, bool isOwner)
         {
-            this.library = library;
             this.parent = parent;
             this.actor = actor;
             this.stamina = stamina;
@@ -104,7 +102,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public bool EquipItem(int equipmentId)
         {
-            IEquipment equipment = library.GetEquipment(equipmentId);
+            IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
             if (!CanEquip(equipment))
             {
                 return false;
@@ -177,9 +175,9 @@ namespace nickmaltbie.Treachery.Equipment
                 MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
             }
 
-            if (Offhand == null && equipmentId != IEquipment.EmptyEquipmentId && library.HasEquipment(equipmentId))
+            if (Offhand == null && equipmentId != IEquipment.EmptyEquipmentId && EquipmentLibrary.Singleton.HasEquipment(equipmentId))
             {
-                GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
+                GameObject prefab = EquipmentLibrary.Singleton.GetEquipment(equipmentId).HeldPrefab;
                 Offhand = GameObject.Instantiate(prefab, parent);
                 Offhand.SetActive(activeState);
 
@@ -201,9 +199,9 @@ namespace nickmaltbie.Treachery.Equipment
                 Main = null;
             }
 
-            if (Main == null && equipmentId != IEquipment.EmptyEquipmentId && library.HasEquipment(equipmentId))
+            if (Main == null && equipmentId != IEquipment.EmptyEquipmentId && EquipmentLibrary.Singleton.HasEquipment(equipmentId))
             {
-                GameObject prefab = library.GetEquipment(equipmentId).HeldPrefab;
+                GameObject prefab = EquipmentLibrary.Singleton.GetEquipment(equipmentId).HeldPrefab;
                 Main = GameObject.Instantiate(prefab, parent);
                 Main.SetActive(activeState);
 
