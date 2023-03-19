@@ -20,7 +20,6 @@
 using System;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Utils;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
 
@@ -52,7 +51,6 @@ namespace nickmaltbie.Treachery.Player.Action
         private KCCMovementEngine _movementEngine;
         private KCCMovementEngine MovementEngine => _movementEngine ??= GetComponent<KCCMovementEngine>();
 
-        public Vector3 RollDirection { get; private set; }
         public float RollRotation { get; private set; }
 
         public override RollMovementAction SetupAction()
@@ -74,22 +72,12 @@ namespace nickmaltbie.Treachery.Player.Action
             return action;
         }
 
-        public override void Update()
-        {
-            base.Update();
-            Vector3 movement = MovementActor.GetDesiredMovement();
-            if (movement.magnitude > KCCUtils.Epsilon)
-            {
-                Vector3 rotatedMovementForward = CameraControls.PlayerHeading * MovementActor.InputMovement;
-                var angle = Quaternion.LookRotation(rotatedMovementForward, MovementEngine.Up);
-                RollRotation = angle.eulerAngles.y;
-                RollDirection = movement.normalized;
-            }
-        }
-
         private void OnRoll(object source, EventArgs args)
         {
-            Action.MoveDirection = RollDirection;
+            Action.MoveDirection = MovementActor.LastDesiredMovement();
+            Vector3 rotatedMovementForward = CameraControls.PlayerHeading * MovementActor.InputMovement;
+            var angle = Quaternion.LookRotation(rotatedMovementForward, MovementEngine.Up);
+            RollRotation = angle.eulerAngles.y;
             Actor.RaiseEvent(RollStart.Instance);
         }
 
