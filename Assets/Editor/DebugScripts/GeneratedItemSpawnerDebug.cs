@@ -27,6 +27,7 @@ namespace nickmaltbie.Treachery.DebugScripts
     public class GeneratedItemSpawnerDebug : Editor
     {
         public int _selected = 0;
+        public static EquipmentLibrary library;
         public static IEquipment[] equipment;
         public static GUIContent[] equipmentIcons;
         private SerializedProperty startupEquipment;
@@ -57,6 +58,13 @@ namespace nickmaltbie.Treachery.DebugScripts
             serializedObject.Update();
 
             var item = target as GeneratedItemSpawner;
+
+            if (library != EquipmentLibrary.Singleton)
+            {
+                library = EquipmentLibrary.Singleton;
+                equipment = null;
+                equipmentIcons = null;
+            }
 
             equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
             equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
