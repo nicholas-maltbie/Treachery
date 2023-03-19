@@ -169,6 +169,22 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public GameObject Source => gameObject;
 
+        /// <summary>
+        /// Previous non zero movement for the player.
+        /// </summary>
+        public Vector3 PreviousNonZeroMovement { get; protected set; }
+
+        /// <summary>
+        /// Previous non zero input movement from player input updated each frame.
+        /// </summary>
+        public Vector3 LastInputMovement { get; private set; }
+
+        /// <inheritdoc/>
+        public Vector3 CameraBase => (CameraControls as SurvivorCameraController)?.InitialCameraPosition + transform.position ?? transform.position;
+
+        /// <inheritdoc/>
+        public IManagedCamera Camera => CameraControls as IManagedCamera;
+
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -351,7 +367,11 @@ namespace nickmaltbie.Treachery.Player
 
         public override void LateUpdate()
         {
-            transform.position += MovementEngine.ColliderCast.PushOutOverlapping(transform.position, transform.rotation, 100 * unityService.deltaTime);
+            transform.position += MovementEngine.ColliderCast.PushOutOverlapping(
+                transform.position,
+                transform.rotation,
+                100 * unityService.deltaTime,
+                layerMask: MovementEngine.LayerMask);
             base.LateUpdate();
         }
 
@@ -375,9 +395,16 @@ namespace nickmaltbie.Treachery.Player
 
             if (IsOwner && !BlockMovement.IsMovementBlocked(CurrentState))
             {
+                Vector3 movement = GetDesiredMovement();
                 MovementEngine.MovePlayer(
-                    GetDesiredMovement() * unityService.fixedDeltaTime,
+                    movement * unityService.fixedDeltaTime,
                     Velocity * unityService.fixedDeltaTime);
+                
+                if (movement.magnitude >= KCCUtils.Epsilon)
+                {
+                    PreviousNonZeroMovement = movement;
+                    LastInputMovement = InputMovement;
+                }
             }
 
             UpdateGroundedState();
@@ -504,6 +531,12 @@ namespace nickmaltbie.Treachery.Player
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        public Vector3 LastDesiredMovement()
+        {
+            return PreviousNonZeroMovement;
         }
     }
 }

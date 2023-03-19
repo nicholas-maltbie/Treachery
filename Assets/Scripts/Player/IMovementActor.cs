@@ -16,13 +16,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.OpenKCC.CameraControls;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Player
 {
     public interface IMovementActor
     {
+        /// <summary>
+        /// Direction player is currently inputting.
+        /// </summary>
         Vector3 InputMovement { get; }
+
+        /// <summary>
+        /// Previous non zero direction player has input.
+        /// </summary>
+        Vector3 LastInputMovement { get; }
+
+        /// <summary>
+        /// Desired movement of the player in world space.
+        /// </summary>
         Vector3 GetDesiredMovement();
+
+        /// <summary>
+        /// Previous non zero desired movement of player in world space.
+        /// </summary>
+        Vector3 LastDesiredMovement();
+
+        /// <summary>
+        /// Where in world space is the player's camera origin coming from.
+        /// </summary>
+        Vector3 CameraBase { get; }
+
+        /// <summary>
+        /// What direction is the player currently looking.
+        /// </summary>
+        IManagedCamera Camera { get; }
     }
 }

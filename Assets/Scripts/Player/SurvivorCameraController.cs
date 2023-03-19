@@ -70,6 +70,16 @@ namespace nickmaltbie.Treachery.Player
         /// <inheritdoc/>
         public Transform CameraBase => config.cameraTransform;
 
+        /// <summary>
+        /// Initial position of camera.
+        /// </summary>
+        public Vector3 InitialCameraPosition { get; private set; }
+
+        public void Awake()
+        {
+            InitialCameraPosition = CameraBase.transform.localPosition;
+        }
+
         public void Start()
         {
             config.Setup(gameObject);

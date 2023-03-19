@@ -54,6 +54,6 @@ namespace nickmaltbie.Treachery.Equipment
         ColliderConfiguration WorldShape { get; }
         void PerformAction();
         void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter meter);
-        void OnRemoveFromInventory(PlayerLoadout player);
+        void OnRemoveFromInventory(PlayerLoadout player, Vector3 throwDirection);
     }
 }

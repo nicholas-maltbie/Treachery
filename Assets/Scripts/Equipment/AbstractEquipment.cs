@@ -100,12 +100,12 @@ namespace nickmaltbie.Treachery.Equipment
 
         public abstract void PerformAction();
 
-        public void OnRemoveFromInventory(PlayerLoadout loadout)
+        public void OnRemoveFromInventory(PlayerLoadout loadout, Vector3 throwDirection)
         {
             GeneratedWorldItem item = GameObject.Instantiate(EquipmentLibrary.Singleton.WorldItemPrefab, loadout.DropPosition, Quaternion.identity);
             NetworkObject netObj = item.GetComponent<NetworkObject>();
-            item.GetComponent<Rigidbody>()?.AddForce(loadout.DropVelocity, ForceMode.VelocityChange);
             netObj.Spawn();
+            item.GetComponent<Rigidbody>().velocity = throwDirection;
             item.SetEquipment(equipmentId);
         }
     }
