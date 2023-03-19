@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Stamina;
@@ -100,6 +101,26 @@ namespace nickmaltbie.Treachery.Equipment
             return null;
         }
 
+        public IEnumerable<ItemType> RequiredToSwap(int equipmentId)
+        {
+            IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
+
+            if (HasSpace(equipment))
+            {
+                yield break; 
+            }
+            
+            if (equipment.ItemType == ItemType.Main)
+            {
+                yield return ItemType.Main;
+            }
+
+            if (!CahEquipOffhand)
+            {
+                yield return ItemType.Offhand;
+            }
+        }
+
         public IEquipment RemoveItem(ItemType itemType)
         {
             switch (itemType)
@@ -120,7 +141,7 @@ namespace nickmaltbie.Treachery.Equipment
         public bool EquipItem(int equipmentId)
         {
             IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
-            if (!CanEquip(equipment))
+            if (!HasSpace(equipment))
             {
                 return false;
             }
@@ -137,7 +158,7 @@ namespace nickmaltbie.Treachery.Equipment
             return true;
         }
 
-        public bool CanEquip(IEquipment equipment)
+        public bool HasSpace(IEquipment equipment)
         {
             switch (equipment.ItemType)
             {

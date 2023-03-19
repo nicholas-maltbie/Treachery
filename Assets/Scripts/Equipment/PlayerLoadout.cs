@@ -271,6 +271,18 @@ namespace nickmaltbie.Treachery.Equipment
         }
 
         [ServerRpc]
+        public void RequestSwapItemServerRpc(NetworkObjectReference swapItem)
+        {
+            if (swapItem.TryGet(out NetworkObject networkObject))
+            {
+                if (networkObject.GetComponent<PickupItem>() is PickupItem item)
+                {
+                    item.PickupObjectFromLoadout(this, true);
+                }
+            }
+        }
+
+        [ServerRpc]
         public void RequestPickupItemServerRpc(NetworkObjectReference pickupItem)
         {
             if (pickupItem.TryGet(out NetworkObject networkObject))
@@ -285,6 +297,17 @@ namespace nickmaltbie.Treachery.Equipment
         [ClientRpc]
         public void EquipItemClientRpc(int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
         {
+            loadouts[loadoutIdx].EquipItem(equipmentId);
+        }
+
+        [ClientRpc]
+        public void SwapItemClientRpc(ItemType[] swapItems, int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
+        {
+            foreach (ItemType itemType in swapItems)
+            {
+                DropItem(loadoutIdx, itemType);
+            }
+
             loadouts[loadoutIdx].EquipItem(equipmentId);
         }
 

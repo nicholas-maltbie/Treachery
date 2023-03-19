@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using nickmaltbie.Treachery.Equipment;
 using Unity.Netcode;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
         {
             if (source.GetComponent<PlayerLoadout>() is PlayerLoadout loadout)
             {
-                return loadout.CurrentLoadout.CanEquip(Equipment);
+                return loadout.CurrentLoadout.HasSpace(Equipment);
             }
 
             return false;
@@ -47,45 +48,58 @@ namespace nickmaltbie.Treachery.Interactive.Item
         {
             if (source.GetComponent<PlayerLoadout>() is PlayerLoadout loadout)
             {
-                if (!loadout.CurrentLoadout.CanEquip(Equipment))
+                if (loadout.CurrentLoadout.HasSpace(Equipment))
                 {
-                    return;
+                    loadout.RequestPickupItemServerRpc(GetComponent<NetworkObject>());
                 }
-
-                loadout.RequestPickupItemServerRpc(GetComponent<NetworkObject>());
+                else
+                {
+                    loadout.RequestSwapItemServerRpc(GetComponent<NetworkObject>());
+                }
             }
         }
 
-        public void PickupObjectFromLoadout(NetworkBehaviourReference playerLoadout)
+        public void PickupObjectFromLoadout(NetworkBehaviourReference playerLoadout, bool swap = false)
         {
+            PlayerLoadout loadout = null;
             if (grabbed == true)
             {
                 return;
             }
-            else if (!playerLoadout.TryGet(out PlayerLoadout loadout))
+            else if (!playerLoadout.TryGet(out loadout))
             {
                 return;
             }
-            else if (!loadout.CurrentLoadout.CanEquip(Equipment))
+            else if (!swap && !loadout.CurrentLoadout.HasSpace(Equipment))
             {
                 return;
+            }
+
+            // Set item as grabbed and destroy this item when possible.
+            grabbed = true;
+            var clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { loadout.OwnerClientId }
+                }
+            };
+
+            // Check if we should swap instead
+            if (swap)
+            {
+                // Have the player drop their current items to make space
+                // for this new item.
+                ItemType[] toSwap = loadout.CurrentLoadout.RequiredToSwap(Equipment.EquipmentId).ToArray();
+                loadout.SwapItemClientRpc(toSwap, Equipment.EquipmentId, loadout.CurrentSelected, clientRpcParams);
             }
             else
             {
-                // Set item as grabbed and destroy this item when possible.
-                grabbed = true;
-                var clientRpcParams = new ClientRpcParams
-                {
-                    Send = new ClientRpcSendParams
-                    {
-                        TargetClientIds = new ulong[] { loadout.OwnerClientId }
-                    }
-                };
-
                 // Just send the grab event to the owner.
                 loadout.EquipItemClientRpc(Equipment.EquipmentId, loadout.CurrentSelected, clientRpcParams);
-                GetComponent<NetworkObject>().Despawn();
             }
+
+            GetComponent<NetworkObject>().Despawn();
         }
 
         public void SetFocusState(GameObject source, bool state)
