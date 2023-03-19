@@ -51,7 +51,6 @@ namespace nickmaltbie.Treachery.Equipment
         public void ResetState()
         {
             spawned = false;
-            NetworkManager.Singleton.OnServerStarted -= ResetState;
         }
 
         public GameObject PreviewPrefab()
