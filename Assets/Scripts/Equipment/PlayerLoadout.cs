@@ -18,7 +18,6 @@
 
 using System;
 using System.Linq;
-using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Item;

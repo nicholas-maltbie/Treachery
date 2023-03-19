@@ -399,7 +399,7 @@ namespace nickmaltbie.Treachery.Player
                 MovementEngine.MovePlayer(
                     movement * unityService.fixedDeltaTime,
                     Velocity * unityService.fixedDeltaTime);
-                
+
                 if (movement.magnitude >= KCCUtils.Epsilon)
                 {
                     PreviousNonZeroMovement = movement;

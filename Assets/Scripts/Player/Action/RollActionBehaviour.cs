@@ -20,7 +20,6 @@
 using System;
 using nickmaltbie.OpenKCC.CameraControls;
 using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Utils;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using UnityEngine;
 
