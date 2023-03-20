@@ -56,7 +56,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
 
         public void PickupObjectFromLoadout(NetworkBehaviourReference playerLoadout, bool swap = false)
         {
-            PlayerLoadout loadout = null;
+            PlayerLoadout loadout;
             if (grabbed)
             {
                 return;
