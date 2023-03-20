@@ -36,7 +36,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
 
         public bool CanInteract(GameObject source)
         {
-            return source.GetComponent<PlayerLoadout>() is PlayerLoadout loadout;
+            return source.GetComponent<PlayerLoadout>() is PlayerLoadout;
         }
 
         public void OnInteract(GameObject source)

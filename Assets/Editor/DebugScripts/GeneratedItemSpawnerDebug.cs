@@ -70,7 +70,7 @@ namespace nickmaltbie.Treachery.DebugScripts
             {
                 ResetCache();
             }
-            
+
             if (EquipmentLibrary.Singleton?.HasEquipment(item.startupEquipment) ?? false)
             {
                 for (int i = 0; i < equipment.Length; i++)

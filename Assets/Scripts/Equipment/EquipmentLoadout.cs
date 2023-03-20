@@ -107,16 +107,16 @@ namespace nickmaltbie.Treachery.Equipment
 
             if (HasSpace(equipment))
             {
-                yield break; 
+                yield break;
             }
-            
+
             if (equipment.ItemType == ItemType.Main)
             {
                 if (HasMain)
                 {
                     yield return ItemType.Main;
                 }
-                
+
                 if (equipment.Weight == EquipmentWeight.TwoHanded)
                 {
                     yield return ItemType.Offhand;
@@ -128,7 +128,7 @@ namespace nickmaltbie.Treachery.Equipment
                 {
                     yield return ItemType.Offhand;
                 }
-                
+
                 if (MainItem != null && MainItem.Weight == EquipmentWeight.TwoHanded)
                 {
                     yield return ItemType.Main;
