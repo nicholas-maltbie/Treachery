@@ -123,10 +123,15 @@ namespace nickmaltbie.Treachery.Equipment
         public void DropItem(int idx, ItemType itemType)
         {
             IEquipment currentEquipment = loadouts[idx].GetItem(itemType);
-            loadouts[idx].RemoveItem(itemType);
-            IMovementActor movementActor = GetComponent<IMovementActor>();
-            var heading = Quaternion.Euler(movementActor.Camera.Pitch, movementActor.Camera.Yaw, 0);
-            DropItemServerRpc(currentEquipment.EquipmentId, heading * Vector3.forward * throwVelocity);
+
+            if (currentEquipment != null)
+            {
+                int equipmentId = currentEquipment.EquipmentId;
+                loadouts[idx].RemoveItem(itemType);
+                IMovementActor movementActor = GetComponent<IMovementActor>();
+                var heading = Quaternion.Euler(movementActor.Camera.Pitch, movementActor.Camera.Yaw, 0);
+                DropItemServerRpc(equipmentId, heading * Vector3.forward * throwVelocity);
+            }
         }
 
         [ServerRpc]
@@ -221,15 +226,6 @@ namespace nickmaltbie.Treachery.Equipment
             currentLoadout.Value = selected;
         }
 
-        public void RemoveItemFromLoadout(ItemType itemType, int slot)
-        {
-            if (IsOwner)
-            {
-                EquipmentLoadout loadout = loadouts[slot];
-                loadout.RemoveItem(itemType);
-            }
-        }
-
         public void AddItemToLoadout(int equipmentId, int slot)
         {
             if (IsOwner)
@@ -271,6 +267,18 @@ namespace nickmaltbie.Treachery.Equipment
         }
 
         [ServerRpc]
+        public void RequestSwapItemServerRpc(NetworkObjectReference swapItem)
+        {
+            if (swapItem.TryGet(out NetworkObject networkObject))
+            {
+                if (networkObject.GetComponent<PickupItem>() is PickupItem item)
+                {
+                    item.PickupObjectFromLoadout(this, true);
+                }
+            }
+        }
+
+        [ServerRpc]
         public void RequestPickupItemServerRpc(NetworkObjectReference pickupItem)
         {
             if (pickupItem.TryGet(out NetworkObject networkObject))
@@ -286,6 +294,19 @@ namespace nickmaltbie.Treachery.Equipment
         public void EquipItemClientRpc(int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
         {
             loadouts[loadoutIdx].EquipItem(equipmentId);
+            loadouts[loadoutIdx].UpdateItemPositions(manager);
+        }
+
+        [ClientRpc]
+        public void SwapItemClientRpc(ItemType[] swapItems, int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
+        {
+            foreach (ItemType itemType in swapItems)
+            {
+                DropItem(loadoutIdx, itemType);
+            }
+
+            loadouts[loadoutIdx].EquipItem(equipmentId);
+            loadouts[loadoutIdx].UpdateItemPositions(manager);
         }
 
         public void OnLoadoutSelected(int previousLoadout, int currentLoadout)

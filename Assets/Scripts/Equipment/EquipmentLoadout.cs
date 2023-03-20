@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Stamina;
@@ -72,7 +73,7 @@ namespace nickmaltbie.Treachery.Equipment
         public bool HasMain => Main != null;
         public bool HasOffhand => Offhand != null;
         public bool HasOffhandAction => OffhandItem?.ItemAction != null;
-        public bool CahEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
+        public bool CanEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
         private Transform parent;
         private IActionActor<PlayerAction> actor;
@@ -100,6 +101,41 @@ namespace nickmaltbie.Treachery.Equipment
             return null;
         }
 
+        public IEnumerable<ItemType> RequiredToSwap(int equipmentId)
+        {
+            IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
+
+            if (HasSpace(equipment))
+            {
+                yield break;
+            }
+
+            if (equipment.ItemType == ItemType.Main)
+            {
+                if (HasMain)
+                {
+                    yield return ItemType.Main;
+                }
+
+                if (equipment.Weight == EquipmentWeight.TwoHanded)
+                {
+                    yield return ItemType.Offhand;
+                }
+            }
+            else if (equipment.ItemType == ItemType.Offhand)
+            {
+                if (HasOffhand)
+                {
+                    yield return ItemType.Offhand;
+                }
+
+                if (MainItem != null && MainItem.Weight == EquipmentWeight.TwoHanded)
+                {
+                    yield return ItemType.Main;
+                }
+            }
+        }
+
         public IEquipment RemoveItem(ItemType itemType)
         {
             switch (itemType)
@@ -107,10 +143,12 @@ namespace nickmaltbie.Treachery.Equipment
                 case ItemType.Main:
                     IEquipment main = MainItem;
                     UpdateMainItem(IEquipment.EmptyEquipmentId);
+                    Main = null;
                     return main;
                 case ItemType.Offhand:
                     IEquipment offhand = OffhandItem;
                     UpdateOffhandItem(IEquipment.EmptyEquipmentId);
+                    Offhand = null;
                     return offhand;
             }
 
@@ -120,7 +158,7 @@ namespace nickmaltbie.Treachery.Equipment
         public bool EquipItem(int equipmentId)
         {
             IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
-            if (!CanEquip(equipment))
+            if (!HasSpace(equipment))
             {
                 return false;
             }
@@ -137,12 +175,12 @@ namespace nickmaltbie.Treachery.Equipment
             return true;
         }
 
-        public bool CanEquip(IEquipment equipment)
+        public bool HasSpace(IEquipment equipment)
         {
             switch (equipment.ItemType)
             {
                 case ItemType.Offhand:
-                    return CahEquipOffhand;
+                    return CanEquipOffhand;
                 case ItemType.Main:
                     return !HasMain && (!HasOffhand || equipment.Weight == EquipmentWeight.OneHanded);
             }

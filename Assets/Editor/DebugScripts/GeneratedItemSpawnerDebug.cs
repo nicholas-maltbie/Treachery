@@ -27,6 +27,7 @@ namespace nickmaltbie.Treachery.DebugScripts
     public class GeneratedItemSpawnerDebug : Editor
     {
         public int _selected = 0;
+        public static EquipmentLibrary library;
         public static IEquipment[] equipment;
         public static GUIContent[] equipmentIcons;
         private SerializedProperty startupEquipment;
@@ -51,6 +52,13 @@ namespace nickmaltbie.Treachery.DebugScripts
             }
         }
 
+        public static void ResetCache()
+        {
+            library = EquipmentLibrary.Singleton;
+            equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
+            equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
+        }
+
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
@@ -58,8 +66,11 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             var item = target as GeneratedItemSpawner;
 
-            equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
-            equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
+            if (library != EquipmentLibrary.Singleton || equipment.Length != EquipmentLibrary.Singleton.EquipmentCount())
+            {
+                ResetCache();
+            }
+
             if (EquipmentLibrary.Singleton?.HasEquipment(item.startupEquipment) ?? false)
             {
                 for (int i = 0; i < equipment.Length; i++)
