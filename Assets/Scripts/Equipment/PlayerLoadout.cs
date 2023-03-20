@@ -22,6 +22,7 @@ using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Item;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using nickmaltbie.Treachery.Player;
 using nickmaltbie.Treachery.Player.Action;
 using Unity.Netcode;
 using UnityEngine;
@@ -42,13 +43,14 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public EquipmentManager manager;
 
+        [SerializeField]
+        public float throwVelocity = 8.0f;
+
         public InputActionReference dropItemInputAction;
         public InputActionReference incrementLoadoutSelection;
         public InputActionReference decrementLoadoutSelection;
         public InputActionReference loadoutScroll;
-
-        public Vector3 DropPosition => transform.position;
-        public Vector3 DropVelocity => Vector3.zero;
+        public Vector3 DropPosition => GetComponent<IMovementActor>().CameraBase;
 
         private EquipmentLoadout[] loadouts;
         private NetworkVariable<int> currentLoadout = new NetworkVariable<int>(
@@ -122,14 +124,16 @@ namespace nickmaltbie.Treachery.Equipment
         {
             IEquipment currentEquipment = loadouts[idx].GetItem(itemType);
             loadouts[idx].RemoveItem(itemType);
-            DropItemServerRpc(currentEquipment.EquipmentId);
+            IMovementActor movementActor = GetComponent<IMovementActor>();
+            var heading = Quaternion.Euler(movementActor.Camera.Pitch, movementActor.Camera.Yaw, 0);
+            DropItemServerRpc(currentEquipment.EquipmentId, heading * Vector3.forward * throwVelocity);
         }
 
         [ServerRpc]
-        public void DropItemServerRpc(int equipmentId)
+        public void DropItemServerRpc(int equipmentId, Vector3 throwDirection)
         {
             IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
-            equipment.OnRemoveFromInventory(this);
+            equipment.OnRemoveFromInventory(this, throwDirection);
         }
 
         public void Start()

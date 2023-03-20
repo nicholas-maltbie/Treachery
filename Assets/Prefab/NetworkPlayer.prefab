@@ -274,7 +274,7 @@ MonoBehaviour:
   maxWalkAngle: 60
   layerMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 247
 --- !u!114 &-2618219780861503884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,7 +462,7 @@ MonoBehaviour:
     zoomSpeed: 1
     cameraRaycastMask:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 247
     shadowOnlyDistance: 0.5
     ditherDistance: 1
     thirdPersonCharacterBase: {fileID: 0}
@@ -567,7 +567,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxLoadouts: 3
-  manager: {fileID: 0}
+  manager: {fileID: 4561035598108080147}
+  throwVelocity: 6.5
   dropItemInputAction: {fileID: -8197223153440005221, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   decrementLoadoutSelection: {fileID: 4700168074898257696, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
