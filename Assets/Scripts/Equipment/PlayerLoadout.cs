@@ -90,7 +90,7 @@ namespace nickmaltbie.Treachery.Equipment
                 transform,
                 GetComponent<IActionActor<PlayerAction>>(),
                 GetComponent<IStaminaMeter>(),
-                IsOwner)).ToArray();
+                () => IsOwner)).ToArray();
         }
 
         public override void OnDestroy()
@@ -212,7 +212,7 @@ namespace nickmaltbie.Treachery.Equipment
         public EquipmentLoadout CurrentLoadout => loadouts[CurrentSelected];
         public EquipmentLoadout GetLoadout(int idx) => loadouts != null ?
             loadouts[idx] :
-            new EquipmentLoadout(transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), false);
+            new EquipmentLoadout(transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), () => false);
 
         public int CurrentSelected => currentLoadout.Value;
 

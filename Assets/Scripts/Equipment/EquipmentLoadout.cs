@@ -78,9 +78,9 @@ namespace nickmaltbie.Treachery.Equipment
         private Transform parent;
         private IActionActor<PlayerAction> actor;
         private IStaminaMeter stamina;
-        private bool isOwner;
+        private Func<bool> isOwner;
 
-        public EquipmentLoadout(Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, bool isOwner)
+        public EquipmentLoadout(Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, Func<bool> isOwner)
         {
             this.parent = parent;
             this.actor = actor;
@@ -195,6 +195,7 @@ namespace nickmaltbie.Treachery.Equipment
             Offhand?.SetActive(state);
 
             MainItem?.ItemAction?.SetActive(state);
+            MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
             OffhandItem?.ItemAction?.SetActive(state);
         }
 
@@ -236,7 +237,7 @@ namespace nickmaltbie.Treachery.Equipment
                 Offhand = GameObject.Instantiate(prefab, parent);
                 Offhand.SetActive(activeState);
 
-                if (isOwner)
+                if (isOwner())
                 {
                     OffhandItem?.SetupItemAction(actor, stamina);
                     OffhandItem?.ItemAction?.SetActive(activeState);
@@ -256,12 +257,14 @@ namespace nickmaltbie.Treachery.Equipment
 
             if (Main == null && equipmentId != IEquipment.EmptyEquipmentId && EquipmentLibrary.Singleton.HasEquipment(equipmentId))
             {
-                GameObject prefab = EquipmentLibrary.Singleton.GetEquipment(equipmentId).HeldPrefab;
+                IEquipment equipment = EquipmentLibrary.Singleton.GetEquipment(equipmentId);
+                GameObject prefab = equipment.HeldPrefab;
                 Main = GameObject.Instantiate(prefab, parent);
                 Main.SetActive(activeState);
 
-                if (isOwner)
+                if (isOwner())
                 {
+                    UnityEngine.Debug.Log($"Setting up item action for item:{equipment.ItemName}");
                     MainItem?.SetupItemAction(actor, stamina);
                     MainItem?.ItemAction?.SetActive(activeState);
                     MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);

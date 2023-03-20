@@ -19,12 +19,17 @@
 
 using nickmaltbie.Treachery.Equipment;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace nickmaltbie.Treachery.Action.PlayerActions
 {
     public class ItemAction : ActorConditionalAction<PlayerAction>
     {
+        private float lastActivateTime = Mathf.NegativeInfinity;
+
+        private float swapCooldown;
+
         private IEquipment equipment;
 
         public ItemAction(
@@ -35,15 +40,28 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             PlayerAction action,
             float cooldown = 0.0f,
             float staminaCost = 0.0f,
+            float swapCooldown = 0.5f,
             bool performWhileHeld = false)
             : base(actionReference, actor, stamina, action, cooldown, staminaCost, performWhileHeld)
         {
             this.equipment = equipment;
+            this.swapCooldown = swapCooldown;
         }
 
         protected override void Perform()
         {
             equipment.PerformAction();
+        }
+
+        public override void SetActive(bool state)
+        {
+            lastActivateTime = Time.time;
+            base.SetActive(state);
+        }
+
+        protected override bool Condition()
+        {
+            return Time.time >= lastActivateTime + swapCooldown && base.Condition();
         }
     }
 }
