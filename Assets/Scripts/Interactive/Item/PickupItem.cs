@@ -36,12 +36,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
 
         public bool CanInteract(GameObject source)
         {
-            if (source.GetComponent<PlayerLoadout>() is PlayerLoadout loadout)
-            {
-                return loadout.CurrentLoadout.HasSpace(Equipment);
-            }
-
-            return false;
+            return source.GetComponent<PlayerLoadout>() is PlayerLoadout loadout;
         }
 
         public void OnInteract(GameObject source)
@@ -62,7 +57,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
         public void PickupObjectFromLoadout(NetworkBehaviourReference playerLoadout, bool swap = false)
         {
             PlayerLoadout loadout = null;
-            if (grabbed == true)
+            if (grabbed)
             {
                 return;
             }

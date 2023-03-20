@@ -73,7 +73,7 @@ namespace nickmaltbie.Treachery.Equipment
         public bool HasMain => Main != null;
         public bool HasOffhand => Offhand != null;
         public bool HasOffhandAction => OffhandItem?.ItemAction != null;
-        public bool CahEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
+        public bool CanEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
         private Transform parent;
         private IActionActor<PlayerAction> actor;
@@ -112,12 +112,27 @@ namespace nickmaltbie.Treachery.Equipment
             
             if (equipment.ItemType == ItemType.Main)
             {
-                yield return ItemType.Main;
+                if (HasMain)
+                {
+                    yield return ItemType.Main;
+                }
+                
+                if (equipment.Weight == EquipmentWeight.TwoHanded)
+                {
+                    yield return ItemType.Offhand;
+                }
             }
-
-            if (!CahEquipOffhand)
+            else if (equipment.ItemType == ItemType.Offhand)
             {
-                yield return ItemType.Offhand;
+                if (HasOffhand)
+                {
+                    yield return ItemType.Offhand;
+                }
+                
+                if (MainItem != null && MainItem.Weight == EquipmentWeight.TwoHanded)
+                {
+                    yield return ItemType.Main;
+                }
             }
         }
 
@@ -128,10 +143,12 @@ namespace nickmaltbie.Treachery.Equipment
                 case ItemType.Main:
                     IEquipment main = MainItem;
                     UpdateMainItem(IEquipment.EmptyEquipmentId);
+                    Main = null;
                     return main;
                 case ItemType.Offhand:
                     IEquipment offhand = OffhandItem;
                     UpdateOffhandItem(IEquipment.EmptyEquipmentId);
+                    Offhand = null;
                     return offhand;
             }
 
@@ -163,7 +180,7 @@ namespace nickmaltbie.Treachery.Equipment
             switch (equipment.ItemType)
             {
                 case ItemType.Offhand:
-                    return CahEquipOffhand;
+                    return CanEquipOffhand;
                 case ItemType.Main:
                     return !HasMain && (!HasOffhand || equipment.Weight == EquipmentWeight.OneHanded);
             }

@@ -221,15 +221,6 @@ namespace nickmaltbie.Treachery.Equipment
             currentLoadout.Value = selected;
         }
 
-        public void RemoveItemFromLoadout(ItemType itemType, int slot)
-        {
-            if (IsOwner)
-            {
-                EquipmentLoadout loadout = loadouts[slot];
-                loadout.RemoveItem(itemType);
-            }
-        }
-
         public void AddItemToLoadout(int equipmentId, int slot)
         {
             if (IsOwner)
@@ -298,6 +289,7 @@ namespace nickmaltbie.Treachery.Equipment
         public void EquipItemClientRpc(int equipmentId, int loadoutIdx, ClientRpcParams clientRpcParams = default)
         {
             loadouts[loadoutIdx].EquipItem(equipmentId);
+            loadouts[loadoutIdx].UpdateItemPositions(manager);
         }
 
         [ClientRpc]
@@ -309,6 +301,7 @@ namespace nickmaltbie.Treachery.Equipment
             }
 
             loadouts[loadoutIdx].EquipItem(equipmentId);
+            loadouts[loadoutIdx].UpdateItemPositions(manager);
         }
 
         public void OnLoadoutSelected(int previousLoadout, int currentLoadout)

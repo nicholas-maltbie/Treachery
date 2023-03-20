@@ -43,6 +43,16 @@ namespace nickmaltbie.Treachery.Equipment
             Initialize();
         }
 
+        public void OnValidate()
+        {
+            Reinitialize();
+        }
+
+        public int EquipmentCount()
+        {
+            return _equipmentLookup.Count;
+        }
+
         public IEnumerable<IEquipment> EnumerateEquipment()
         {
             Initialize();

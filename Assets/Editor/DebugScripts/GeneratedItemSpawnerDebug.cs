@@ -52,6 +52,13 @@ namespace nickmaltbie.Treachery.DebugScripts
             }
         }
 
+        public static void ResetCache()
+        {
+            library = EquipmentLibrary.Singleton;
+            equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
+            equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
+        }
+
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
@@ -59,15 +66,11 @@ namespace nickmaltbie.Treachery.DebugScripts
 
             var item = target as GeneratedItemSpawner;
 
-            if (library != EquipmentLibrary.Singleton)
+            if (library != EquipmentLibrary.Singleton || equipment.Length != EquipmentLibrary.Singleton.EquipmentCount())
             {
-                library = EquipmentLibrary.Singleton;
-                equipment = null;
-                equipmentIcons = null;
+                ResetCache();
             }
-
-            equipment ??= EquipmentLibrary.Singleton?.EnumerateEquipment().ToArray();
-            equipmentIcons ??= equipment.Select(equipment => new GUIContent(equipment.HeldPrefab?.name, equipment.ItemIcon.texture)).ToArray();
+            
             if (EquipmentLibrary.Singleton?.HasEquipment(item.startupEquipment) ?? false)
             {
                 for (int i = 0; i < equipment.Length; i++)
