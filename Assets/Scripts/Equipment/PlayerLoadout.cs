@@ -123,10 +123,15 @@ namespace nickmaltbie.Treachery.Equipment
         public void DropItem(int idx, ItemType itemType)
         {
             IEquipment currentEquipment = loadouts[idx].GetItem(itemType);
-            loadouts[idx].RemoveItem(itemType);
-            IMovementActor movementActor = GetComponent<IMovementActor>();
-            var heading = Quaternion.Euler(movementActor.Camera.Pitch, movementActor.Camera.Yaw, 0);
-            DropItemServerRpc(currentEquipment.EquipmentId, heading * Vector3.forward * throwVelocity);
+
+            if (currentEquipment != null)
+            {
+                int equipmentId = currentEquipment.EquipmentId;
+                loadouts[idx].RemoveItem(itemType);
+                IMovementActor movementActor = GetComponent<IMovementActor>();
+                var heading = Quaternion.Euler(movementActor.Camera.Pitch, movementActor.Camera.Yaw, 0);
+                DropItemServerRpc(equipmentId, heading * Vector3.forward * throwVelocity);
+            }
         }
 
         [ServerRpc]

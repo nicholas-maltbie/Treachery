@@ -81,7 +81,7 @@ namespace nickmaltbie.Treachery.Interactive.Item
             };
 
             // Check if we should swap instead
-            if (swap)
+            if (!loadout.CurrentLoadout.HasSpace(Equipment) && swap)
             {
                 // Have the player drop their current items to make space
                 // for this new item.
