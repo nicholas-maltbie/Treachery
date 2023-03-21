@@ -17,8 +17,8 @@
 // SOFTWARE.
 
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace nickmaltbie.Treachery
 {
@@ -29,7 +29,7 @@ namespace nickmaltbie.Treachery
             get
             {
                 var mat = new Material(base.materialForRendering);
-                mat.SetInt("_StencilComp", (int) CompareFunction.NotEqual);
+                mat.SetInt("_StencilComp", (int)CompareFunction.NotEqual);
                 return mat;
             }
         }
