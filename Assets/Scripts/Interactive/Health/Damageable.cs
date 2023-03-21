@@ -64,7 +64,6 @@ namespace nickmaltbie.Treachery.Interactive.Health
             bool damage = change < 0;
             bool spendStamina = Stamina != null && StaminaSplit >= 0;
 
-            UnityEngine.Debug.Log($"{gameObject.name} -- Stamina:{Stamina} != null && StaminaSplit:{StaminaSplit} >= 0");
             if (spendStamina && damage)
             {
                 float staminaCost = Mathf.Abs(change) * StaminaSplit;
@@ -143,6 +142,11 @@ namespace nickmaltbie.Treachery.Interactive.Health
         [ClientRpc]
         public void OnResetHealthClientRpc()
         {
+            if (IsOwner)
+            {
+                currentHealth.Value = maxHealth.Value;
+            }
+
             OnResetHealth?.Invoke(this, EventArgs.Empty);
         }
 
@@ -158,7 +162,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void ResetToMaxHealth()
         {
-            currentHealth.Value = maxHealth.Value;
+            OnResetHealthClientRpc();
         }
 
         public string AddHitbox(IHitbox hitbox, string name = "")

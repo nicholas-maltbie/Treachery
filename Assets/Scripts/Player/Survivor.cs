@@ -465,6 +465,12 @@ namespace nickmaltbie.Treachery.Player
         {
             bool denyMovement = PlayerInputUtils.playerMovementState == PlayerInputState.Deny;
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
+
+            if (!GetComponent<Damageable>().IsAlive())
+            {
+                moveVector = Vector2.zero;
+            }
+
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);
