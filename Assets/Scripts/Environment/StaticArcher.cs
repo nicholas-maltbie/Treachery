@@ -39,6 +39,7 @@ namespace nickmaltbie.Treachery.Environment
     public class StaticArcher : NetworkSMAnim
     {
         public float arrowFireSpeed = 50.0f;
+        public float arrowDamage = 20.0f;
 
         public class DrawArrowEvent : IEvent { }
 
@@ -91,6 +92,7 @@ namespace nickmaltbie.Treachery.Environment
                 Transform arrowTransform = aimHelper.ArrowTransform;
                 Arrow firedArrow = GameObject.Instantiate(aimHelper.arrowPrefab, arrowTransform.position, arrowTransform.rotation);
                 firedArrow.GetComponent<NetworkObject>().Spawn(true);
+                firedArrow.arrowDamage = arrowDamage;
 
                 Transform targetPosition = aimHelper.targetPosition;
                 Vector3 dir = targetPosition.position - firedArrow.transform.position;

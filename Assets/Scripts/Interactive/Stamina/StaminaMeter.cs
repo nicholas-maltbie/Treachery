@@ -86,9 +86,11 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// Adjust the current remaining stamina by some amount.
         /// </summary>
         /// <param name="amount">Increase or decrease stamina by some amount.</param>
-        private void AdjustStamina(float amount)
+        private float AdjustStamina(float amount)
         {
+            float previous = RemainingStamina;
             RemainingStamina = Mathf.Clamp(RemainingStamina + amount, 0, MaximumStamina);
+            return RemainingStamina - previous;
         }
 
         /// <inheritdoc/>
@@ -98,13 +100,16 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         }
 
         /// <inheritdoc/>
-        public void ExhaustStamina(float amount)
+        public float ExhaustStamina(float amount)
         {
             if (amount > 0)
             {
-                AdjustStamina(-amount);
+                float change = AdjustStamina(-amount);
                 lastStaminaSpendTime = Time.time;
+                return change;
             }
+
+            return 0;
         }
 
         /// <inheritdoc/>

@@ -48,7 +48,8 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// Exhaust some stamina from the actor.
         /// </summary>
         /// <param name="amount">Amount of stamina to exhaust.</param>
-        void ExhaustStamina(float amount);
+        /// <returns>The amount of stamina actually lost.</returns>
+        float ExhaustStamina(float amount);
 
         /// <summary>
         /// Spend some stamina if the player has enough.

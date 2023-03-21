@@ -67,9 +67,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
             if (spendStamina && damage)
             {
                 float staminaCost = Mathf.Abs(change) * StaminaSplit;
-                change *= Mathf.Clamp(1 - StaminaSplit, 0, 1);
-
-                Stamina.SpendStamina(staminaCost);
+                float staminaLost = Mathf.Abs(Stamina.ExhaustStamina(staminaCost));
+                change = Mathf.Clamp(change + staminaLost, change, 0);
             }
 
             bool wasAlive = IsAlive();
