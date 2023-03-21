@@ -234,7 +234,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(StartMoveInput), typeof(BlockMoveState))]
         [Transition(typeof(BlockStop), typeof(IdleState))]
         [BlockEnabled]
-        [DamageMultiplier(multiplier = 0.5f)]
+        [DamageMultiplier(damageMultiplier = 0.9f, staminaSplit = 0.5f)]
         public class BlockIdleState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
@@ -242,7 +242,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(BlockStop), typeof(WalkingState))]
         [BlockEnabled]
         [MovementSettings(SpeedConfig = nameof(blockSpeed))]
-        [DamageMultiplier(multiplier = 0.5f)]
+        [DamageMultiplier(damageMultiplier = 0.5f, staminaSplit = 0.5f)]
         public class BlockMoveState : State { }
 
         [Animation(SlidingAnimState, 0.35f, true)]
@@ -465,6 +465,12 @@ namespace nickmaltbie.Treachery.Player
         {
             bool denyMovement = PlayerInputUtils.playerMovementState == PlayerInputState.Deny;
             Vector2 moveVector = denyMovement ? Vector2.zero : MoveAction?.ReadValue<Vector2>() ?? Vector2.zero;
+
+            if (!GetComponent<Damageable>().IsAlive())
+            {
+                moveVector = Vector2.zero;
+            }
+
             InputMovement = new Vector3(moveVector.x, 0, moveVector.y);
 
             bool locked = LockMovementAnimationAttribute.IsMovementAnimationLocked(CurrentState);

@@ -40,6 +40,12 @@ namespace nickmaltbie.Treachery.Interactive.Particles
             particles.transform.SetParent(sourceTransform);
             particles.transform.position = sourceTransform.localToWorldMatrix * onDamagedEvent.damageEvent.relativeHitPos;
             particles.transform.rotation = Quaternion.FromToRotation(Vector3.forward, onDamagedEvent.damageEvent.hitNormal);
+            particles.transform.localScale = Vector3.one;
+            if (sourceTransform != null)
+            {
+                particles.transform.localScale = sourceTransform.lossyScale;
+            }
+
             particles.Stop();
             particles.Play();
         }
