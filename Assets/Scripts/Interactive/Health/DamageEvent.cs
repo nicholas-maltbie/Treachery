@@ -38,8 +38,6 @@ namespace nickmaltbie.Treachery.Interactive.Health
     public struct OnDamagedEvent
     {
         public DamageEvent damageEvent;
-        public float previousHealth;
-        public float currentHealth;
     }
 
     public struct DamageEvent

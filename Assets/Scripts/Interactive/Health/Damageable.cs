@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using nickmaltbie.Treachery.Interactive.Hitbox;
+using nickmaltbie.Treachery.Interactive.Stamina;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -29,7 +30,6 @@ namespace nickmaltbie.Treachery.Interactive.Health
     {
         public static readonly SHA256 hash = SHA256.Create();
         private Dictionary<string, IHitbox> hitboxLookup = new Dictionary<string, IHitbox>();
-        public float DamageMultiplier { get; set; } = 1.0f;
 
         public NetworkVariable<float> maxHealth = new NetworkVariable<float>(
             value: 100,
@@ -44,6 +44,9 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public event EventHandler OnDeath;
         public event EventHandler OnResetHealth;
 
+        public float DamageMultiplier { get; set; } = 1.0f;
+        public float StaminaSplit { get; set; } = 0.0f;
+        public IStaminaMeter Stamina => GetComponent<IStaminaMeter>();
         public float MaxHealth => maxHealth.Value;
         public float CurrentHealth => currentHealth.Value;
         public bool Invulnerable { get; set; } = false;
@@ -56,7 +59,26 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         private void AdjustHealth(float change)
         {
+            // If the player has a stamina meter and the stamina split is not zero
+            // and damage is being dealt.
+            bool damage = change < 0;
+            bool spendStamina = Stamina != null && StaminaSplit >= 0;
+
+            UnityEngine.Debug.Log($"{gameObject.name} -- Stamina:{Stamina} != null && StaminaSplit:{StaminaSplit} >= 0");
+            if (spendStamina && damage)
+            {
+                float staminaCost = Mathf.Abs(change) * StaminaSplit;
+                change *= Mathf.Clamp(1 - StaminaSplit, 0, 1);
+
+                Stamina.SpendStamina(staminaCost);
+            }
+
+            bool wasAlive = IsAlive();
             currentHealth.Value = GetAdjustedHealth(change);
+            if (wasAlive && !IsAlive())
+            {
+                ReportDeathServerRpc();
+            }
         }
 
         public float GetHealthPercentage()
@@ -84,6 +106,12 @@ namespace nickmaltbie.Treachery.Interactive.Health
             return CurrentHealth > 0;
         }
 
+        [ServerRpc]
+        public void ReportDeathServerRpc()
+        {
+            OnDeathClientRpc();
+        }
+
         [ClientRpc]
         public void OnDeathClientRpc()
         {
@@ -91,21 +119,25 @@ namespace nickmaltbie.Treachery.Interactive.Health
         }
 
         [ClientRpc]
-        public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent, float adjust, float previousHealth, float currentHealth)
+        public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent)
         {
-            if (IsOwner && !IsOwnedByServer)
-            {
-                AdjustHealth(adjust);
-            }
-
             OnDamageEvent?.Invoke(
                 this,
                 new OnDamagedEvent
                 {
                     damageEvent = networkDamageEvent,
-                    previousHealth = previousHealth,
-                    currentHealth = currentHealth,
                 });
+
+            float adjust = networkDamageEvent.amount;
+            if (networkDamageEvent.eventType == EventType.Damage)
+            {
+                adjust *= -DamageMultiplier;
+            }
+
+            if (IsOwner)
+            {
+                AdjustHealth(adjust);
+            }
         }
 
         [ClientRpc]
@@ -116,24 +148,12 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public void ApplyDamage(DamageEvent damageEvent)
         {
-            float adjust = damageEvent.amount;
-            if (damageEvent.type == EventType.Damage)
+            if (damageEvent.type == EventType.Damage && (!IsAlive() || Invulnerable))
             {
-                if (!IsAlive() || Invulnerable)
-                {
-                    return;
-                }
-
-                adjust *= -DamageMultiplier;
+                return;
             }
 
-            float previousHealth = currentHealth.Value;
-            if (IsOwnedByServer)
-            {
-                AdjustHealth(adjust);
-            }
-
-            OnDamageClientRpc(damageEvent, adjust, previousHealth, GetAdjustedHealth(adjust));
+            OnDamageClientRpc(damageEvent);
         }
 
         public void ResetToMaxHealth()
@@ -177,21 +197,33 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
     public class DamageMultiplierAttribute : Attribute
     {
-        public float multiplier = 1.0f;
+        public float staminaSplit = 0.0f;
+        public float damageMultiplier = 1.0f;
 
         public static float GetDamageMultiplier(Type state)
         {
             if (Attribute.GetCustomAttribute(state, typeof(DamageMultiplierAttribute)) is DamageMultiplierAttribute mul)
             {
-                return mul.multiplier;
+                return mul.damageMultiplier;
             }
 
             return 1.0f;
         }
 
+        public static float GetStaminaSplit(Type state)
+        {
+            if (Attribute.GetCustomAttribute(state, typeof(DamageMultiplierAttribute)) is DamageMultiplierAttribute mul)
+            {
+                return mul.staminaSplit;
+            }
+
+            return 0.0f;
+        }
+
         public static void UpdateDamageMultiplier(Type state, Damageable damageable)
         {
             damageable.DamageMultiplier = GetDamageMultiplier(state);
+            damageable.StaminaSplit = GetStaminaSplit(state);
         }
 
         public static void UpdateDamageMultiplier(Type state, GameObject player)
