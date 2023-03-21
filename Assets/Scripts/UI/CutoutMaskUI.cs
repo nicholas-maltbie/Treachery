@@ -18,37 +18,19 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
-namespace nickmaltbie.Treachery.UI
+namespace nickmaltbie.Treachery
 {
-    public class SegmentedBar : MonoBehaviour
+    public class CutoutMaskUI : Image
     {
-        public Image negative;
-        public Image positive;
-        public Image intermediate;
-        public float delay = 1.0f;
-
-        public void SetPercent(float percent)
+        public override Material materialForRendering
         {
-            positive.fillAmount = percent;
-            negative.fillAmount = 1 - percent;
-        }
-
-        public void SetColor(Color color)
-        {
-            positive.color = color;
-            negative.color = new Color(color.r / 10, color.g / 10, color.b / 10, color.a);
-        }
-
-        public void Update()
-        {
-            if (intermediate.fillAmount <= positive.fillAmount)
+            get
             {
-                intermediate.fillAmount = positive.fillAmount;
-            }
-            else
-            {
-                intermediate.fillAmount = Mathf.Lerp(intermediate.fillAmount, positive.fillAmount, Time.deltaTime / delay);
+                var mat = new Material(base.materialForRendering);
+                mat.SetInt("_StencilComp", (int) CompareFunction.NotEqual);
+                return mat;
             }
         }
     }
