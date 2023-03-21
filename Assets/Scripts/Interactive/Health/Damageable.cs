@@ -33,14 +33,15 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
         public NetworkVariable<float> maxHealth = new NetworkVariable<float>(
             value: 100,
-            writePerm: NetworkVariableWritePermission.Server,
+            writePerm: NetworkVariableWritePermission.Owner,
             readPerm: NetworkVariableReadPermission.Everyone);
         public NetworkVariable<float> currentHealth = new NetworkVariable<float>(
             value: 100,
-            writePerm: NetworkVariableWritePermission.Server,
+            writePerm: NetworkVariableWritePermission.Owner,
             readPerm: NetworkVariableReadPermission.Everyone);
 
         public event EventHandler<OnDamagedEvent> OnDamageEvent;
+        public event EventHandler OnDeath;
         public event EventHandler OnResetHealth;
 
         public float MaxHealth => maxHealth.Value;
@@ -48,9 +49,14 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public bool Invulnerable { get; set; } = false;
         public bool Passthrough { get; set; } = false;
 
+        private float GetAdjustedHealth(float change)
+        {
+            return Mathf.Clamp(CurrentHealth + change, 0, MaxHealth);
+        }
+
         private void AdjustHealth(float change)
         {
-            currentHealth.Value = Mathf.Clamp(CurrentHealth + change, 0, MaxHealth);
+            currentHealth.Value = GetAdjustedHealth(change);
         }
 
         public float GetHealthPercentage()
@@ -79,8 +85,19 @@ namespace nickmaltbie.Treachery.Interactive.Health
         }
 
         [ClientRpc]
-        public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent, float previousHealth, float currentHealth)
+        public void OnDeathClientRpc()
         {
+            OnDeath?.Invoke(this, EventArgs.Empty);
+        }
+
+        [ClientRpc]
+        public void OnDamageClientRpc(NetworkDamageEvent networkDamageEvent, float adjust, float previousHealth, float currentHealth)
+        {
+            if (IsOwner && !IsOwnedByServer)
+            {
+                AdjustHealth(adjust);
+            }
+
             OnDamageEvent?.Invoke(
                 this,
                 new OnDamagedEvent
@@ -111,8 +128,12 @@ namespace nickmaltbie.Treachery.Interactive.Health
             }
 
             float previousHealth = currentHealth.Value;
-            AdjustHealth(adjust);
-            OnDamageClientRpc(damageEvent, previousHealth, currentHealth.Value);
+            if (IsOwnedByServer)
+            {
+                AdjustHealth(adjust);
+            }
+
+            OnDamageClientRpc(damageEvent, adjust, previousHealth, GetAdjustedHealth(adjust));
         }
 
         public void ResetToMaxHealth()
