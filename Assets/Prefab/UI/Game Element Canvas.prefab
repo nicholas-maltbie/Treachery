@@ -382,7 +382,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 1
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: -1
   m_TargetDisplay: 0
@@ -433,6 +433,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5799449508386820906}
     m_Modifications:
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.a
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3375622512819069939, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: delay
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7215839640000705561, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
       propertyPath: m_Name
       value: Stamina Bar
@@ -539,6 +559,22 @@ PrefabInstance:
       propertyPath: _data._objectReferences.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: fedbea640e0769641a5a938fa84f080b, type: 2}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.a
+      value: 0.101960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701225763978801219, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6235552635256601086, guid: 9dd8f0d2436ef7b4eba3c50e1b90dbd5, type: 3}
       propertyPath: m_Color.g
       value: 0.17842808
