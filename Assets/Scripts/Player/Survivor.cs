@@ -243,12 +243,14 @@ namespace nickmaltbie.Treachery.Player
         [BlockEnabled]
         [MovementSettings(SpeedConfig = nameof(blockSpeed))]
         [DamageMultiplier(damageMultiplier = 0.5f, staminaSplit = 0.5f)]
+        [BlockAction(PlayerAction.Sprint)]
         public class BlockMoveState : State { }
 
         [Animation(SlidingAnimState, 0.35f, true)]
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [AnimationTransition(typeof(GroundedEvent), typeof(LandingState), 0.35f, true, 0.25f)]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
+        [BlockAction(PlayerAction.Sprint)]
         public class SlidingState : State { }
 
         [Animation(FallingAnimState, 0.1f, true)]
@@ -294,7 +296,7 @@ namespace nickmaltbie.Treachery.Player
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         [TransitionFromAnyState(typeof(PunchEvent))]
-        [BlockAction(PlayerAction.Punch, PlayerAction.Roll)]
+        [BlockAction(PlayerAction.Punch, PlayerAction.Roll, PlayerAction.Sprint)]
         [OnEnterState(nameof(RotateTowardsViewport))]
         public class PunchingState : State { }
 
