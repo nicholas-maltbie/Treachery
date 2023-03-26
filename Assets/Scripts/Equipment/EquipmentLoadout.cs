@@ -264,7 +264,6 @@ namespace nickmaltbie.Treachery.Equipment
 
                 if (isOwner())
                 {
-                    UnityEngine.Debug.Log($"Setting up item action for item:{equipment.ItemName}");
                     MainItem?.SetupItemAction(actor, stamina);
                     MainItem?.ItemAction?.SetActive(activeState);
                     MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
