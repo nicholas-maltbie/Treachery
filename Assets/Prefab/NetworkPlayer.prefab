@@ -521,7 +521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03c361905d91754ca91eebc00443634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationRate: 180
+  rotationRate: 720
   avatarBase: {fileID: 0}
 --- !u!114 &7590240513597693028
 MonoBehaviour:
@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxLoadouts: 3
-  manager: {fileID: 4561035598108080147}
+  manager: {fileID: 0}
   throwVelocity: 6.5
   dropItemInputAction: {fileID: -8197223153440005221, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
