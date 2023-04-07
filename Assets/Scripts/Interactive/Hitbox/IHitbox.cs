@@ -87,6 +87,36 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 hitbox: hitbox);
         }
 
+        public static IEnumerable<(RaycastHit, IHitbox)> GetAllValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source)
+        {
+            foreach (RaycastHit hit in hitSequence)
+            {
+                // Get the hitbox associated with the hit
+                IHitbox checkHitbox = hit.collider?.GetComponent<IHitbox>();
+
+                // Don't let the player hit him/her self.
+                // Also ignore disabled hitboxes or hitboxes with passthrough set.
+                bool ignoreHitbox = checkHitbox != null &&
+                    (checkHitbox.Source == source || checkHitbox.Disabled || (checkHitbox.Source?.Passthrough ?? false));
+                if (ignoreHitbox)
+                {
+                    continue;
+                }
+                else if (checkHitbox == null && !hit.collider.isTrigger)
+                {
+                    // check if we hit a wall or something.
+                    yield break;
+                }
+                else
+                {
+                    // we had a valid hit, return this hitbox.
+                    yield return (hit, checkHitbox);
+                }
+            }
+
+            yield break;
+        }
+
         public static IHitbox GetFirstValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source, out RaycastHit firstHit, out bool didHit)
         {
             foreach (RaycastHit hit in hitSequence)

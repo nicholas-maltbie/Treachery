@@ -71,11 +71,11 @@ namespace nickmaltbie.Treachery.Equipment
 
         public ActorConditionalAction<PlayerAction> SecondaryItemAction => null;
 
-        public bool DisableDefaultPrimary => ItemType == ItemType.Main;
+        public virtual bool DisableDefaultPrimary => ItemType == ItemType.Main;
 
-        public bool DisableDefaultSecondary => ItemType == ItemType.Offhand;
+        public virtual bool DisableDefaultSecondary => ItemType == ItemType.Offhand;
 
-        public bool CanDrop => true;
+        public virtual bool CanDrop => true;
 
         public ColliderConfiguration WorldShape => itemShape;
 
