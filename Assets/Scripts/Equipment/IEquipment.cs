@@ -53,7 +53,7 @@ namespace nickmaltbie.Treachery.Equipment
         bool DisableDefaultSecondary { get; }
         ColliderConfiguration WorldShape { get; }
         void PerformAction();
-        void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter meter);
+        void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter meter);
         void OnRemoveFromInventory(PlayerLoadout player, Vector3 throwDirection);
     }
 }

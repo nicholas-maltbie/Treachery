@@ -25,6 +25,7 @@ using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using nickmaltbie.Treachery.Player;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
@@ -53,28 +54,34 @@ namespace nickmaltbie.Treachery.Equipment
 
         public WeaponType WeaponType => WeaponType.Melee;
 
-        protected IDamageable Source => throw new NotImplementedException();
-
-        public Vector3 AttackBaseOffset => throw new NotImplementedException();
-        private ICameraControls viewHeading => throw new NotImplementedException();
-        private Transform PlayerPosition => throw new NotImplementedException();
+        protected IDamageable Source { get; set; }
+        protected Vector3 AttackBaseOffset { get; set; }
+        protected ICameraControls viewHeading { get; set; }
+        protected Transform PlayerPosition { get; set; }
+        protected IDamageActor DamageActor { get; set; }
 
         private RaycastHit[] HitCache = new RaycastHit[MaxHitsPerRay];
 
         public override bool DisableDefaultPrimary => true;
 
-        public override void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
+        public override void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
             ItemAction = new ItemAction(
                 InputAction,
                 actor,
                 stamina,
                 this,
-                ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem,
+                PlayerAction.MeleeAttack,
                 cooldown,
                 staminaCost,
                 performWhileHeld: true);
             ItemAction.Setup();
+
+            Source = player.GetComponent<IDamageable>();
+            viewHeading = player.GetComponent<ICameraControls>();
+            AttackBaseOffset = player.GetComponent<IManagedCamera>().CameraBase.localPosition;
+            DamageActor = player.GetComponent<IDamageActor>();
+            PlayerPosition = player.transform;
         }
 
         public IEnumerable<Quaternion> GetOffsets()
@@ -164,6 +171,7 @@ namespace nickmaltbie.Treachery.Equipment
                 case MeleeAttackType.Basic:
                 default:
                     DamageEvent basicAttack = GetBasicAttack(viewHeading.PlayerHeading, source);
+                    DamageActor.AttackServerRpc(basicAttack);
                     break;
             }
         }

@@ -26,10 +26,10 @@ namespace nickmaltbie.Treachery.Player
         private PlayerDeathEvent() { }
     }
 
-    public class PunchEvent : IEvent
+    public class AttackStartEvent : IEvent
     {
-        public static PunchEvent Instance = new PunchEvent();
-        private PunchEvent() { }
+        public static AttackStartEvent Instance = new AttackStartEvent();
+        private AttackStartEvent() { }
     }
 
     public class PlayerReviveEvent : IEvent
@@ -66,6 +66,30 @@ namespace nickmaltbie.Treachery.Player
     {
         public static RollStop Instance = new RollStop();
         private RollStop() { }
+    }
+
+    public class SwingAttackStart : IEvent
+    {
+        public static SwingAttackStart Instance = new SwingAttackStart();
+        private SwingAttackStart() { }
+    }
+
+    public class CleaveAttackStart : IEvent
+    {
+        public static CleaveAttackStart Instance = new CleaveAttackStart();
+        private CleaveAttackStart() { }
+    }
+
+    public class StabAttackStart : IEvent
+    {
+        public static StabAttackStart Instance = new StabAttackStart();
+        private StabAttackStart() { }
+    }
+
+    public class AttackEnd : IEvent
+    {
+        public static AttackEnd Instance = new AttackEnd();
+        private AttackEnd() { }
     }
 
     public class BlockStart : IEvent

@@ -87,6 +87,7 @@ namespace nickmaltbie.Treachery.Equipment
                 writePerm: NetworkVariableWritePermission.Owner);
 
             loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout(
+                gameObject,
                 transform,
                 GetComponent<IActionActor<PlayerAction>>(),
                 GetComponent<IStaminaMeter>(),
@@ -212,7 +213,7 @@ namespace nickmaltbie.Treachery.Equipment
         public EquipmentLoadout CurrentLoadout => loadouts[CurrentSelected];
         public EquipmentLoadout GetLoadout(int idx) => loadouts != null ?
             loadouts[idx] :
-            new EquipmentLoadout(transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), () => false);
+            new EquipmentLoadout(gameObject, transform, GetComponent<IActionActor<PlayerAction>>(), GetComponent<IStaminaMeter>(), () => false);
 
         public int CurrentSelected => currentLoadout.Value;
 

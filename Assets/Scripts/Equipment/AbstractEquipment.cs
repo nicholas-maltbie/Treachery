@@ -79,7 +79,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public ColliderConfiguration WorldShape => itemShape;
 
-        public virtual void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
+        public virtual void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
             ItemAction = new ItemAction(InputAction, actor, stamina, this, ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem);
             ItemAction.Setup();

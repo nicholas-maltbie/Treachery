@@ -34,6 +34,7 @@ using nickmaltbie.Treachery.Animation.Control;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player.Action;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -49,7 +50,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(Damageable))]
     [RequireComponent(typeof(StaminaMeter))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor
+    public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor, IDamageActor
     {
         public class BlockMovement : Attribute
         {
@@ -295,10 +296,11 @@ namespace nickmaltbie.Treachery.Player
         [Animation(PunchingAnimState, 0.05f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
-        [TransitionFromAnyState(typeof(PunchEvent))]
+        [TransitionFromAnyState(typeof(AttackStartEvent))]
         [BlockAction(PlayerAction.Punch, PlayerAction.Roll, PlayerAction.Sprint)]
+        [LockMovementAnimation]
         [OnEnterState(nameof(RotateTowardsViewport))]
-        public class PunchingState : State { }
+        public class MeleeAttackState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
         [TransitionFromAnyState(typeof(PlayerDeathEvent))]
@@ -545,6 +547,21 @@ namespace nickmaltbie.Treachery.Player
         public Vector3 LastDesiredMovement()
         {
             return PreviousNonZeroMovement;
+        }
+
+        [ServerRpc]
+        public void AttackServerRpc(NetworkDamageEvent attack)
+        {
+            NetworkDamageEvent.ProcessEvent(attack);
+        }
+
+        [ServerRpc]
+        public void MultiAttackServerRpc(NetworkDamageEvent[] attacks)
+        {
+            foreach (NetworkDamageEvent attack in attacks)
+            {
+                NetworkDamageEvent.ProcessEvent(attack);
+            }
         }
     }
 }

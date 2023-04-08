@@ -27,6 +27,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         Roll,
         Sprint,
         Interact,
+        MeleeAttack,
         PrimaryItem,
         OffhandItem,
     }
