@@ -168,14 +168,19 @@ namespace nickmaltbie.Treachery.Equipment
 
         public override void PerformAction()
         {
-            Actor.RaiseEvent(new MeleeAttackEvent(this.attackType));
+            Actor.RaiseEvent(new MeleeAttackEvent(attackType));
             Vector3 source = PlayerPosition.position + AttackBaseOffset;
             switch (attackType)
             {
                 case MeleeAttackType.Basic:
                 default:
                     DamageEvent basicAttack = GetBasicAttack(viewHeading.PlayerHeading, source);
-                    DamageActor.AttackServerRpc(basicAttack);
+
+                    if (basicAttack.target != null)
+                    {
+                        DamageActor.AttackServerRpc(basicAttack);
+                    }
+
                     break;
             }
         }
