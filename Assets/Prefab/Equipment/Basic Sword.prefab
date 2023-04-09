@@ -60,7 +60,7 @@ MonoBehaviour:
     capsuleDirection: 0
   attackType: 1
   damageType: 2
-  degreeRange: 15
+  degreeRange: 60
   attackRange: 1
   peirce: 0
   damage: 20
@@ -103,35 +103,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.35355338
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.35355338
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.61237246
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.61237246
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
       value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
       propertyPath: m_Name
       value: sword
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ae428250890b46046a5e73e22e0b9293, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae428250890b46046a5e73e22e0b9293, type: 3}

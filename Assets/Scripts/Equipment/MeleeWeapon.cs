@@ -26,6 +26,7 @@ using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
@@ -42,7 +43,7 @@ namespace nickmaltbie.Treachery.Equipment
     {
         public const int DegreesPerRay = 5;
         public const int VerticalAttackDegrees = 90;
-        public const int MaxHitsPerRay = 10;
+        public const int MaxHitsPerRay = 20;
 
         public MeleeAttackType attackType;
         public DamageType damageType = DamageType.Slashing;
@@ -57,7 +58,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         protected IDamageable Source { get; set; }
         protected Vector3 AttackBaseOffset { get; set; }
-        protected ICameraControls viewHeading { get; set; }
+        protected IManagedCamera viewHeading { get; set; }
         protected Transform PlayerPosition { get; set; }
         protected IDamageActor DamageActor { get; set; }
         public IActionActor<PlayerAction> Actor { get; set; }
@@ -80,8 +81,8 @@ namespace nickmaltbie.Treachery.Equipment
             ItemAction.Setup();
 
             Source = player.GetComponent<IDamageable>();
-            viewHeading = player.GetComponent<ICameraControls>();
-            AttackBaseOffset = player.GetComponent<IManagedCamera>().CameraBase.localPosition;
+            viewHeading = player.GetComponent<IManagedCamera>();
+            AttackBaseOffset = player.GetComponent<SurvivorCameraController>().InitialCameraPosition;
             DamageActor = player.GetComponent<IDamageActor>();
             PlayerPosition = player.transform;
             Actor = actor;
@@ -146,9 +147,9 @@ namespace nickmaltbie.Treachery.Equipment
                 Vector3 dir = rotation * Vector3.forward;
                 int hitCount = Physics.RaycastNonAlloc(source, dir, HitCache, attackRange, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
                 IEnumerable<RaycastHit> hits = Enumerable.Range(0, hitCount).Select(idx => HitCache[idx]);
-                IHitbox hit = IHitbox.GetFirstValidHit(hits, Source, out RaycastHit firstHit, out bool didHit);
+                var hit = IHitbox.GetFirstValidHit(hits, Source, out RaycastHit firstHit, out bool didHit);
                 
-                if (didHit && firstHit.distance < closestDistance)
+                if (didHit && hit != null && firstHit.distance < closestDistance)
                 {
                     raycastHit = firstHit;
                     closestHit = hit;
@@ -170,11 +171,12 @@ namespace nickmaltbie.Treachery.Equipment
         {
             Actor.RaiseEvent(new MeleeAttackEvent(attackType));
             Vector3 source = PlayerPosition.position + AttackBaseOffset;
+            var rotation = Quaternion.Euler(viewHeading.Pitch, viewHeading.Yaw, 0);
             switch (attackType)
             {
                 case MeleeAttackType.Basic:
                 default:
-                    DamageEvent basicAttack = GetBasicAttack(viewHeading.PlayerHeading, source);
+                    DamageEvent basicAttack = GetBasicAttack(rotation, source);
 
                     if (basicAttack.target != null)
                     {
