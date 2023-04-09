@@ -46,6 +46,9 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public float throwVelocity = 8.0f;
 
+        [SerializeField]
+        public float swapCooldown = 0.25f;
+
         public InputActionReference dropItemInputAction;
         public InputActionReference incrementLoadoutSelection;
         public InputActionReference decrementLoadoutSelection;
@@ -61,6 +64,7 @@ namespace nickmaltbie.Treachery.Equipment
         private (InputAction, Action<CallbackContext>)[] numberOptions;
 
         public IActionActor<PlayerAction> Actor { get; private set; }
+        private float lastSwapTime = Mathf.NegativeInfinity;
 
         private KeyControl GetDigitKey(int index)
         {
@@ -249,6 +253,7 @@ namespace nickmaltbie.Treachery.Equipment
                 return;
             }
 
+            lastSwapTime = Time.time;
             currentLoadout.Value = selected;
         }
 
@@ -354,6 +359,11 @@ namespace nickmaltbie.Treachery.Equipment
 
         public bool CanSwapLaodout()
         {
+            if (Time.time < lastSwapTime + swapCooldown)
+            {
+                return false;
+            }
+
             return Actor.CanPerform(PlayerAction.SwapLoadout);
         }
     }

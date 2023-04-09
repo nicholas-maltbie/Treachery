@@ -569,6 +569,7 @@ MonoBehaviour:
   MaxLoadouts: 2
   manager: {fileID: 0}
   throwVelocity: 6.5
+  swapCooldown: 0.25
   dropItemInputAction: {fileID: -8197223153440005221, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   decrementLoadoutSelection: {fileID: 0}
