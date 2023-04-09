@@ -66,26 +66,26 @@
       "url": "https://registry.npmjs.org"
     },
     "com.nickmaltbie.statemachineunity": {
-      "version": "1.2.5",
+      "version": "https://github.com/nicholas-maltbie/StateMachineUnity.git#release/latest",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.nickmaltbie.testutilsunity": "0.0.2",
         "com.unity.inputsystem": "1.0.0"
       },
-      "url": "https://registry.npmjs.org"
+      "hash": "1d8762a6275763e46f218b038c9f2bd101684beb"
     },
     "com.nickmaltbie.statemachineunity.netcode": {
-      "version": "1.2.5",
+      "version": "https://github.com/nicholas-maltbie/StateMachineUnity.git#release/netcode/latest",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.nickmaltbie.testutilsunity": "0.0.2",
         "com.nickmaltbie.statemachineunity": "1.2.3",
         "com.unity.inputsystem": "1.0.0",
         "com.unity.netcode.gameobjects": "1.1.0"
       },
-      "url": "https://registry.npmjs.org"
+      "hash": "fedcd35ccdb647ed787519c1bf795dcd72a85bbb"
     },
     "com.nickmaltbie.testutilsunity": {
       "version": "1.0.0",

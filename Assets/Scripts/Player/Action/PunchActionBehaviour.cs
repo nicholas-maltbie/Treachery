@@ -61,7 +61,7 @@ namespace nickmaltbie.Treachery.Player.Action
 
         public void OnAttack(object source, DamageEvent attack)
         {
-            Actor.RaiseEvent(AttackStartEvent.Instance);
+            Actor.RaiseEvent(MeleeAttackEvent.Instance);
             if (attack.target != null)
             {
                 attack.damageSource = GetComponent<IDamageSource>();

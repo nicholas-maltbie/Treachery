@@ -32,6 +32,7 @@ namespace nickmaltbie.Treachery.Equipment
 {
     public enum MeleeAttackType
     {
+        Punch,
         Basic,
         Stab,
         Cleave
@@ -59,6 +60,7 @@ namespace nickmaltbie.Treachery.Equipment
         protected ICameraControls viewHeading { get; set; }
         protected Transform PlayerPosition { get; set; }
         protected IDamageActor DamageActor { get; set; }
+        public IActionActor<PlayerAction> Actor { get; set; }
 
         private RaycastHit[] HitCache = new RaycastHit[MaxHitsPerRay];
 
@@ -82,6 +84,7 @@ namespace nickmaltbie.Treachery.Equipment
             AttackBaseOffset = player.GetComponent<IManagedCamera>().CameraBase.localPosition;
             DamageActor = player.GetComponent<IDamageActor>();
             PlayerPosition = player.transform;
+            Actor = actor;
         }
 
         public IEnumerable<Quaternion> GetOffsets()
@@ -165,6 +168,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public override void PerformAction()
         {
+            Actor.RaiseEvent(new MeleeAttackEvent(this.attackType));
             Vector3 source = PlayerPosition.position + AttackBaseOffset;
             switch (attackType)
             {

@@ -31,6 +31,7 @@ using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Animation.Control;
+using nickmaltbie.Treachery.Equipment;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player.Action;
@@ -186,6 +187,40 @@ namespace nickmaltbie.Treachery.Player
         /// <inheritdoc/>
         public IManagedCamera Camera => CameraControls as IManagedCamera;
 
+        /// <summary>
+        /// Currently selected attack action type
+        /// </summary>
+        public MeleeAttackType AttackAction { get; protected set; } = MeleeAttackType.Punch;
+
+        /// <summary>
+        /// Currently selected attack animation.
+        /// </summary>
+        public string AttackAnim()
+        {
+            switch (AttackAction)
+            {
+                case MeleeAttackType.Stab:
+                    return StabAttackAnimState;
+                case MeleeAttackType.Cleave:
+                    return CleaveAttackAnimState;
+                case MeleeAttackType.Punch:
+                    return PunchingAnimState;
+                case MeleeAttackType.Basic:
+                default:
+                    return SwingAttackAnimState;
+            }
+        }
+
+        public void OnMeleeAttack(IEvent evt)
+        {
+            if (evt is MeleeAttackEvent attack)
+            {
+                AttackAction = attack.attackType;
+            }
+
+            RotateTowardsViewport();
+        }
+
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -293,13 +328,14 @@ namespace nickmaltbie.Treachery.Player
         [BlockAllAction]
         public class GuardState : State { }
 
-        [Animation(PunchingAnimState, 0.05f, true)]
+        [DynamicAnimation(nameof(AttackAnim), 0.05f, true)]
+        [AnimationTransition(typeof(AttackEnd), typeof(IdleState), 0.35f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
-        [TransitionFromAnyState(typeof(AttackStartEvent))]
+        [TransitionFromAnyState(typeof(MeleeAttackEvent))]
         [BlockAction(PlayerAction.Punch, PlayerAction.Roll, PlayerAction.Sprint)]
         [LockMovementAnimation]
-        [OnEnterState(nameof(RotateTowardsViewport))]
+        [OnEnterState(nameof(OnMeleeAttack))]
         public class MeleeAttackState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]

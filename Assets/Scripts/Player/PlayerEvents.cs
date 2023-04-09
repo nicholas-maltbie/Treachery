@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using nickmaltbie.StateMachineUnity.Event;
+using nickmaltbie.Treachery.Equipment;
 
 namespace nickmaltbie.Treachery.Player
 {
@@ -26,10 +27,14 @@ namespace nickmaltbie.Treachery.Player
         private PlayerDeathEvent() { }
     }
 
-    public class AttackStartEvent : IEvent
+    public class MeleeAttackEvent : IEvent
     {
-        public static AttackStartEvent Instance = new AttackStartEvent();
-        private AttackStartEvent() { }
+        public readonly MeleeAttackType attackType;
+
+        public MeleeAttackEvent(MeleeAttackType attackType)
+        {
+            this.attackType = attackType;
+        }
     }
 
     public class PlayerReviveEvent : IEvent
