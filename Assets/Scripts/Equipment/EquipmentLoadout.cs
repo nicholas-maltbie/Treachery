@@ -206,15 +206,15 @@ namespace nickmaltbie.Treachery.Equipment
             if (Main != null)
             {
                 Main.transform.SetParent(manager.GetMainHand);
-                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
-                Main.transform.localRotation = Quaternion.identity;
+                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f + MainItem.HeldOffset;
+                Main.transform.localRotation = MainItem.HeldRotation;
             }
 
             if (Offhand != null)
             {
                 Offhand.transform.SetParent(manager.GetOffHand);
-                Offhand.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
-                Offhand.transform.localRotation = Quaternion.identity;
+                Offhand.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f + OffhandItem.HeldOffset;
+                Offhand.transform.localRotation = OffhandItem.HeldRotation;
             }
         }
 

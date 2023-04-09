@@ -100,12 +100,12 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         }
 
         /// <inheritdoc/>
-        public float ExhaustStamina(float amount)
+        public float ExhaustStamina(float amount, float cooldownTime = 0.0f)
         {
             if (amount > 0)
             {
                 float change = AdjustStamina(-amount);
-                lastStaminaSpendTime = Time.time;
+                lastStaminaSpendTime = Time.time + cooldownTime;
                 return change;
             }
 
@@ -113,11 +113,11 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         }
 
         /// <inheritdoc/>
-        public bool SpendStamina(float amount)
+        public bool SpendStamina(float amount, float cooldownTime = 0.0f)
         {
             if (RemainingStamina >= amount)
             {
-                ExhaustStamina(amount);
+                ExhaustStamina(amount, cooldownTime);
                 return true;
             }
             else
@@ -150,7 +150,7 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
 
         public bool SpendStamina(IStaminaAction action)
         {
-            return SpendStamina(action.Cost);
+            return SpendStamina(action.Cost, action.CooldownTime);
         }
 
         public bool HasEnoughStamina(float amount)

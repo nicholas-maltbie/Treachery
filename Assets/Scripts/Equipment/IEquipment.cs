@@ -40,6 +40,9 @@ namespace nickmaltbie.Treachery.Equipment
     {
         public const int EmptyEquipmentId = -1;
 
+        public Vector3 HeldOffset { get; }
+        public Quaternion HeldRotation { get; }
+
         int EquipmentId { get; }
         GameObject HeldPrefab { get; }
         Sprite ItemIcon { get; }

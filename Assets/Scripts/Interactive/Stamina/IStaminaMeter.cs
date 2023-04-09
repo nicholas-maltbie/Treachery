@@ -48,15 +48,17 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// Exhaust some stamina from the actor.
         /// </summary>
         /// <param name="amount">Amount of stamina to exhaust.</param>
+        /// <param name="cooldownTime">Extra cooldown time before starting stamina restore timer.</param>
         /// <returns>The amount of stamina actually lost.</returns>
-        float ExhaustStamina(float amount);
+        float ExhaustStamina(float amount, float cooldownTime = 0.0f);
 
         /// <summary>
         /// Spend some stamina if the player has enough.
         /// </summary>
         /// <param name="amount">Amount of stamina to spend.</param>
+        /// <param name="cooldownTime">Extra cooldown time before starting stamina restore timer.</param>
         /// <returns>True if the stamina can be spent, false otherwise.</returns>
-        bool SpendStamina(float amount);
+        bool SpendStamina(float amount, float cooldownTime = 0.0f);
 
         /// <summary>
         /// Spend some stamina if the player has enough.

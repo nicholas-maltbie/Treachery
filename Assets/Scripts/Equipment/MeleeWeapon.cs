@@ -51,7 +51,7 @@ namespace nickmaltbie.Treachery.Equipment
         public float attackRange = 1.0f;
         public bool peirce = false;
         public float damage = 20;
-        public float cooldown = 0.1f;
+        public float cooldown = 1.0f;
         public float staminaCost = 10;
 
         public WeaponType WeaponType => WeaponType.Melee;
@@ -169,7 +169,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         public override void PerformAction()
         {
-            Actor.RaiseEvent(new MeleeAttackEvent(attackType));
+            Actor.RaiseEvent(new MeleeAttackEvent(attackType, cooldown));
             Vector3 source = PlayerPosition.position + AttackBaseOffset;
             var rotation = Quaternion.Euler(viewHeading.Pitch, viewHeading.Yaw, 0);
             switch (attackType)

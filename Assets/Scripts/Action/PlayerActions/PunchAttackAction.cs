@@ -64,7 +64,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
             ICameraControls viewHeading,
             float cooldown = 0.0f,
             float staminaCost = 0.0f)
-            : base(actionReference, actor, stamina, PlayerAction.Punch, cooldown, staminaCost, true)
+            : base(actionReference, actor, stamina, PlayerAction.MeleeAttack, cooldown, staminaCost, true)
         {
             this.player = player;
             this.playerPosition = playerPosition;
@@ -100,5 +100,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
                 OnAttack?.Invoke(this, IHitbox.EmptyDamageEvent(Interactive.Health.EventType.Damage, damageDealt));
             }
         }
+
+        public override float CooldownTime => cooldown;
     }
 }

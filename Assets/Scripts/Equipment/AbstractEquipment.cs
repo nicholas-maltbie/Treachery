@@ -51,6 +51,9 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public ColliderConfiguration itemShape;
 
+        [SerializeField]
+        public Transform holdOffset;
+
         public bool InHand { get; private set; }
 
         public int EquipmentId => equipmentId;
@@ -78,6 +81,10 @@ namespace nickmaltbie.Treachery.Equipment
         public virtual bool CanDrop => true;
 
         public ColliderConfiguration WorldShape => itemShape;
+
+        public Vector3 HeldOffset => holdOffset?.localPosition ?? Vector3.zero;
+
+        public Quaternion HeldRotation => holdOffset?.localRotation ?? Quaternion.identity;
 
         public virtual void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {

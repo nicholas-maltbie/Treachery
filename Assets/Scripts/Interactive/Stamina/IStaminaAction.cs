@@ -27,5 +27,10 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// THe cost of this action.
         /// </summary>
         float Cost { get; }
+
+        /// <summary>
+        /// Extra cooldown time before restoring stamina.
+        /// </summary>
+        float CooldownTime { get;  }
     }
 }

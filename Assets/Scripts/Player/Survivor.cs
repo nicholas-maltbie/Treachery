@@ -193,6 +193,11 @@ namespace nickmaltbie.Treachery.Player
         public MeleeAttackType AttackAction { get; protected set; } = MeleeAttackType.Punch;
 
         /// <summary>
+        /// Remaining time in current attack.
+        /// </summary>
+        private float remainingAttackDuration;
+
+        /// <summary>
         /// Currently selected attack animation.
         /// </summary>
         public string AttackAnim()
@@ -216,6 +221,7 @@ namespace nickmaltbie.Treachery.Player
             if (evt is MeleeAttackEvent attack)
             {
                 AttackAction = attack.attackType;
+                remainingAttackDuration = attack.attackDuration;
             }
 
             RotateTowardsViewport();
@@ -245,7 +251,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
-        [BlockAction(PlayerAction.Punch, PlayerAction.Block)]
+        [BlockAction(PlayerAction.MeleeAttack, PlayerAction.Block)]
         public class LandingState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
@@ -333,7 +339,8 @@ namespace nickmaltbie.Treachery.Player
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
         [TransitionFromAnyState(typeof(MeleeAttackEvent))]
-        [BlockAction(PlayerAction.Punch, PlayerAction.Roll, PlayerAction.Sprint)]
+        [OnUpdate(nameof(AttackUpdate))]
+        [BlockAction(PlayerAction.MeleeAttack, PlayerAction.Block, PlayerAction.Dodge, PlayerAction.Roll, PlayerAction.Sprint, PlayerAction.SwapLoadout)]
         [LockMovementAnimation]
         [OnEnterState(nameof(OnMeleeAttack))]
         public class MeleeAttackState : State { }
@@ -413,6 +420,19 @@ namespace nickmaltbie.Treachery.Player
                 100 * unityService.deltaTime,
                 layerMask: MovementEngine.LayerMask);
             base.LateUpdate();
+        }
+
+        /// <summary>
+        /// Update called when the player is attacking.
+        /// </summary>
+        public void AttackUpdate()
+        {
+            remainingAttackDuration -= Time.deltaTime;
+
+            if (remainingAttackDuration <= 0)
+            {
+                RaiseEvent(AttackEnd.Instance);
+            }
         }
 
         /// <summary>

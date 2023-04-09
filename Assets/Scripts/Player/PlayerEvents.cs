@@ -30,10 +30,12 @@ namespace nickmaltbie.Treachery.Player
     public class MeleeAttackEvent : IEvent
     {
         public readonly MeleeAttackType attackType;
+        public readonly float attackDuration;
 
-        public MeleeAttackEvent(MeleeAttackType attackType)
+        public MeleeAttackEvent(MeleeAttackType attackType, float attackDuration)
         {
             this.attackType = attackType;
+            this.attackDuration = attackDuration;
         }
     }
 

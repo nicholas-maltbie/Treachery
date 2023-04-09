@@ -60,6 +60,8 @@ namespace nickmaltbie.Treachery.Equipment
         private NetworkList<NetworkEquipmentLoadout> networkLoadouts;
         private (InputAction, Action<CallbackContext>)[] numberOptions;
 
+        public IActionActor<PlayerAction> Actor { get; private set; }
+
         private KeyControl GetDigitKey(int index)
         {
             switch (index)
@@ -86,10 +88,12 @@ namespace nickmaltbie.Treachery.Equipment
                 readPerm: NetworkVariableReadPermission.Everyone,
                 writePerm: NetworkVariableWritePermission.Owner);
 
+            Actor = GetComponent<IActionActor<PlayerAction>>();
+
             loadouts = Enumerable.Range(0, MaxLoadouts).Select(_ => new EquipmentLoadout(
                 gameObject,
                 transform,
-                GetComponent<IActionActor<PlayerAction>>(),
+                Actor,
                 GetComponent<IStaminaMeter>(),
                 () => IsOwner)).ToArray();
         }
@@ -224,6 +228,11 @@ namespace nickmaltbie.Treachery.Equipment
                 return;
             }
 
+            if (!CanSwapLaodout())
+            {
+                return;
+            }
+
             currentLoadout.Value = selected;
         }
 
@@ -325,6 +334,11 @@ namespace nickmaltbie.Treachery.Equipment
             EquipmentLoadout modified = loadouts[changeEvent.Index];
             modified.UpdateFromNetworkState(changeEvent.Value);
             modified.UpdateItemPositions(manager);
+        }
+
+        public bool CanSwapLaodout()
+        {
+            return Actor.CanPerform(PlayerAction.SwapLoadout);
         }
     }
 }

@@ -63,5 +63,7 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
         {
             return Time.time >= lastActivateTime + swapCooldown && base.Condition();
         }
+
+        public override float CooldownTime => cooldown;
     }
 }
