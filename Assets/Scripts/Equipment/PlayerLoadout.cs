@@ -101,10 +101,18 @@ namespace nickmaltbie.Treachery.Equipment
         public override void OnDestroy()
         {
             base.OnDestroy();
+            if (incrementLoadoutSelection != null)
+            {
+                incrementLoadoutSelection.action.performed -= IncrementLoadout;
+            }
+
+            if (decrementLoadoutSelection != null)
+            {
+                decrementLoadoutSelection.action.performed -= DecrementLoadout;
+            }
+
             currentLoadout.OnValueChanged -= OnLoadoutSelected;
             networkLoadouts.OnListChanged -= OnLoadoutModified;
-            incrementLoadoutSelection.action.performed -= IncrementLoadout;
-            decrementLoadoutSelection.action.performed -= DecrementLoadout;
             dropItemInputAction.action.performed -= DropCurrentItem;
             loadoutScroll.action.performed -= ScrollLoadout;
             foreach ((InputAction, Action<CallbackContext>) tuple in numberOptions)
@@ -150,8 +158,8 @@ namespace nickmaltbie.Treachery.Equipment
         {
             loadouts[CurrentSelected].SetActive(true);
 
-            incrementLoadoutSelection.action.Enable();
-            decrementLoadoutSelection.action.Enable();
+            incrementLoadoutSelection?.action?.Enable();
+            decrementLoadoutSelection?.action?.Enable();
             dropItemInputAction.action.Enable();
             loadoutScroll.action.Enable();
 
@@ -181,8 +189,16 @@ namespace nickmaltbie.Treachery.Equipment
                 }
             }
 
-            incrementLoadoutSelection.action.performed += IncrementLoadout;
-            decrementLoadoutSelection.action.performed += DecrementLoadout;
+            if (incrementLoadoutSelection?.action != null)
+            {
+                incrementLoadoutSelection.action.performed += IncrementLoadout;
+            }
+            
+            if (decrementLoadoutSelection?.action != null)
+            {
+                decrementLoadoutSelection.action.performed += DecrementLoadout;
+            }
+
             dropItemInputAction.action.performed += DropCurrentItem;
             loadoutScroll.action.performed += ScrollLoadout;
             currentLoadout.OnValueChanged += OnLoadoutSelected;
