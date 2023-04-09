@@ -22,12 +22,13 @@ namespace nickmaltbie.Treachery.Action.PlayerActions
     {
         Jump,
         Dodge,
-        Punch,
         Block,
         Roll,
         Sprint,
         Interact,
+        MeleeAttack,
         PrimaryItem,
         OffhandItem,
+        SwapLoadout,
     }
 }

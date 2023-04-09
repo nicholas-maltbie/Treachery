@@ -31,9 +31,11 @@ using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Action;
 using nickmaltbie.Treachery.Action.PlayerActions;
 using nickmaltbie.Treachery.Animation.Control;
+using nickmaltbie.Treachery.Equipment;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player.Action;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -49,7 +51,7 @@ namespace nickmaltbie.Treachery.Player
     [RequireComponent(typeof(Damageable))]
     [RequireComponent(typeof(StaminaMeter))]
     [DefaultExecutionOrder(1000)]
-    public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor
+    public class Survivor : NetworkSMAnim, IJumping, IDamageSource, IActionActor<PlayerAction>, IMovementActor, IDamageActor
     {
         public class BlockMovement : Attribute
         {
@@ -185,6 +187,46 @@ namespace nickmaltbie.Treachery.Player
         /// <inheritdoc/>
         public IManagedCamera Camera => CameraControls as IManagedCamera;
 
+        /// <summary>
+        /// Currently selected attack action type
+        /// </summary>
+        public MeleeAttackType AttackAction { get; protected set; } = MeleeAttackType.Punch;
+
+        /// <summary>
+        /// Remaining time in current attack.
+        /// </summary>
+        private float remainingAttackDuration;
+
+        /// <summary>
+        /// Currently selected attack animation.
+        /// </summary>
+        public string AttackAnim()
+        {
+            switch (AttackAction)
+            {
+                case MeleeAttackType.Stab:
+                    return StabAttackAnimState;
+                case MeleeAttackType.Cleave:
+                    return CleaveAttackAnimState;
+                case MeleeAttackType.Punch:
+                    return PunchingAnimState;
+                case MeleeAttackType.Basic:
+                default:
+                    return SwingAttackAnimState;
+            }
+        }
+
+        public void OnMeleeAttack(IEvent evt)
+        {
+            if (evt is MeleeAttackEvent attack)
+            {
+                AttackAction = attack.attackType;
+                remainingAttackDuration = attack.attackDuration;
+            }
+
+            RotateTowardsViewport();
+        }
+
         [InitialState]
         [Animation(IdleAnimState, 0.35f, true)]
         [Transition(typeof(StartMoveInput), typeof(WalkingState))]
@@ -209,7 +251,7 @@ namespace nickmaltbie.Treachery.Player
         [Transition(typeof(LeaveGroundEvent), typeof(FallingState))]
         [Transition(typeof(SteepSlopeEvent), typeof(SlidingState))]
         [MovementSettings(SpeedConfig = nameof(walkingSpeed))]
-        [BlockAction(PlayerAction.Punch, PlayerAction.Block)]
+        [BlockAction(PlayerAction.MeleeAttack, PlayerAction.Block)]
         public class LandingState : State { }
 
         [Animation(WalkingAnimState, 0.1f, true)]
@@ -292,13 +334,16 @@ namespace nickmaltbie.Treachery.Player
         [BlockAllAction]
         public class GuardState : State { }
 
-        [Animation(PunchingAnimState, 0.05f, true)]
+        [DynamicAnimation(nameof(AttackAnim), 0.05f, true)]
+        [AnimationTransition(typeof(AttackEnd), typeof(IdleState), 0.35f, true)]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [MovementSettings(SpeedConfig = nameof(attackSpeed))]
-        [TransitionFromAnyState(typeof(PunchEvent))]
-        [BlockAction(PlayerAction.Punch, PlayerAction.Roll, PlayerAction.Sprint)]
-        [OnEnterState(nameof(RotateTowardsViewport))]
-        public class PunchingState : State { }
+        [TransitionFromAnyState(typeof(MeleeAttackEvent))]
+        [OnUpdate(nameof(AttackUpdate))]
+        [BlockAction(PlayerAction.MeleeAttack, PlayerAction.Block, PlayerAction.Dodge, PlayerAction.Roll, PlayerAction.Sprint, PlayerAction.SwapLoadout)]
+        [LockMovementAnimation]
+        [OnEnterState(nameof(OnMeleeAttack))]
+        public class MeleeAttackState : State { }
 
         [Animation(DyingAnimState, 0.35f, true)]
         [TransitionFromAnyState(typeof(PlayerDeathEvent))]
@@ -375,6 +420,19 @@ namespace nickmaltbie.Treachery.Player
                 100 * unityService.deltaTime,
                 layerMask: MovementEngine.LayerMask);
             base.LateUpdate();
+        }
+
+        /// <summary>
+        /// Update called when the player is attacking.
+        /// </summary>
+        public void AttackUpdate()
+        {
+            remainingAttackDuration -= Time.deltaTime;
+
+            if (remainingAttackDuration <= 0)
+            {
+                RaiseEvent(AttackEnd.Instance);
+            }
         }
 
         /// <summary>
@@ -545,6 +603,21 @@ namespace nickmaltbie.Treachery.Player
         public Vector3 LastDesiredMovement()
         {
             return PreviousNonZeroMovement;
+        }
+
+        [ServerRpc]
+        public void AttackServerRpc(NetworkDamageEvent attack)
+        {
+            NetworkDamageEvent.ProcessEvent(attack);
+        }
+
+        [ServerRpc]
+        public void MultiAttackServerRpc(NetworkDamageEvent[] attacks)
+        {
+            foreach (NetworkDamageEvent attack in attacks)
+            {
+                NetworkDamageEvent.ProcessEvent(attack);
+            }
         }
     }
 }

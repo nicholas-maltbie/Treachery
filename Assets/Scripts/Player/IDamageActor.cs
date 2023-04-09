@@ -16,28 +16,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using nickmaltbie.Treachery.Interactive.Health;
+using Unity.Netcode;
+
 namespace nickmaltbie.Treachery.Player
 {
-    public static class PlayerAnimStates
+    public interface IDamageActor
     {
-        public const string IdleAnimState = "Idle";
-        public const string JumpAnimState = "Jump";
-        public const string LandingAnimState = "Landing";
-        public const string WalkingAnimState = "Walking";
-        public const string SprintingAnimState = "Sprinting";
-        public const string SlidingAnimState = "Sliding";
-        public const string FallingAnimState = "Falling";
-        public const string LongFallingAnimState = "Long Falling";
-        public const string DyingAnimState = "Dying";
-        public const string DeadAnimState = "Dead";
-        public const string RevivingAnimState = "Reviving";
-        public const string PunchingAnimState = "Punching";
-        public const string HitReactionAnimState = "Hit Reaction";
-        public const string DodgeAnimState = "Dodge";
-        public const string BlockAnimState = "Blocking";
-        public const string RollAnimState = "Rolling";
-        public const string SwingAttackAnimState = "SwingAttack";
-        public const string StabAttackAnimState = "StabAttack";
-        public const string CleaveAttackAnimState = "CleaveAttack";
+        [ServerRpc]
+        void AttackServerRpc(NetworkDamageEvent attack);
+
+        [ServerRpc]
+        void MultiAttackServerRpc(NetworkDamageEvent[] attack);
     }
 }

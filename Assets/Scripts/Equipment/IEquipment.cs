@@ -40,6 +40,9 @@ namespace nickmaltbie.Treachery.Equipment
     {
         public const int EmptyEquipmentId = -1;
 
+        public Vector3 HeldOffset { get; }
+        public Quaternion HeldRotation { get; }
+
         int EquipmentId { get; }
         GameObject HeldPrefab { get; }
         Sprite ItemIcon { get; }
@@ -53,7 +56,7 @@ namespace nickmaltbie.Treachery.Equipment
         bool DisableDefaultSecondary { get; }
         ColliderConfiguration WorldShape { get; }
         void PerformAction();
-        void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter meter);
+        void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter meter);
         void OnRemoveFromInventory(PlayerLoadout player, Vector3 throwDirection);
     }
 }

@@ -75,13 +75,15 @@ namespace nickmaltbie.Treachery.Equipment
         public bool HasOffhandAction => OffhandItem?.ItemAction != null;
         public bool CanEquipOffhand => !HasOffhand && (!HasMain || MainItem.Weight == EquipmentWeight.OneHanded);
 
+        private GameObject player;
         private Transform parent;
         private IActionActor<PlayerAction> actor;
         private IStaminaMeter stamina;
         private Func<bool> isOwner;
 
-        public EquipmentLoadout(Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, Func<bool> isOwner)
+        public EquipmentLoadout(GameObject player, Transform parent, IActionActor<PlayerAction> actor, IStaminaMeter stamina, Func<bool> isOwner)
         {
+            this.player = player;
             this.parent = parent;
             this.actor = actor;
             this.stamina = stamina;
@@ -204,15 +206,15 @@ namespace nickmaltbie.Treachery.Equipment
             if (Main != null)
             {
                 Main.transform.SetParent(manager.GetMainHand);
-                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
-                Main.transform.localRotation = Quaternion.identity;
+                Main.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f + MainItem.HeldOffset;
+                Main.transform.localRotation = MainItem.HeldRotation;
             }
 
             if (Offhand != null)
             {
                 Offhand.transform.SetParent(manager.GetOffHand);
-                Offhand.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f;
-                Offhand.transform.localRotation = Quaternion.identity;
+                Offhand.transform.localPosition = Vector3.forward * 0.1f + Vector3.up * 0.1f + OffhandItem.HeldOffset;
+                Offhand.transform.localRotation = OffhandItem.HeldRotation;
             }
         }
 
@@ -239,7 +241,7 @@ namespace nickmaltbie.Treachery.Equipment
 
                 if (isOwner())
                 {
-                    OffhandItem?.SetupItemAction(actor, stamina);
+                    OffhandItem?.SetupItemAction(player, actor, stamina);
                     OffhandItem?.ItemAction?.SetActive(activeState);
                     OffhandItem?.SecondaryItemAction?.SetActive(false);
                     MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
@@ -264,7 +266,7 @@ namespace nickmaltbie.Treachery.Equipment
 
                 if (isOwner())
                 {
-                    MainItem?.SetupItemAction(actor, stamina);
+                    MainItem?.SetupItemAction(player, actor, stamina);
                     MainItem?.ItemAction?.SetActive(activeState);
                     MainItem?.SecondaryItemAction?.SetActive(!HasOffhandAction);
                 }

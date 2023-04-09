@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using nickmaltbie.StateMachineUnity.Event;
+using nickmaltbie.Treachery.Equipment;
 
 namespace nickmaltbie.Treachery.Player
 {
@@ -26,10 +27,16 @@ namespace nickmaltbie.Treachery.Player
         private PlayerDeathEvent() { }
     }
 
-    public class PunchEvent : IEvent
+    public class MeleeAttackEvent : IEvent
     {
-        public static PunchEvent Instance = new PunchEvent();
-        private PunchEvent() { }
+        public readonly MeleeAttackType attackType;
+        public readonly float attackDuration;
+
+        public MeleeAttackEvent(MeleeAttackType attackType, float attackDuration)
+        {
+            this.attackType = attackType;
+            this.attackDuration = attackDuration;
+        }
     }
 
     public class PlayerReviveEvent : IEvent
@@ -66,6 +73,30 @@ namespace nickmaltbie.Treachery.Player
     {
         public static RollStop Instance = new RollStop();
         private RollStop() { }
+    }
+
+    public class SwingAttackStart : IEvent
+    {
+        public static SwingAttackStart Instance = new SwingAttackStart();
+        private SwingAttackStart() { }
+    }
+
+    public class CleaveAttackStart : IEvent
+    {
+        public static CleaveAttackStart Instance = new CleaveAttackStart();
+        private CleaveAttackStart() { }
+    }
+
+    public class StabAttackStart : IEvent
+    {
+        public static StabAttackStart Instance = new StabAttackStart();
+        private StabAttackStart() { }
+    }
+
+    public class AttackEnd : IEvent
+    {
+        public static AttackEnd Instance = new AttackEnd();
+        private AttackEnd() { }
     }
 
     public class BlockStart : IEvent

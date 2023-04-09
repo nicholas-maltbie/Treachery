@@ -38,11 +38,11 @@ namespace nickmaltbie.Treachery.Action
         protected IActionActor<TAction> actor;
         protected IStaminaMeter stamina;
 
-        private float staminaCost;
-        private float cooldown;
-        private bool performWhileHeld;
-        private float elapsedSincePerformed = Mathf.Infinity;
-        private bool enabled = false;
+        protected float staminaCost;
+        protected float cooldown;
+        protected bool performWhileHeld;
+        protected float elapsedSincePerformed = Mathf.Infinity;
+        protected bool enabled = false;
 
         public ActorConditionalAction(
             InputActionReference inputAction,
@@ -134,5 +134,7 @@ namespace nickmaltbie.Treachery.Action
         protected virtual float StaminaCost => staminaCost;
 
         public virtual float Cost => StaminaCost;
+
+        public virtual float CooldownTime => 0.0f;
     }
 }

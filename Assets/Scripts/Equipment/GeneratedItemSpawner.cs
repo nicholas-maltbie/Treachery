@@ -57,7 +57,12 @@ namespace nickmaltbie.Treachery.Equipment
         {
             if (startupEquipment != IEquipment.EmptyEquipmentId)
             {
-                return EquipmentLibrary.Singleton?.GetEquipment(startupEquipment).HeldPrefab;
+                if (!EquipmentLibrary.Singleton.HasEquipment(startupEquipment))
+                {
+                    EquipmentLibrary.Singleton.Initialize();
+                }
+
+                return EquipmentLibrary.Singleton.GetEquipment(startupEquipment).HeldPrefab;
             }
 
             return null;

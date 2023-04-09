@@ -51,6 +51,9 @@ namespace nickmaltbie.Treachery.Equipment
         [SerializeField]
         public ColliderConfiguration itemShape;
 
+        [SerializeField]
+        public Transform holdOffset;
+
         public bool InHand { get; private set; }
 
         public int EquipmentId => equipmentId;
@@ -71,15 +74,19 @@ namespace nickmaltbie.Treachery.Equipment
 
         public ActorConditionalAction<PlayerAction> SecondaryItemAction => null;
 
-        public bool DisableDefaultPrimary => ItemType == ItemType.Main;
+        public virtual bool DisableDefaultPrimary => ItemType == ItemType.Main;
 
-        public bool DisableDefaultSecondary => ItemType == ItemType.Offhand;
+        public virtual bool DisableDefaultSecondary => ItemType == ItemType.Offhand;
 
-        public bool CanDrop => true;
+        public virtual bool CanDrop => true;
 
         public ColliderConfiguration WorldShape => itemShape;
 
-        public virtual void SetupItemAction(IActionActor<PlayerAction> actor, IStaminaMeter stamina)
+        public Vector3 HeldOffset => holdOffset?.localPosition ?? Vector3.zero;
+
+        public Quaternion HeldRotation => holdOffset?.localRotation ?? Quaternion.identity;
+
+        public virtual void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
             ItemAction = new ItemAction(InputAction, actor, stamina, this, ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem);
             ItemAction.Setup();
