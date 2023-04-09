@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using nickmaltbie.OpenKCC.CameraControls;
@@ -26,7 +25,6 @@ using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
 using nickmaltbie.Treachery.Player;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Equipment
@@ -148,7 +146,7 @@ namespace nickmaltbie.Treachery.Equipment
                 int hitCount = Physics.RaycastNonAlloc(source, dir, HitCache, attackRange, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
                 IEnumerable<RaycastHit> hits = Enumerable.Range(0, hitCount).Select(idx => HitCache[idx]);
                 var hit = IHitbox.GetFirstValidHit(hits, Source, out RaycastHit firstHit, out bool didHit);
-                
+
                 if (didHit && hit != null && firstHit.distance < closestDistance)
                 {
                     raycastHit = firstHit;

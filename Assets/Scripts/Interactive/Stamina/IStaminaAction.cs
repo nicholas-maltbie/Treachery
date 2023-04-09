@@ -31,6 +31,6 @@ namespace nickmaltbie.Treachery.Interactive.Stamina
         /// <summary>
         /// Extra cooldown time before restoring stamina.
         /// </summary>
-        float CooldownTime { get;  }
+        float CooldownTime { get; }
     }
 }
