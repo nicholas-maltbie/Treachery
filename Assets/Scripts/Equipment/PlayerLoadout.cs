@@ -197,7 +197,7 @@ namespace nickmaltbie.Treachery.Equipment
             {
                 incrementLoadoutSelection.action.performed += IncrementLoadout;
             }
-            
+
             if (decrementLoadoutSelection?.action != null)
             {
                 decrementLoadoutSelection.action.performed += DecrementLoadout;
