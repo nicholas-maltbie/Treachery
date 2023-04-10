@@ -75,6 +75,9 @@ namespace nickmaltbie.Treachery.Player
         /// </summary>
         public Vector3 InitialCameraPosition { get; private set; }
 
+        /// <inheritdoc/>
+        public Transform PlayerBase => transform;
+
         public void Awake()
         {
             InitialCameraPosition = CameraBase.transform.localPosition;
