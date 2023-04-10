@@ -10,7 +10,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,8 +23,21 @@ env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
-  build-treachery-app:
-    name: Build Treachery WebGL App
+  # Verify build will perform as expected
+  tests-validation:
+    uses: ./.github/workflows/tests-validation.yml
+    secrets:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  
+  project-linting:
+    uses: ./.github/workflows/format.yml
+    secrets:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+  # Build the WebGL Unity application.
+  build-webgl-app:
+    name: Build WebGL App
+    needs: [project-linting, tests-validation]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -37,17 +50,19 @@ jobs:
           target_platform: WebGL
 
       # Build the game deployment at build
-      - uses: game-ci/unity-builder@v2.0.4
+      - uses: game-ci/unity-builder@v2
         with:
           unityVersion: ${{ env.UNITY_VERSION }}
           targetPlatform: WebGL
           buildMethod: ScriptBatch.OfficialBuild_WebGL
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
-      # save build to temp_build_treachery_webgl
+      # save build to temp_build_webgl
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: temp_build_treachery_webgl
+          name: temp_build_webgl
           path: Builds/${{ env.PROJECT_NAME }}-WebGL
 
   # Build the documentation
@@ -59,36 +74,40 @@ jobs:
       - uses: ./.github/actions/setvars
       - uses: ./.github/actions/git-lfs-cache
 
-      - name: Install DocFX
-        run: choco install -y docfx
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
 
+      # Restore dotnet tools. This handles cache implicitly.
+      - run: dotnet tool restore
+
+      # build full website
       - name: Build Website
-        run: .\Documentation\build.cmd
+        run: .\Documentation\build.ps1
 
-      # Upload build to temp_build_docs_webgl
+      # Upload build to temp_build_docs
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: temp_build_docs_webgl
+          name: temp_build_docs
           path: _site
 
   # Combine artifacts for website
   combine-and-deploy-artifact:
     name: Combine and Deploy Artifact
     runs-on: ubuntu-latest
-    needs: [build-treachery-app, build-docs]
+    needs: [build-webgl-app, build-docs]
     steps:
       # Download previous builds
       - name: Download WebGL Build
         uses: actions/download-artifact@v3
         with:
-          name: temp_build_treachery_webgl
+          name: temp_build_webgl
           path: _site
 
       - name: Download Docs Build
         uses: actions/download-artifact@v3
         with:
-          name: temp_build_docs_webgl
+          name: temp_build_docs
           path: _site/docs
 
       - name: Upload Site Artifact
@@ -98,6 +117,8 @@ jobs:
 
   # Deploy job
   deploy-combined-webgl:
+    name: Deploy Combined Artifacts
+    
     # Add a dependency to the build job
     needs: combine-and-deploy-artifact
 
@@ -123,13 +144,14 @@ jobs:
     name: Cleanup the build artifacts after deploying site.
     runs-on: ubuntu-latest
     if: always()
-    needs: [deploy-combined-webgl]
+    needs: deploy-combined-webgl
 
     steps:
       - name: Cleanup temp build artifacts
         uses: joutvhu/delete-artifact@v1
+        continue-on-error: true
         with:
           name: |
-            temp_build_treachery_webgl
-            temp_build_docs_webgl
+            temp_build_webgl
+            temp_build_docs
             github-pages
