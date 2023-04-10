@@ -14,9 +14,9 @@ dotnet docfx metadata %~dp0\docfx.json --warningsAsErrors --logLevel verbose --f
 )
 
 echo Generating website
-dotnet docfx build %~dp0\docfx.json --warningsAsErrors --logLevel verbose && (
+dotnet docfx build %~dp0\docfx.json -t default,%~dp0\templates\custom --warningsAsErrors --logLevel verbose && (
     echo Successfuly generated website for documentation
 ) || (
-    echo Could not properly website for documentation
+    echo Could not properly generate website for documentation
     exit /b 1
 )
