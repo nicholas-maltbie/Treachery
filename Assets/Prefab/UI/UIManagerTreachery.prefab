@@ -135,17 +135,17 @@ MonoBehaviour:
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_PointAction: {fileID: 3367101946890717985, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_MoveAction: {fileID: -307424754437218563, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_SubmitAction: {fileID: -5311298852430063574, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_MoveAction: {fileID: 8130185064591157487, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_SubmitAction: {fileID: -5311298852430063574, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   m_CancelAction: {fileID: 1152416210319569963, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_LeftClickAction: {fileID: -2362483838269644402, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_MiddleClickAction: {fileID: 5278173575564425398, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_RightClickAction: {fileID: -6178336325687425428, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_ScrollWheelAction: {fileID: -7488414455339657299, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_TrackedDevicePositionAction: {fileID: -8744628688011088238, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: -8822090747999447430, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
+  m_LeftClickAction: {fileID: -2362483838269644402, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_RightClickAction: {fileID: -6178336325687425428, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_ScrollWheelAction: {fileID: -7488414455339657299, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_TrackedDevicePositionAction: {fileID: -8744628688011088238, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: -8822090747999447430, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
@@ -164,8 +164,8 @@ MonoBehaviour:
   screenPrefabs:
   - {fileID: 486149923664253863, guid: 7e049cbb3534c824eaa8e415a809e228, type: 3}
   - {fileID: 7000847131833854331, guid: f95633d2f1ed8c4478b03c59178708e6, type: 3}
-  - {fileID: -1115252214597416267, guid: de594f0ca0c7e164fbcaade84840570f, type: 3}
   - {fileID: 7721720131060799492, guid: 096f31d0428114a43afc88bce9356f6b, type: 3}
+  - {fileID: -1115252214597416267, guid: de594f0ca0c7e164fbcaade84840570f, type: 3}
   initialScreen: 0
   inputActions: {fileID: -944628639613478452, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
   maxScreenHistory: 100
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 59c551f8259784a429773ca4a275eb03, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 1438824033719841653}
   m_DeviceLostEvent:
