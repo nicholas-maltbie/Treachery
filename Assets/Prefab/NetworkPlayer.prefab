@@ -456,9 +456,9 @@ MonoBehaviour:
     rotationRate: 180
     cameraTransform: {fileID: 1928389238472999755}
     baseCameraOffset: {x: 0, y: 0, z: 0}
-    minCameraDistance: 0
-    maxCameraDistance: 4
-    currentDistance: 0
+    minCameraDistance: 2
+    maxCameraDistance: 3
+    currentDistance: 2
     zoomSpeed: 1
     cameraRaycastMask:
       serializedVersion: 2
@@ -566,10 +566,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317b11fbc2aa79a45a40e9c6b855557e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxLoadouts: 3
+  MaxLoadouts: 2
   manager: {fileID: 0}
   throwVelocity: 6.5
+  swapCooldown: 0.25
   dropItemInputAction: {fileID: -8197223153440005221, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
-  decrementLoadoutSelection: {fileID: 4700168074898257696, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+  decrementLoadoutSelection: {fileID: 0}
   loadoutScroll: {fileID: -5585577661466553000, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
