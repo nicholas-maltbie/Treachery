@@ -94,7 +94,7 @@ MonoBehaviour:
   attackType: 1
   damageType: 2
   degreeRange: 60
-  attackRange: 1
+  attackRange: 1.5
   peirce: 0
   damage: 20
   cooldown: 2
