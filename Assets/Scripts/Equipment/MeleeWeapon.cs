@@ -40,14 +40,13 @@ namespace nickmaltbie.Treachery.Equipment
     public class MeleeWeapon : AbstractEquipment, IWeapon
     {
         public const int DegreesPerRay = 5;
-        public const int VerticalAttackDegrees = 90;
         public const int MaxHitsPerRay = 20;
 
         public MeleeAttackType attackType;
         public DamageType damageType = DamageType.Slashing;
-        public float degreeRange = 15;
+        public float horizontalDegreeRange = 15;
+        public float verticalDegreeRange = 90;
         public float attackRange = 1.0f;
-        public bool peirce = false;
         public float damage = 20;
         public float cooldown = 1.0f;
         public float staminaCost = 10;
@@ -95,14 +94,13 @@ namespace nickmaltbie.Treachery.Equipment
         {
             // Get the offsets of the attack for attacks with
             // a spreading range.
-            for (int yawStep = 0; yawStep <= Mathf.CeilToInt(degreeRange / DegreesPerRay); yawStep++)
+            for (int yawStep = 0; yawStep <= Mathf.CeilToInt(horizontalDegreeRange / DegreesPerRay); yawStep++)
             {
-                float yawOffset = Mathf.Clamp(DegreesPerRay * yawStep, -degreeRange, degreeRange);
+                float yawOffset = Mathf.Clamp(DegreesPerRay * yawStep, -horizontalDegreeRange, horizontalDegreeRange);
 
-                for (int pitchStep = 0; pitchStep <= Mathf.CeilToInt(VerticalAttackDegrees / DegreesPerRay); pitchStep++)
+                for (int pitchStep = 0; pitchStep <= Mathf.CeilToInt(verticalDegreeRange / DegreesPerRay); pitchStep++)
                 {
-                    float pitchOffset = Mathf.Clamp(DegreesPerRay * pitchStep, -VerticalAttackDegrees, VerticalAttackDegrees);
-
+                    float pitchOffset = Mathf.Clamp(DegreesPerRay * pitchStep, -verticalDegreeRange, verticalDegreeRange);
                     if (yawOffset == 0 && pitchOffset == 0)
                     {
                         yield return (yawOffset, pitchOffset);
@@ -127,6 +125,44 @@ namespace nickmaltbie.Treachery.Equipment
                     }
                 }
             }
+        }
+
+        private IEnumerable<DamageEvent> GetStabAttack(Quaternion heading, Vector3 source)
+        {
+            Dictionary<IDamageable, (RaycastHit, IHitbox)> hitLookup = new Dictionary<IDamageable, (RaycastHit, IHitbox)>();
+
+            // Get all the rays for the attack.
+            foreach (Quaternion offset in GetOffsets())
+            {
+                // Add the offset to the current heading
+                // and draw a ray from that point outwards
+                Quaternion rotation = heading * offset;
+                Vector3 dir = rotation * Vector3.forward;
+                
+                // Get the hit targets
+                int hitCount = Physics.RaycastNonAlloc(source, dir, HitCache, attackRange, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
+                IEnumerable<RaycastHit> hits = Enumerable.Range(0, hitCount).Select(idx => HitCache[idx]);
+                foreach((RaycastHit raycastHit, IHitbox hitbox) in IHitbox.GetAllValidHit(hits, Source))
+                {
+                    var damageable = hitbox.Source;
+                    if (!hitLookup.TryGetValue(damageable, out var tuple) || raycastHit.distance < tuple.Item1.distance)
+                    {
+                        hitLookup[damageable] = (raycastHit, hitbox);
+                    }
+                }
+            }
+
+            // Return list of targets struck
+            foreach (var kvp in hitLookup)
+            {
+                var raycastHit = kvp.Value.Item1;
+                yield return IHitbox.DamageEventFromHit(raycastHit, kvp.Value.Item2, damage, raycastHit.normal, DamageType.Piercing);
+            }
+        }
+
+        private IEnumerable<DamageEvent> GetCleaveAttack(Quaternion heading, Vector3 source)
+        {
+            return new DamageEvent[0];
         }
 
         private DamageEvent GetBasicAttack(Quaternion heading, Vector3 source)
@@ -172,10 +208,17 @@ namespace nickmaltbie.Treachery.Equipment
             var rotation = Quaternion.Euler(viewHeading.Pitch, viewHeading.Yaw, 0);
             switch (attackType)
             {
+                case MeleeAttackType.Stab:
+                    IEnumerable<DamageEvent> stabAttack = GetStabAttack(rotation, source);
+                    DamageActor.MultiAttackServerRpc(stabAttack.Select(attack => NetworkDamageEvent.FromDamageEvent(attack)).ToArray());
+                    break;
+                case MeleeAttackType.Cleave:
+                    IEnumerable<DamageEvent> cleaveAttack = GetCleaveAttack(rotation, source);
+                    DamageActor.MultiAttackServerRpc(cleaveAttack.Select(attack => NetworkDamageEvent.FromDamageEvent(attack)).ToArray());
+                    break;
                 case MeleeAttackType.Basic:
                 default:
                     DamageEvent basicAttack = GetBasicAttack(rotation, source);
-
                     if (basicAttack.target != null)
                     {
                         DamageActor.AttackServerRpc(basicAttack);
