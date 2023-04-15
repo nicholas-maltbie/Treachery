@@ -94,7 +94,7 @@ MonoBehaviour:
   attackType: 3
   damageType: 2
   horizontalDegreeRange: 90
-  verticalDegreeRange: 60
+  verticalDegreeRange: 30
   attackRange: 1.5
   damage: 20
   cooldown: 2
