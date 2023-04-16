@@ -87,6 +87,11 @@ namespace nickmaltbie.Treachery.Interactive.Health
             attack.target.ApplyDamage(attack);
         }
 
+        public static NetworkDamageEvent FromDamageEvent(DamageEvent damageEvent)
+        {
+            return damageEvent;
+        }
+
         public static implicit operator DamageEvent(NetworkDamageEvent damageEvent)
         {
             NetworkObject source = null;

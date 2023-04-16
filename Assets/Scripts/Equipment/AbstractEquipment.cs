@@ -52,7 +52,7 @@ namespace nickmaltbie.Treachery.Equipment
         public ColliderConfiguration itemShape;
 
         [SerializeField]
-        public Transform holdOffset;
+        public Transform holdOffset = null;
 
         public bool InHand { get; private set; }
 
@@ -82,14 +82,28 @@ namespace nickmaltbie.Treachery.Equipment
 
         public ColliderConfiguration WorldShape => itemShape;
 
-        public Vector3 HeldOffset => holdOffset?.localPosition ?? Vector3.zero;
+        public Vector3 HeldOffset { get; set; }
 
-        public Quaternion HeldRotation => holdOffset?.localRotation ?? Quaternion.identity;
+        public Quaternion HeldRotation { get; set; }
 
         public virtual void SetupItemAction(GameObject player, IActionActor<PlayerAction> actor, IStaminaMeter stamina)
         {
             ItemAction = new ItemAction(InputAction, actor, stamina, this, ItemType == ItemType.Main ? PlayerAction.PrimaryItem : PlayerAction.OffhandItem);
             ItemAction.Setup();
+        }
+
+        public void Awake()
+        {
+            try
+            {
+                HeldOffset = holdOffset?.localPosition ?? Vector3.zero;
+                HeldRotation = holdOffset?.localRotation ?? Quaternion.identity;
+            }
+            catch
+            {
+                HeldOffset = Vector3.zero;
+                HeldRotation = Quaternion.identity;
+            }
         }
 
         public void OnValidate()

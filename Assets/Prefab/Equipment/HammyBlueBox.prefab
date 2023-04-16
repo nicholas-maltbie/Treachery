@@ -109,3 +109,4 @@ MonoBehaviour:
     radius: 0
     height: 0
     capsuleDirection: 0
+  holdOffset: {fileID: 0}
