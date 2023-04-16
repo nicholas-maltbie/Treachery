@@ -129,7 +129,7 @@ namespace nickmaltbie.Treachery.Equipment
 
         private IEnumerable<DamageEvent> GetTargets(Quaternion heading, Vector3 source, bool pierce, int maxTargets)
         {
-            Dictionary<IDamageable, (RaycastHit, IHitbox)> hitLookup = new Dictionary<IDamageable, (RaycastHit, IHitbox)>();
+            var hitLookup = new Dictionary<IDamageable, (RaycastHit, IHitbox)>();
 
             // Get all the rays for the attack.
             foreach (Quaternion offset in GetOffsets())
@@ -138,7 +138,7 @@ namespace nickmaltbie.Treachery.Equipment
                 // and draw a ray from that point outwards
                 Quaternion rotation = heading * offset;
                 Vector3 dir = rotation * Vector3.forward;
-                
+
                 // Get the hit targets
                 int hitCount = Physics.RaycastNonAlloc(source, dir, HitCache, attackRange, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
                 IEnumerable<RaycastHit> hits = Enumerable.Range(0, hitCount).Select(idx => HitCache[idx]);
@@ -149,7 +149,7 @@ namespace nickmaltbie.Treachery.Equipment
                 }
                 else
                 {
-                    IHitbox hitbox = IHitbox.GetFirstValidHit(hits, Source, out RaycastHit firstHit, out bool didHit);
+                    var hitbox = IHitbox.GetFirstValidHit(hits, Source, out RaycastHit firstHit, out bool didHit);
                     if (!didHit || hitbox == null)
                     {
                         filteredHits = Enumerable.Empty<(RaycastHit, IHitbox)>();
@@ -160,10 +160,10 @@ namespace nickmaltbie.Treachery.Equipment
                     }
                 }
 
-                foreach((RaycastHit raycastHit, IHitbox hitbox) in filteredHits)
+                foreach ((RaycastHit raycastHit, IHitbox hitbox) in filteredHits)
                 {
-                    var damageable = hitbox.Source;
-                    if (!hitLookup.TryGetValue(damageable, out var tuple) || raycastHit.distance < tuple.Item1.distance)
+                    IDamageable damageable = hitbox.Source;
+                    if (!hitLookup.TryGetValue(damageable, out (RaycastHit, IHitbox) tuple) || raycastHit.distance < tuple.Item1.distance)
                     {
                         hitLookup[damageable] = (raycastHit, hitbox);
                     }
@@ -172,9 +172,9 @@ namespace nickmaltbie.Treachery.Equipment
 
             // Return list of targets struck
             int currentTarget = 0;
-            foreach (var kvp in hitLookup.OrderBy(kvp => kvp.Value.Item1.distance))
+            foreach (KeyValuePair<IDamageable, (RaycastHit, IHitbox)> kvp in hitLookup.OrderBy(kvp => kvp.Value.Item1.distance))
             {
-                var raycastHit = kvp.Value.Item1;
+                RaycastHit raycastHit = kvp.Value.Item1;
                 yield return IHitbox.DamageEventFromHit(raycastHit, kvp.Value.Item2, damage, raycastHit.normal, DamageType.Piercing);
                 currentTarget++;
                 if (currentTarget >= maxTargets)
@@ -203,6 +203,7 @@ namespace nickmaltbie.Treachery.Equipment
                     attack = GetTargets(rotation, source, false, 1);
                     break;
             }
+
             DamageActor.MultiAttackServerRpc(attack.Select(attack => NetworkDamageEvent.FromDamageEvent(attack)).ToArray());
         }
     }
