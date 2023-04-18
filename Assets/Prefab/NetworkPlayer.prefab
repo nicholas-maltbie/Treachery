@@ -274,7 +274,7 @@ MonoBehaviour:
   maxWalkAngle: 60
   layerMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 1271
 --- !u!114 &-2618219780861503884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +467,7 @@ MonoBehaviour:
     ditherDistance: 1
     thirdPersonCharacterBase: {fileID: 0}
     transitionTime: 0.1
+    rotatePlayer: 0
 --- !u!114 &411798885196726263
 MonoBehaviour:
   m_ObjectHideFlags: 0
