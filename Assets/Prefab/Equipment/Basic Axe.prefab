@@ -93,7 +93,7 @@ MonoBehaviour:
   holdOffset: {fileID: 1050272307014274883}
   attackType: 3
   damageType: 2
-  horizontalDegreeRange: 90
+  horizontalDegreeRange: 120
   verticalDegreeRange: 30
   attackRange: 1.5
   damage: 20
