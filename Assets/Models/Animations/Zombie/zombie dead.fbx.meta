@@ -39,7 +39,7 @@ ModelImporter:
       name: zombie dead
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 100
+      firstFrame: 99
       lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0
@@ -47,8 +47,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
