@@ -93,17 +93,17 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.2
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 20
   avoidancePriority: 50
-  m_AngularSpeed: 720
-  m_StoppingDistance: 0.05
+  m_AngularSpeed: 180
+  m_StoppingDistance: 0.75
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &4401246841409611388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,10 +136,16 @@ MonoBehaviour:
   aggroDistance: 5
   loseAggroDistance: 20
   timeBetweenRoaming: 3
-  chaseSpeed: 8
+  chaseSpeed: 8.5
+  attackSpeed: 4
   roamSpeed: 1
   minRoamTime: 0.5
   maxRoamTime: 3
+  timeToAttack: 0.75
+  attackRange: 1
+  attackDamage: 5
+  attackCooldown: 1
+  attackBase: {fileID: 7850465900701211296}
 --- !u!114 &4401246841409611385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,5 +251,10 @@ PrefabInstance:
 --- !u!4 &4224068397024528419 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
+  m_PrefabInstance: {fileID: 2016762072510249641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7850465900701211296 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8578951913224593417, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
   m_PrefabInstance: {fileID: 2016762072510249641}
   m_PrefabAsset: {fileID: 0}

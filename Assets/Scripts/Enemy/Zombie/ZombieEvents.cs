@@ -30,5 +30,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 this.heading = heading;
             }
         }
+
+        public class ZombieAttackEvent : IEvent { }
     }
 }

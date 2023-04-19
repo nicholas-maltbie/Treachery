@@ -7270,10 +7270,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie
       objectReference: {fileID: 0}
-    - target: {fileID: 4401246841409611387, guid: 5a0521c05ef85134b9b85e34eba2a2d1, type: 3}
-      propertyPath: chaseSpeed
-      value: 8.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4401246841409611391, guid: 5a0521c05ef85134b9b85e34eba2a2d1, type: 3}
       propertyPath: m_RootOrder
       value: 16

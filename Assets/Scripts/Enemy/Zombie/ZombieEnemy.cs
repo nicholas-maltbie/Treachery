@@ -1,10 +1,12 @@
 
 
+using System.Collections.Generic;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
+using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
 using UnityEngine;
 using UnityEngine.AI;
@@ -18,6 +20,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
     [RequireComponent(typeof(IDamageable))]
     public class ZombieEnemy : NetworkSMAnim
     {
+        /// <summary>
+        /// Tag for what the zombie will target.
+        /// </summary>
+        public const string ZombieTargetTag = "Player";
+
         /// <summary>
         /// Distance at which the zombie will start chasing the player.
         /// </summary>
@@ -39,6 +46,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public float chaseSpeed = 5.0f;
 
         /// <summary>
+        /// Speed zombie moves while attacking.
+        /// </summary>
+        public float attackSpeed = 4.0f;
+
+        /// <summary>
         /// Speed at which the zombie roams around.
         /// </summary>
         public float roamSpeed = 1.0f;
@@ -52,6 +64,37 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// Maximum time zombie will spend roaming.
         /// </summary>
         public float maxRoamTime = 3.0f;
+
+        /// <summary>
+        /// Time between starting attack animation and
+        /// attacking the player.
+        /// </summary>
+        public float timeToAttack = 0.25f;
+
+        /// <summary>
+        /// Distance from which zombie can attack a player.
+        /// </summary>
+        public float attackRange = 1.0f;
+
+        /// <summary>
+        /// Damage zombie deals during attack
+        /// </summary>
+        public float attackDamage = 5.0f;
+
+        /// <summary>
+        /// Minimum time between attacks.
+        /// </summary>
+        public float attackCooldown = 1.0f;
+
+        /// <summary>
+        /// Attack base transform to draw attack raycast from.
+        /// </summary>
+        public Transform attackBase;
+
+        /// <summary>
+        /// Last time the zombie attacked at.
+        /// </summary>
+        private float lastAttackTime = Mathf.NegativeInfinity;
 
         /// <summary>
         /// What the zombie is chasing.
@@ -77,6 +120,16 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// Time until the zombie will start roaming again.
         /// </summary>
         private float timeToNextRoam;
+
+        /// <summary>
+        /// Has the zombie attacked this animation.
+        /// </summary>
+        private bool attacked;
+
+        /// <summary>
+        /// Damageable object for the zombie.
+        /// </summary>
+        private IDamageable damageable;
 
         /// <summary>
         /// Zombie standing still and doing nothing.
@@ -114,6 +167,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
         [Animation(ZombieAttackAnimState, 0.35f, true)]
+        [TransitionFromAnyState(typeof(ZombieAttackEvent))]
+        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [OnUpdate(nameof(ZombieAttackAction))]
+        [OnEnterState(nameof(OnEnterAttackState))]
+        [OnExitState(nameof(OnFinishAttack))]
         public class AttackState : State { }
 
         /// <summary>
@@ -138,16 +196,25 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [Animation(ZombieDeadAnimState, 0.35f, true)]
         public class DeadState : State { }
 
+        public void Awake()
+        {
+            AttachedAnimator = GetComponentInChildren<Animator>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            damageable = GetComponent<IDamageable>();
+        }
+
         public override void Start()
         {
             gameObject.AddComponent<ReviveEventManager>();
-            AttachedAnimator = GetComponentInChildren<Animator>();
-            navMeshAgent = GetComponent<NavMeshAgent>();
-
-            IDamageable damageable = GetComponent<IDamageable>();
             damageable.OnDamageEvent += OnDamage;
 
             base.Start();
+        }
+
+        public override void Update()
+        {
+            navMeshAgent.enabled = damageable.IsAlive();
+            base.Update();
         }
 
         /// <summary>
@@ -171,14 +238,31 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             navMeshAgent.SetDestination(zombieTarget.transform.position);
             navMeshAgent.speed = chaseSpeed;
 
+            float dist = Vector3.Distance(transform.position, zombieTarget.transform.position);
+
             // If the target is more than lose aggro distance away, lose the target
-            if (Vector3.Distance(transform.position, zombieTarget.transform.position) >= loseAggroDistance)
+            if (dist >= loseAggroDistance)
             {
                 zombieTarget = null;
                 RaiseEvent(new TargetLostEvent());
             }
+
+            // If the target is within attack range, then attack the player
+            if (dist <= attackRange)
+            {
+                // Only allow the attack if it has been at least cooldown since previous attack
+                if (Time.time >= lastAttackTime + attackCooldown)
+                {
+                    RaiseEvent(new ZombieAttackEvent());
+                }
+            }
         }
 
+        /// <summary>
+        /// When the zombie is damaged, react to the damage.
+        /// </summary>
+        /// <param name="source">Damage source for the event.</param>
+        /// <param name="onDamagedEvent">Event for the damage.</param>
         public void OnDamage(object source, OnDamagedEvent onDamagedEvent)
         {
             if (!IsServer)
@@ -192,6 +276,62 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             }
         }
 
+        /// <summary>
+        /// When the zombie starts attacking.
+        /// </summary>
+        public void OnEnterAttackState()
+        {
+            attacked = false;
+            navMeshAgent.speed = 0.0f;
+        }
+
+        /// <summary>
+        /// Last time the player attacked at.
+        /// </summary>
+        public void OnFinishAttack()
+        {
+            lastAttackTime = Time.time;
+        }
+
+        /// <summary>
+        /// Action to run while in the attack state.
+        /// </summary>
+        public void ZombieAttackAction()
+        {
+            // Rotate towards target
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                Quaternion.LookRotation(zombieTarget.transform.position - transform.position, Vector3.up),
+                navMeshAgent.angularSpeed * Time.deltaTime);
+
+            // Still chase the target
+            navMeshAgent.SetDestination(zombieTarget.transform.position);
+            navMeshAgent.speed = attackSpeed;
+
+            float dist = Vector3.Distance(transform.position, zombieTarget.transform.position);
+
+            if (base.deltaTimeInCurrentState >= timeToAttack && !attacked)
+            {
+                attacked = true;
+
+                // Attack forward towards the target
+                Vector3 attackStart = attackBase.transform.position;
+                Vector3 attackTarget = zombieTarget.transform.position;
+                Vector3 attackDir = Vector3.ProjectOnPlane(attackTarget - attackStart, Vector3.up).normalized;
+                IEnumerable<RaycastHit> hits = Physics.RaycastAll(attackStart, attackDir, attackRange * 2, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
+                var hitbox = IHitbox.GetFirstValidHit(hits, damageable, out RaycastHit hit, out bool didHit);
+                bool playerTarget = didHit && (hitbox.Source as Component).CompareTag(ZombieTargetTag);
+                if (didHit && hitbox != null && playerTarget)
+                {
+                    DamageEvent damageEvent = IHitbox.DamageEventFromHit(hit, hitbox, attackDamage, -attackDir, DamageType.Slashing);
+                    NetworkDamageEvent.ProcessEvent(damageEvent);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply roaming movement for the player.
+        /// </summary>
         public void RoamingMovement()
         {
             // Have the nav mesh agent move towards the target
@@ -261,6 +401,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             }
         }
 
+        /// <summary>
+        /// Check current parameters when entering idle state.
+        /// </summary>
         public void OnStartIdleState()
         {
             // Check if we're already chasing something
@@ -313,7 +456,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             float closestDist = Mathf.Infinity;
             GameObject closest = null;
 
-            foreach (GameObject target in GameObject.FindGameObjectsWithTag("Player"))
+            foreach (GameObject target in GameObject.FindGameObjectsWithTag(ZombieTargetTag))
             {
                 float dist = Vector3.Distance(target.transform.position, transform.position);
                 
