@@ -128,7 +128,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 // Also ignore disabled hitboxes or hitboxes with passthrough set.
                 bool ignoreHitbox = checkHitbox != null &&
                     (checkHitbox.Source == source || checkHitbox.Disabled || (checkHitbox.Source?.Passthrough ?? false));
-                
+
                 if (ignoreHitbox)
                 {
                     continue;
