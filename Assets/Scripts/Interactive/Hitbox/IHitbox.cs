@@ -117,7 +117,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
             yield break;
         }
 
-        public static IHitbox GetFirstValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source, out RaycastHit firstHit, out bool didHit)
+        public static IHitbox GetFirstValidHit(IEnumerable<RaycastHit> hitSequence, IDamageable source, out RaycastHit firstHit, out bool didHit, int layerMaskIgnore = 0)
         {
             foreach (RaycastHit hit in hitSequence)
             {
@@ -128,6 +128,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 // Also ignore disabled hitboxes or hitboxes with passthrough set.
                 bool ignoreHitbox = checkHitbox != null &&
                     (checkHitbox.Source == source || checkHitbox.Disabled || (checkHitbox.Source?.Passthrough ?? false));
+                
                 if (ignoreHitbox)
                 {
                     continue;
@@ -141,6 +142,13 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
                 }
                 else
                 {
+                    // Ignore objects on the ignore layer.
+                    int hitLayerMask = 1 << (checkHitbox.Source as Component).gameObject.layer;
+                    if ((layerMaskIgnore & hitLayerMask) != 0)
+                    {
+                        continue;
+                    }
+
                     // we had a valid hit, return this hitbox.
                     firstHit = hit;
                     didHit = true;

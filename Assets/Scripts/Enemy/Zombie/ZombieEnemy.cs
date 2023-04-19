@@ -26,6 +26,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public const string ZombieTargetTag = "Player";
 
         /// <summary>
+        /// Physics layer for enemies.
+        /// </summary>
+        public static int EnemyLayerMask => 1 << LayerMask.NameToLayer("Enemy");
+
+        /// <summary>
         /// Distance at which the zombie will start chasing the player.
         /// </summary>
         public float aggroDistance = 5.0f;
@@ -305,10 +310,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 navMeshAgent.angularSpeed * Time.deltaTime);
 
             // Still chase the target
-            navMeshAgent.SetDestination(zombieTarget.transform.position);
-            navMeshAgent.speed = attackSpeed;
-
             float dist = Vector3.Distance(transform.position, zombieTarget.transform.position);
+            navMeshAgent.speed = attackSpeed;
+            navMeshAgent.SetDestination(zombieTarget.transform.position);
 
             if (base.deltaTimeInCurrentState >= timeToAttack && !attacked)
             {
@@ -319,7 +323,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 Vector3 attackTarget = zombieTarget.transform.position;
                 Vector3 attackDir = Vector3.ProjectOnPlane(attackTarget - attackStart, Vector3.up).normalized;
                 IEnumerable<RaycastHit> hits = Physics.RaycastAll(attackStart, attackDir, attackRange * 2, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
-                var hitbox = IHitbox.GetFirstValidHit(hits, damageable, out RaycastHit hit, out bool didHit);
+                var hitbox = IHitbox.GetFirstValidHit(hits, damageable, out RaycastHit hit, out bool didHit, layerMaskIgnore: EnemyLayerMask);
                 bool playerTarget = didHit && (hitbox.Source as Component).CompareTag(ZombieTargetTag);
                 if (didHit && hitbox != null && playerTarget)
                 {

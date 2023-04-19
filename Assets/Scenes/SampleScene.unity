@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 40638795}
   - component: {fileID: 40638794}
   - component: {fileID: 40638793}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -648,7 +648,7 @@ GameObject:
   - component: {fileID: 68172904}
   - component: {fileID: 68172903}
   - component: {fileID: 68172908}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1465,7 +1465,7 @@ GameObject:
   - component: {fileID: 227442570}
   - component: {fileID: 227442569}
   - component: {fileID: 227442568}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2495,7 +2495,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33384
+  m_Name: pb_Mesh33386
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3067,7 +3067,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33518
+  m_Name: pb_Mesh33524
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3613,7 +3613,7 @@ GameObject:
   - component: {fileID: 1208797295}
   - component: {fileID: 1208797294}
   - component: {fileID: 1208797293}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5814,7 +5814,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1369946073}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7269,6 +7269,10 @@ PrefabInstance:
     - target: {fileID: 4401246841409611329, guid: 5a0521c05ef85134b9b85e34eba2a2d1, type: 3}
       propertyPath: m_Name
       value: Zombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 4401246841409611390, guid: 5a0521c05ef85134b9b85e34eba2a2d1, type: 3}
+      propertyPath: m_Acceleration
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4401246841409611391, guid: 5a0521c05ef85134b9b85e34eba2a2d1, type: 3}
       propertyPath: m_RootOrder
