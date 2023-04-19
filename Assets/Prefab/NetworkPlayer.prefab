@@ -65,9 +65,10 @@ GameObject:
   - component: {fileID: 7590240513597693028}
   - component: {fileID: 8659606099551949071}
   - component: {fileID: 2241755074560627964}
+  - component: {fileID: 5563947537858094271}
   m_Layer: 7
   m_Name: NetworkPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -274,7 +275,7 @@ MonoBehaviour:
   maxWalkAngle: 60
   layerMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 1271
 --- !u!114 &-2618219780861503884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +468,7 @@ MonoBehaviour:
     ditherDistance: 1
     thirdPersonCharacterBase: {fileID: 0}
     transitionTime: 0.1
+    rotatePlayer: 0
 --- !u!114 &411798885196726263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -574,3 +576,19 @@ MonoBehaviour:
   incrementLoadoutSelection: {fileID: -1289574976295722738, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
   decrementLoadoutSelection: {fileID: 0}
   loadoutScroll: {fileID: -5585577661466553000, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
+--- !u!208 &5563947537858094271
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928389238801210305}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.9, z: 0.5}
+  m_MoveThreshold: 0.001
+  m_Carve: 0
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 0, y: 0.9, z: 0}
+  m_TimeToStationary: 0.5
