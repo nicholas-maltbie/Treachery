@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionReference: {fileID: 2346518491616881302, guid: 98323288612fc7b4ba4be833f71dd9ca, type: 3}
-  cooldown: 0.5
+  cooldown: 1
   viewSource: {fileID: 1928389238472999755}
   staminaCost: 10
 --- !u!114 &420403279906431496

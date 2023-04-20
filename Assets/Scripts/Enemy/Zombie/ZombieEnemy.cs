@@ -205,9 +205,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
-        [Animation(ZombieAttackAnimState, 0.35f, true)]
+        [Animation(ZombieAttackAnimState, 0.1f, true)]
         [TransitionFromAnyState(typeof(ZombieAttackEvent))]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [OnUpdate(nameof(ZombieAttackAction))]
         [OnEnterState(nameof(OnEnterAttackState))]
         [OnExitState(nameof(OnFinishAttack))]
@@ -296,7 +296,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             if (dist <= attackRange)
             {
                 // set animation to just idle
-                ChaseAnimationState = ZombieIdleAnimState;
+                ChaseAnimationState = ZombieWalkingAnimState;
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
