@@ -58,6 +58,7 @@ namespace nickmaltbie.Treachery.Interactive.Hitbox
         public void Start()
         {
             HitboxId = damageable?.AddHitbox(this, gameObject.name) ?? string.Empty;
+            damageable ??= GetComponentInParent<Damageable>();
         }
     }
 }

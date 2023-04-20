@@ -35,8 +35,7 @@ Transform:
   m_LocalPosition: {x: 2.82, y: 0, z: -5.945}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4224068397024528419}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -74,9 +73,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -145,7 +144,6 @@ MonoBehaviour:
   attackRange: 1
   attackDamage: 5
   attackCooldown: 1
-  attackBase: {fileID: 7850465900701211296}
 --- !u!114 &4401246841409611385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,71 +188,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   library: {fileID: 11400000, guid: c02bd4889a689c64d84aa8d9b740c7b8, type: 2}
---- !u!1001 &2016762072510249641
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 4401246841409611391}
-    m_Modifications:
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3038184910987569200, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-      propertyPath: m_Name
-      value: With Hitboxes - Zombiegirl W Kurniawan
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8400791806913205663, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-  m_SourcePrefab: {fileID: 100100000, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
---- !u!4 &4224068397024528419 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2405517830434714250, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-  m_PrefabInstance: {fileID: 2016762072510249641}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7850465900701211296 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8578951913224593417, guid: f793ed8e9bc2b7a43a731557615acc25, type: 3}
-  m_PrefabInstance: {fileID: 2016762072510249641}
-  m_PrefabAsset: {fileID: 0}

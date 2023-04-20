@@ -677,24 +677,6 @@ MonoBehaviour:
   isTriggerCollider: 1
   disabledOverride: 0
   hitboxType: 2
---- !u!1 &3038184910987569200 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2b22fc8a7f8ee3e46a41a183676d90e0, type: 3}
-  m_PrefabInstance: {fileID: 2803671937162712417}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8400791806913205663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3038184910987569200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5df654a8e35ef5d428323378cf04ea1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  library: {fileID: 11400000, guid: c02bd4889a689c64d84aa8d9b740c7b8, type: 2}
 --- !u!1 &3697960156122872282 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7657966619581158213, guid: 2b22fc8a7f8ee3e46a41a183676d90e0, type: 3}
