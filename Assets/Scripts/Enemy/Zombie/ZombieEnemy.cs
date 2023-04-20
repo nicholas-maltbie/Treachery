@@ -21,9 +21,11 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
+using nickmaltbie.StateMachineUnity.Utils;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -110,7 +112,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Attack base transform to draw attack raycast from.
         /// </summary>
-        public Transform attackBase;
+        private Transform attackBase;
 
         /// <summary>
         /// Last time the zombie attacked at.
@@ -153,6 +155,22 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         private IDamageable damageable;
 
         /// <summary>
+        /// Selected zombie avatar.
+        /// </summary>
+        private NetworkVariable<int> SelectedAvatar = new NetworkVariable<int>(value: -1);
+
+        /// <summary>
+        /// Spawned avatar for this zombie.
+        /// </summary>
+        private GameObject spawnedAvatar;
+
+        /// <summary>
+        /// Animation state when chasing someone
+        /// </summary>
+        /// <value></value>
+        private string ChaseAnimationState { get; set; } = ZombieRunningAnimState;
+
+        /// <summary>
         /// Zombie standing still and doing nothing.
         /// </summary>
         [InitialState]
@@ -176,7 +194,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie has a target and is chasing after them.
         /// </summary>
-        [Animation(ZombieRunningAnimState, 0.35f, true)]
+        [DynamicAnimation(nameof(ChaseAnimationState), 0.1f, true)]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
         [Transition(typeof(TargetLostEvent), typeof(IdleState))]
         [OnEnterState(nameof(OnStartChase))]
@@ -187,9 +205,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
-        [Animation(ZombieAttackAnimState, 0.35f, true)]
+        [Animation(ZombieAttackAnimState, 0.1f, true)]
         [TransitionFromAnyState(typeof(ZombieAttackEvent))]
-        [TransitionOnAnimationComplete(typeof(IdleState))]
+        [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [OnUpdate(nameof(ZombieAttackAction))]
         [OnEnterState(nameof(OnEnterAttackState))]
         [OnExitState(nameof(OnFinishAttack))]
@@ -222,6 +240,12 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             AttachedAnimator = GetComponentInChildren<Animator>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<IDamageable>();
+            attackBase = AttachedAnimator.GetBoneTransform(HumanBodyBones.Head);
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
         }
 
         public override void Start()
@@ -271,11 +295,19 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             // If the target is within attack range, then attack the player
             if (dist <= attackRange)
             {
+                // set animation to just idle
+                ChaseAnimationState = ZombieWalkingAnimState;
+
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
                 {
                     RaiseEvent(new ZombieAttackEvent());
                 }
+            }
+            else
+            {
+                // maintain chase animation
+                ChaseAnimationState = ZombieRunningAnimState;
             }
         }
 
@@ -322,7 +354,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             // Rotate towards target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                Quaternion.LookRotation(zombieTarget.transform.position - transform.position, Vector3.up),
+                Quaternion.LookRotation(Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up), Vector3.up),
                 navMeshAgent.angularSpeed * Time.deltaTime);
 
             // Still chase the target
