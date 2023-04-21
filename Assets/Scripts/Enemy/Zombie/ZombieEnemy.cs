@@ -155,20 +155,10 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         private IDamageable damageable;
 
         /// <summary>
-        /// Selected zombie avatar.
-        /// </summary>
-        private NetworkVariable<int> SelectedAvatar = new NetworkVariable<int>(value: -1);
-
-        /// <summary>
-        /// Spawned avatar for this zombie.
-        /// </summary>
-        private GameObject spawnedAvatar;
-
-        /// <summary>
         /// Animation state when chasing someone
         /// </summary>
         /// <value></value>
-        private string ChaseAnimationState { get; set; } = ZombieRunningAnimState;
+        public string ChaseAnimationState { get; private set; } = ZombieRunningAnimState;
 
         /// <summary>
         /// Zombie standing still and doing nothing.
@@ -194,7 +184,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie has a target and is chasing after them.
         /// </summary>
-        [DynamicAnimation(nameof(ChaseAnimationState), 0.1f, true)]
+        [DynamicAnimation(nameof(ChaseAnimationState), 0.25f, true)]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
         [Transition(typeof(TargetLostEvent), typeof(IdleState))]
         [OnEnterState(nameof(OnStartChase))]
@@ -205,7 +195,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
-        [Animation(ZombieAttackAnimState, 0.1f, true)]
+        [Animation(ZombieAttackAnimState, 0.25f, true)]
         [TransitionFromAnyState(typeof(ZombieAttackEvent))]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [OnUpdate(nameof(ZombieAttackAction))]
@@ -296,7 +286,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             if (dist <= attackRange)
             {
                 // set animation to just idle
-                ChaseAnimationState = ZombieWalkingAnimState;
+                ChaseAnimationState = ZombieChaseIdleAnimState;
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
@@ -462,7 +452,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             CheckPersistedTarget();
 
             // Setup time to next roam
-            timeToNextRoam = Random.Range(0.0f, timeBetweenRoaming);
+            timeToNextRoam = UnityEngine.Random.Range(0.0f, timeBetweenRoaming);
         }
 
         /// <summary>
