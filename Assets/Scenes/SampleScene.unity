@@ -2304,6 +2304,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie Woman (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
+      propertyPath: nametagText
+      value: Zombie 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
 --- !u!43 &739103549
@@ -2312,7 +2316,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33414
+  m_Name: pb_Mesh190302
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2595,6 +2599,10 @@ PrefabInstance:
     - target: {fileID: 5959098636586586155, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
       propertyPath: m_Name
       value: Zombie Cop (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
+      propertyPath: nametagText
+      value: Zombie
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
@@ -2884,7 +2892,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33558
+  m_Name: pb_Mesh190440
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5281,7 +5289,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33332
+  m_Name: pb_Mesh190226
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5780,6 +5788,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie Woman (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
+      propertyPath: nametagText
+      value: Zombie
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
 --- !u!4 &1487263729 stripped
@@ -5846,6 +5858,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie Cop (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
+      propertyPath: nametagText
+      value: Zombie 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
 --- !u!1001 &1566464102
@@ -5906,6 +5922,10 @@ PrefabInstance:
     - target: {fileID: 5959098636586586155, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
       propertyPath: m_Name
       value: Zombie Woman (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
+      propertyPath: nametagText
+      value: Zombie
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
@@ -6214,6 +6234,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie Woman
       objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
+      propertyPath: nametagText
+      value: Zombie 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
 --- !u!1001 &1874823880
@@ -6275,6 +6299,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie Cop
       objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
+      propertyPath: nametagText
+      value: Zombie 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
 --- !u!43 &1876415406
@@ -6283,7 +6311,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33354
+  m_Name: pb_Mesh190246
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6561,6 +6589,10 @@ PrefabInstance:
     - target: {fileID: 5959098636586586155, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
       propertyPath: m_Name
       value: Zombie Cop (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7203109965387254877, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
+      propertyPath: nametagText
+      value: Zombie
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
