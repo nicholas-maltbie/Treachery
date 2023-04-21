@@ -44,6 +44,30 @@ namespace nickmaltbie.Treachery.UI
         private GameObject feedBase;
         private float currentOffset = 0;
 
+        public void ResetFeed()
+        {
+            eventFeed.Clear();
+
+            if (feedBase != null)
+            {
+                GameObject.Destroy(feedBase);
+                feedBase = null;
+            }
+
+            currentOffset = 0;
+
+            feedBase = new GameObject();
+            feedBase.transform.SetParent(transform);
+            var rectTransform = feedBase.AddComponent<RectTransform>();
+            rectTransform.anchorMax = new Vector2(1, 1);
+            rectTransform.anchorMin = new Vector2(0, 1);
+            rectTransform.pivot = new Vector2(0.5f, 1);
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            feedBase.name = "Feed Base";
+            rectTransform.localScale = Vector3.one;
+        }
+
         public void AddEvent(string source, string dest)
         {
             eventFeed.AddFirst(CreateFeedEvent(source, dest));
@@ -78,17 +102,7 @@ namespace nickmaltbie.Treachery.UI
             }
 
             Singleton = this;
-
-            feedBase = new GameObject();
-            feedBase.transform.SetParent(transform);
-            var rectTransform = feedBase.AddComponent<RectTransform>();
-            rectTransform.anchorMax = new Vector2(1, 1);
-            rectTransform.anchorMin = new Vector2(0, 1);
-            rectTransform.pivot = new Vector2(0.5f, 1);
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-
-            feedBase.name = "Feed Base";
+            ResetFeed();
         }
 
         public void OnDestroy()
@@ -111,6 +125,11 @@ namespace nickmaltbie.Treachery.UI
             {
                 var last = eventFeed.Last;
                 eventFeed.RemoveLast();
+
+                if (eventFeed.Count == 0)
+                {
+                    ResetFeed();
+                }
 
                 GameObject.Destroy(last.Value.feedItem);
             }
