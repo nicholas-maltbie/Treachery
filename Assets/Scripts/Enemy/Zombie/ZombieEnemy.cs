@@ -21,11 +21,9 @@ using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
-using nickmaltbie.StateMachineUnity.Utils;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
