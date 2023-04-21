@@ -37,13 +37,13 @@ namespace nickmaltbie.Treachery.UI
 
         public string EntityName => nametagText.Value.ToString();
 
-        private NetworkVariable<FixedString32Bytes> nametagText = new NetworkVariable<FixedString32Bytes>(
+        protected NetworkVariable<FixedString32Bytes> nametagText = new NetworkVariable<FixedString32Bytes>(
             value: "",
             writePerm: NetworkVariableWritePermission.Owner);
 
-        private GameObject spawnedNametag;
+        protected TMP_Text text;
 
-        private TMP_Text text;
+        private GameObject spawnedNametag;
 
         public void Awake()
         {

@@ -66,7 +66,7 @@ GameObject:
   - component: {fileID: 8659606099551949071}
   - component: {fileID: 2241755074560627964}
   - component: {fileID: 5563947537858094271}
-  - component: {fileID: 767809235895009248}
+  - component: {fileID: -3582000947947143121}
   m_Layer: 7
   m_Name: NetworkPlayer
   m_TagString: Player
@@ -593,7 +593,7 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0.9, z: 0}
   m_TimeToStationary: 0.5
---- !u!114 &767809235895009248
+--- !u!114 &-3582000947947143121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -602,10 +602,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1928389238801210305}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2660bb5ff097dea47929afcf67c128c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d0623cdc51081a47b6f958e80a24727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultName: Player
   nametagPrefab: {fileID: 4015307637982759229, guid: 6e7a1ab96a4f19246a714195acfb05b8, type: 3}
   displayWhenOwned: 0
-  nametagOffset: {x: 0, y: 2.15, z: 0}
+  nametagOffset: {x: 0, y: 2, z: 0}

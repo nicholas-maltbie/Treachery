@@ -275,6 +275,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ChaseTarget()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             if (zombieTarget == null)
             {
                 RaiseEvent(new TargetLostEvent());
@@ -351,6 +356,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ZombieAttackAction()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Rotate towards target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -387,6 +397,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void RoamingMovement()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Have the nav mesh agent move towards the target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -412,8 +427,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void IdleZombieAction()
         {
-            CheckForTargets();
-            CheckRoaming();
+            if (IsServer)
+            {
+                CheckForTargets();
+                CheckRoaming();
+            }
         }
 
         /// <summary>
