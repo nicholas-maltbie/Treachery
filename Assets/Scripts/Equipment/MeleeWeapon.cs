@@ -175,7 +175,9 @@ namespace nickmaltbie.Treachery.Equipment
             foreach (KeyValuePair<IDamageable, (RaycastHit, IHitbox)> kvp in hitLookup.OrderBy(kvp => kvp.Value.Item1.distance))
             {
                 RaycastHit raycastHit = kvp.Value.Item1;
-                yield return IHitbox.DamageEventFromHit(raycastHit, kvp.Value.Item2, damage, raycastHit.normal, DamageType.Piercing);
+                DamageEvent attack = IHitbox.DamageEventFromHit(raycastHit, kvp.Value.Item2, damage, raycastHit.normal, damageType);
+                attack.damageSource = (Source as Component).GetComponent<IDamageSource>();
+                yield return attack;
                 currentTarget++;
                 if (currentTarget >= maxTargets)
                 {

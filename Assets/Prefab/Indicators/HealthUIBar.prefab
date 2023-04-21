@@ -66,7 +66,6 @@ MonoBehaviour:
   positive: {fileID: 8166205271747722864}
   intermediate: {fileID: 9031352725628641897}
   delay: 0.5
-  samples: 10
 --- !u!114 &7889265916675122483
 MonoBehaviour:
   m_ObjectHideFlags: 0

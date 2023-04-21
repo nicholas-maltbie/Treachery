@@ -16,6 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
@@ -34,7 +35,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(IDamageable))]
-    public class ZombieEnemy : NetworkSMAnim
+    public class ZombieEnemy : NetworkSMAnim, IDamageSource
     {
         /// <summary>
         /// Tag for what the zombie will target.
@@ -159,6 +160,16 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public string ChaseAnimationState { get; private set; } = ZombieRunningAnimState;
 
         /// <summary>
+        /// Source of damage for this game object.
+        /// </summary>
+        public GameObject Source => gameObject;
+
+        /// <summary>
+        /// Damage source for zombie.
+        /// </summary>
+        private Lazy<DamageSource> damageSource;
+
+        /// <summary>
         /// Zombie standing still and doing nothing.
         /// </summary>
         [InitialState]
@@ -229,6 +240,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             navMeshAgent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<IDamageable>();
             attackBase = AttachedAnimator.GetBoneTransform(HumanBodyBones.Head);
+            damageSource = new Lazy<DamageSource>(() => new DamageSource(gameObject));
         }
 
         public override void OnNetworkSpawn()
@@ -263,6 +275,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ChaseTarget()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             if (zombieTarget == null)
             {
                 RaiseEvent(new TargetLostEvent());
@@ -339,6 +356,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ZombieAttackAction()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Rotate towards target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -364,6 +386,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 if (didHit && hitbox != null && playerTarget)
                 {
                     DamageEvent damageEvent = IHitbox.DamageEventFromHit(hit, hitbox, attackDamage, -attackDir, DamageType.Slashing);
+                    damageEvent.damageSource = this;
                     NetworkDamageEvent.ProcessEvent(damageEvent);
                 }
             }
@@ -374,6 +397,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void RoamingMovement()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Have the nav mesh agent move towards the target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -399,8 +427,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void IdleZombieAction()
         {
-            CheckForTargets();
-            CheckRoaming();
+            if (IsServer)
+            {
+                CheckForTargets();
+                CheckRoaming();
+            }
         }
 
         /// <summary>

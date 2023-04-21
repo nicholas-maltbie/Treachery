@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
+using nickmaltbie.Treachery.UI;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -71,12 +72,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
                 change = Mathf.Clamp(change + staminaLost, change, 0);
             }
 
-            bool wasAlive = IsAlive();
             currentHealth.Value = GetAdjustedHealth(change);
-            if (wasAlive && !IsAlive())
-            {
-                ReportDeathServerRpc();
-            }
         }
 
         public float GetHealthPercentage()
@@ -105,15 +101,25 @@ namespace nickmaltbie.Treachery.Interactive.Health
         }
 
         [ServerRpc]
-        public void ReportDeathServerRpc()
+        public void ReportDeathServerRpc(NetworkDamageEvent networkDamageEvent)
         {
-            OnDeathClientRpc();
+            OnDeathClientRpc(networkDamageEvent);
         }
 
         [ClientRpc]
-        public void OnDeathClientRpc()
+        public void OnDeathClientRpc(NetworkDamageEvent networkDamageEvent)
         {
             OnDeath?.Invoke(this, EventArgs.Empty);
+
+            Nametag sourceNametag = (networkDamageEvent.source as Component)?.GetComponent<Nametag>();
+            Nametag targetNametag = GetComponent<Nametag>();
+
+            if (sourceNametag != null && targetNametag != null)
+            {
+                DeathFeed.Singleton.AddEvent(
+                    sourceNametag.EntityName,
+                    targetNametag.EntityName);
+            }
         }
 
         [ClientRpc]
@@ -134,7 +140,12 @@ namespace nickmaltbie.Treachery.Interactive.Health
 
             if (IsOwner)
             {
+                bool wasAlive = IsAlive();
                 AdjustHealth(adjust);
+                if (wasAlive && !IsAlive())
+                {
+                    ReportDeathServerRpc(networkDamageEvent);
+                }
             }
         }
 
