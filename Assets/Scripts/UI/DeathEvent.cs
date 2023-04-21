@@ -16,42 +16,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using nickmaltbie.StateMachineUnity;
-using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.UI;
-using Unity.Netcode;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace nickmaltbie.Treachery.Player
+namespace nickmaltbie.Treachery.UI
 {
-    [RequireComponent(typeof(IDamageable))]
-    [RequireComponent(typeof(IStateMachine<Type>))]
-    public class ReviveEventManager : NetworkBehaviour
+    public class DeathEvent : MonoBehaviour
     {
-        /// <summary>
-        /// Previous live state of the player.
-        /// </summary>
-        protected bool PreviousLivingState { get; set; }
+        public Image icon;
+        public TMP_Text killer;
+        public TMP_Text killed;
 
-        public void Start()
+        public void UpdateText(string killerName, string killedName)
         {
-            PreviousLivingState = GetComponent<Damageable>().IsAlive();
+            killer.text = killerName;
+            killed.text = killedName;
         }
 
-        public void Update()
+        public void UpdateIcon(Sprite sprite)
         {
-            if (IsOwner)
-            {
-                bool currentLivingState = GetComponent<Damageable>().IsAlive();
-                if (currentLivingState != PreviousLivingState)
-                {
-                    IStateMachine<Type> sm = GetComponent<IStateMachine<Type>>();
-                    sm.RaiseEvent(currentLivingState ? PlayerReviveEvent.Instance : PlayerDeathEvent.Instance);
-                }
-
-                PreviousLivingState = currentLivingState;
-            }
+            icon.sprite = sprite;
         }
     }
 }

@@ -17,20 +17,28 @@
 // SOFTWARE.
 
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace nickmaltbie.Treachery.UI
 {
-    public class Nametag : MonoBehaviour
+    public class Nametag : NetworkBehaviour
     {
         public static readonly Quaternion FlipRotation = Quaternion.Euler(0, 180, 0);
 
-        public string nametagText;
+        public string defaultName;
 
         public TMP_Text nametagPrefab;
 
+        public bool displayWhenOwned = true;
+
         public Vector3 nametagOffset = Vector3.up * 2;
+
+        public string EntityName => nametagText.Value;
+
+        private NetworkVariable<string> nametagText = new NetworkVariable<string>(
+            value: "",
+            writePerm: NetworkVariableWritePermission.Owner);
 
         private GameObject spawnedNametag;
 
@@ -40,19 +48,50 @@ namespace nickmaltbie.Treachery.UI
         {
             spawnedNametag = GameObject.Instantiate(nametagPrefab.gameObject, transform.position + nametagOffset, Quaternion.identity, transform);
             text = spawnedNametag.GetComponent<TMP_Text>();
-            text.text = nametagText;
         }
 
-        public void UpdateText(string newName)
+        public void OnEnable()
         {
-            nametagText = newName;
+            nametagText.OnValueChanged += UpdateText;
+        }
+
+        public void OnDisable()
+        {
+            nametagText.OnValueChanged -= UpdateText;
+        }
+
+        public void UpdateName(string newName)
+        {
+            nametagText.Value = newName;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            if (IsOwner && string.IsNullOrEmpty(nametagText.Value))
+            {
+                nametagText.Value = defaultName;
+            }
+
+            text.text = nametagText.Value;
+        }
+
+        public void UpdateText(string previousName, string newName)
+        {
             text.text = newName;
         }
 
-        public void Update()
+        public void LateUpdate()
         {
-            spawnedNametag.transform.LookAt(Camera.main.transform, Vector3.up);
-            spawnedNametag.transform.rotation *= FlipRotation;
+            if (displayWhenOwned == false && IsOwner)
+            {
+                spawnedNametag.gameObject.SetActive(false);
+            }
+            else
+            {
+                spawnedNametag.gameObject.SetActive(true);
+                spawnedNametag.transform.LookAt(Camera.main.transform, Vector3.up);
+                spawnedNametag.transform.rotation *= FlipRotation;
+            }
         }
     }
 }

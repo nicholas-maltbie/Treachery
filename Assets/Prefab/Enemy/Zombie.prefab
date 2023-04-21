@@ -201,6 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2660bb5ff097dea47929afcf67c128c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nametagText: 
+  defaultName: zombie
   nametagPrefab: {fileID: 4015307637982759229, guid: 6e7a1ab96a4f19246a714195acfb05b8, type: 3}
+  displayWhenOwned: 1
   nametagOffset: {x: 0, y: 2.1, z: 0}
