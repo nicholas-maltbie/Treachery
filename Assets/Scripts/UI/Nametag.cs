@@ -19,6 +19,7 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Collections;
 
 namespace nickmaltbie.Treachery.UI
 {
@@ -34,9 +35,9 @@ namespace nickmaltbie.Treachery.UI
 
         public Vector3 nametagOffset = Vector3.up * 2;
 
-        public string EntityName => nametagText.Value;
+        public string EntityName => nametagText.Value.ToString();
 
-        private NetworkVariable<string> nametagText = new NetworkVariable<string>(
+        private NetworkVariable<FixedString32Bytes> nametagText = new NetworkVariable<FixedString32Bytes>(
             value: "",
             writePerm: NetworkVariableWritePermission.Owner);
 
@@ -67,17 +68,17 @@ namespace nickmaltbie.Treachery.UI
 
         public override void OnNetworkSpawn()
         {
-            if (IsOwner && string.IsNullOrEmpty(nametagText.Value))
+            if (IsOwner && string.IsNullOrEmpty(nametagText.Value.ToString()))
             {
                 nametagText.Value = defaultName;
             }
 
-            text.text = nametagText.Value;
+            text.text = nametagText.Value.ToString();
         }
 
-        public void UpdateText(string previousName, string newName)
+        public void UpdateText(FixedString32Bytes previousName, FixedString32Bytes newName)
         {
-            text.text = newName;
+            text.text = newName.ToString();
         }
 
         public void LateUpdate()

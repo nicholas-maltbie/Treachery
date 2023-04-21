@@ -13,7 +13,8 @@
         "nickmaltbie.ScreenManager.TestCommon",
         "nickmaltbie.TestUtilsUnity",
         "Unity.InputSystem",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
