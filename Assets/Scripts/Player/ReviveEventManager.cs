@@ -19,7 +19,6 @@
 using System;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.UI;
 using Unity.Netcode;
 using UnityEngine;
 

@@ -17,9 +17,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace nickmaltbie.Treachery.UI
 {
@@ -58,7 +56,7 @@ namespace nickmaltbie.Treachery.UI
 
             feedBase = new GameObject();
             feedBase.transform.SetParent(transform);
-            var rectTransform = feedBase.AddComponent<RectTransform>();
+            RectTransform rectTransform = feedBase.AddComponent<RectTransform>();
             rectTransform.anchorMax = new Vector2(1, 1);
             rectTransform.anchorMin = new Vector2(0, 1);
             rectTransform.pivot = new Vector2(0.5f, 1);
@@ -78,7 +76,7 @@ namespace nickmaltbie.Treachery.UI
             var item = GameObject.Instantiate(eventPrefab.gameObject);
             item.transform.SetParent(feedBase.transform);
             currentOffset += item.GetComponent<RectTransform>().sizeDelta.y;
-            var rectTransform = item.GetComponent<RectTransform>();
+            RectTransform rectTransform = item.GetComponent<RectTransform>();
 
             rectTransform.localPosition = new Vector3(0, currentOffset, 0);
             rectTransform.localScale = Vector3.one;
@@ -115,7 +113,7 @@ namespace nickmaltbie.Treachery.UI
 
         public void Update()
         {
-            var rectTransform = feedBase.GetComponent<RectTransform>();
+            RectTransform rectTransform = feedBase.GetComponent<RectTransform>();
             if (rectTransform.localPosition.y > -currentOffset)
             {
                 rectTransform.localPosition -= Vector3.up * Time.deltaTime * scrollSpeed;
@@ -123,7 +121,7 @@ namespace nickmaltbie.Treachery.UI
 
             while (eventFeed.Count > 0 && eventFeed.Last.Value.timeCreation + elementLifetime <= Time.time)
             {
-                var last = eventFeed.Last;
+                LinkedListNode<FeedEntry> last = eventFeed.Last;
                 eventFeed.RemoveLast();
 
                 if (eventFeed.Count == 0)

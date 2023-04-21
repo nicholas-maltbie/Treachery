@@ -17,9 +17,9 @@
 // SOFTWARE.
 
 using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using Unity.Collections;
 
 namespace nickmaltbie.Treachery.UI
 {

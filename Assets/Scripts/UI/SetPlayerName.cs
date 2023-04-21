@@ -17,9 +17,7 @@
 // SOFTWARE.
 
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
-using Unity.Collections;
 
 namespace nickmaltbie.Treachery.UI
 {
@@ -29,8 +27,8 @@ namespace nickmaltbie.Treachery.UI
 
         public void Awake()
         {
-            var inputField = GetComponent<TMP_InputField>();
-            
+            TMP_InputField inputField = GetComponent<TMP_InputField>();
+
             if (PlayerPrefs.HasKey(PlayerNameKey))
             {
                 inputField.text = PlayerPrefs.GetString(PlayerNameKey, PlayerNametag.PlayerName);

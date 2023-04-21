@@ -16,11 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using TMPro;
-using Unity.Netcode;
-using UnityEngine;
-using Unity.Collections;
-
 namespace nickmaltbie.Treachery.UI
 {
     public class PlayerNametag : Nametag
