@@ -1,0 +1,68 @@
+{
+    "subs":
+    [
+      {
+        "name": "sub1",
+        "months": 1,
+        "strength": 0
+      },
+      {
+        "name": "sub2",
+        "months": 10,
+        "strength": 2
+      },
+      {
+        "name": "sub3",
+        "months": 4,
+        "strength": 3
+      },
+      {
+        "name": "sub4",
+        "months": 1000,
+        "strength": 4
+      },
+      {
+        "name": "sub5",
+        "months": 1,
+        "strength": 5
+      },{
+        "name": "sub1",
+        "months": 1,
+        "strength": 0
+      },
+      {
+        "name": "sub2",
+        "months": 10,
+        "strength": 2
+      },
+      {
+        "name": "sub3",
+        "months": 4,
+        "strength": 3
+      },
+      {
+        "name": "sub4",
+        "months": 1000,
+        "strength": 4
+      },{
+        "name": "sub1",
+        "months": 1,
+        "strength": 0
+      },
+      {
+        "name": "sub2",
+        "months": 10,
+        "strength": 2
+      },
+      {
+        "name": "sub3",
+        "months": 4,
+        "strength": 3
+      },
+      {
+        "name": "sub4",
+        "months": 1000,
+        "strength": 4
+      }
+    ]
+}

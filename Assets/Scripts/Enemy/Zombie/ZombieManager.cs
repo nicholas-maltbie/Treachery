@@ -36,10 +36,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [SerializeField]
         public ZombieEnemy[] zombiePrefabs;
 
-        [SerializeField]
-        public Transform[] spawnPositions;
-
         public int targetZombieCount = 10;
+
+        protected ZombieSpawnPos[] spawnPositions;
 
         private LinkedList<(GameObject, float)> deathTimes = new LinkedList<(GameObject, float)>();
 
@@ -61,10 +60,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             float attackCooldown = 2.0f - normalizedStrength * 1.75f;
             float attackDamage = 5.0f + normalizedStrength * 20.0f + UnityEngine.Random.Range(-3.0f, 3.0f);
             GameObject zombiePrefab = zombiePrefabs[UnityEngine.Random.Range(0, zombiePrefabs.Length)].gameObject;
-            Transform selectedTransform = spawnPositions[UnityEngine.Random.Range(0, spawnPositions.Length)];
-
-            Vector3 offset = UnityEngine.Random.insideUnitCircle * 2;
-            Vector3 spawnPos = selectedTransform.transform.position + new Vector3(offset.x, 0, offset.y);
+            Vector3 spawnPos = spawnPositions[UnityEngine.Random.Range(0, spawnPositions.Length)].GetSpawnPos();
 
             return new ZombieConfig
             {
@@ -120,7 +116,13 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             }
         }
 
-        public void Update()
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            spawnPositions = GameObject.FindObjectsOfType<ZombieSpawnPos>();
+        }
+
+        public virtual void Update()
         {
             if (!IsServer)
             {
@@ -135,6 +137,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 SpawnedZombies--;
             }
 
+            SpawnZombiesIfNeeded();
+        }
+
+        public virtual void SpawnZombiesIfNeeded()
+        {
             while (SpawnedZombies < targetZombieCount)
             {
                 SpawnZombie($"Zombie-{TotalSpawned++}", UnityEngine.Random.Range(0, 2.0f));
