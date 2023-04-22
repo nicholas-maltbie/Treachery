@@ -224,6 +224,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [Transition(typeof(JumpStartEvent), typeof(JumpingState))]
         [OnEnterState(nameof(StartRoaming))]
         [OnUpdate(nameof(RoamingMovement))]
+        [OnExitState(nameof(ClearTarget))]
         [Transition(typeof(StopRoamEvent), typeof(IdleState))]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
         [Transition(typeof(OnHitEvent), typeof(HitStunState))]
@@ -371,6 +372,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 RaiseEvent(new JumpEndEvent());
             }
+        }
+
+        public void ClearTarget()
+        {
+            zombieTarget = null;
         }
 
         /// <summary>
