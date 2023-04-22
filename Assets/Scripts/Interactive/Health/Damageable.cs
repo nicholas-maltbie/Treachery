@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Interactive.Stamina;
-using nickmaltbie.Treachery.UI;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -58,7 +57,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public void AdjustMaxHealth(float maxHealth)
         {
             this.maxHealth.Value = maxHealth;
-            this.currentHealth.Value = maxHealth;
+            currentHealth.Value = maxHealth;
         }
 
         private float GetAdjustedHealth(float change)

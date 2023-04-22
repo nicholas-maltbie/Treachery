@@ -112,7 +112,7 @@ namespace nickmaltbie.Treachery.UI
 
             if (sourceNametag != null && targetNametag != null)
             {
-                this.AddEvent(
+                AddEvent(
                     sourceNametag.EntityName,
                     targetNametag.EntityName);
             }

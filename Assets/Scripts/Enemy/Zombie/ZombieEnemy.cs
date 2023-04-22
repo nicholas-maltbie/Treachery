@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
@@ -165,6 +164,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public GameObject Source => gameObject;
 
         /// <summary>
+        /// Time it takes the zombie to jump over a gap.
+        /// </summary>
+        private float jumpLength = 1.0f;
+
+        /// <summary>
         /// Zombie standing still and doing nothing.
         /// </summary>
         [InitialState]
@@ -181,6 +185,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         [Animation(ZombieWalkingAnimState, 0.35f, true)]
         [Transition(typeof(ZombieAttackEvent), typeof(AttackState))]
+        [Transition(typeof(JumpStartEvent), typeof(JumpingState))]
         [OnEnterState(nameof(StartRoaming))]
         [OnUpdate(nameof(RoamingMovement))]
         [Transition(typeof(StopRoamEvent), typeof(IdleState))]
@@ -195,6 +200,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
         [Transition(typeof(ZombieAttackEvent), typeof(AttackState))]
         [Transition(typeof(TargetLostEvent), typeof(IdleState))]
+        [Transition(typeof(JumpStartEvent), typeof(JumpingState))]
         [OnEnterState(nameof(OnStartChase))]
         [OnExitState(nameof(StopMovement))]
         [OnUpdate(nameof(ChaseTarget))]
@@ -211,6 +217,12 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [OnEnterState(nameof(OnEnterAttackState))]
         [OnExitState(nameof(OnFinishAttack))]
         public class AttackState : State { }
+
+        [Animation(ZombieJumpAnimState, 0.25f, true)]
+        [Transition(typeof(JumpEndEvent), typeof(IdleState))]
+        [OnUpdate(nameof(OnJump))]
+        [OnEnterState(nameof(OnStartJump))]
+        public class JumpingState : State { }
 
         /// <summary>
         /// Zombie is stunned after being hit
@@ -232,6 +244,8 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         [Animation(ZombieDeadAnimState, 0.35f, true)]
         public class DeadState : State { }
+
+        private OffMeshLinkData jumpLink;
 
         public void Awake()
         {
@@ -256,16 +270,51 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         public override void Update()
         {
-            navMeshAgent.enabled = damageable.IsAlive();
-
-            if (!damageable.IsAlive() &&
-                (CurrentState != typeof(DyingState) ||
-                 CurrentState != typeof(DeadState)))
+            if (IsServer)
             {
-                RaiseEvent(PlayerDeathEvent.Instance);
+                navMeshAgent.enabled = damageable.IsAlive();
+                navMeshAgent.stoppingDistance = Mathf.Max(0.5f, attackRange / 2);
+
+                if (!damageable.IsAlive() &&
+                    (CurrentState != typeof(DyingState) ||
+                    CurrentState != typeof(DeadState)))
+                {
+                    RaiseEvent(PlayerDeathEvent.Instance);
+                }
+
+                if (navMeshAgent.enabled && navMeshAgent.isOnOffMeshLink)
+                {
+                    this.RaiseEvent(new JumpStartEvent(navMeshAgent.currentOffMeshLinkData));
+                }
             }
 
             base.Update();
+        }
+
+        public void OnStartJump(IEvent jmp)
+        {
+            var jumpEvent = jmp as JumpStartEvent;
+            this.jumpLink = jumpEvent.linkData;
+        }
+
+        public void OnJump()
+        {
+            // lerp from link start to link end in time to animation
+            var tlerp = Mathf.Clamp(this.deltaTimeInCurrentState / jumpLength, 0, 1.0f);
+
+            // straight line from startlink to endlink
+            var newPos = Vector3.Lerp(jumpLink.startPos, jumpLink.endPos, tlerp);
+
+            // add the 'hop'
+            newPos.y += 2f * Mathf.Sin(Mathf.PI * tlerp);
+
+            // Update transform position
+            transform.position = newPos;
+
+            if (tlerp >= 1.0f)
+            {
+                RaiseEvent(new JumpEndEvent());
+            }
         }
 
         /// <summary>
@@ -308,6 +357,12 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 // set animation to just idle
                 ChaseAnimationState = ZombieChaseIdleAnimState;
+                
+                // Rotate towards target
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up), Vector3.up),
+                    navMeshAgent.angularSpeed * Time.deltaTime);
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)

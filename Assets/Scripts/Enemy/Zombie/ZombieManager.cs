@@ -80,7 +80,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         public GameObject SpawnZombie(ZombieConfig config)
         {
-            GameObject spawned = GameObject.Instantiate(config.zombiePrefab, config.spawnPos, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0));
+            var spawned = GameObject.Instantiate(config.zombiePrefab, config.spawnPos, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0));
             spawned.transform.localScale = Vector3.one * config.scale;
 
             NetworkObject netObj = spawned.GetComponent<NetworkObject>();
@@ -91,7 +91,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             zombie.attackCooldown = config.attackCooldown;
             zombie.attackRange = 1.5f * config.scale;
 
-            var agent = spawned.GetComponent<NavMeshAgent>();
+            NavMeshAgent agent = spawned.GetComponent<NavMeshAgent>();
 
             Nametag nametag = spawned.GetComponent<Nametag>();
             nametag.UpdateName(config.name);
@@ -127,7 +127,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 return;
             }
 
-            while (deathTimes.Count > 0  && deathTimes.Last.Value.Item2 + zombieCleanupTime <= Time.time)
+            while (deathTimes.Count > 0 && deathTimes.Last.Value.Item2 + zombieCleanupTime <= Time.time)
             {
                 GameObject go = deathTimes.Last.Value.Item1;
                 deathTimes.RemoveLast();
