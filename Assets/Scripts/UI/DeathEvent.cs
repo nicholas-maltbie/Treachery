@@ -16,17 +16,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Enemy.Zombie
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace nickmaltbie.Treachery.UI
 {
-    public static class ZombieAnimations
+    public class DeathEvent : MonoBehaviour
     {
-        public const string ZombieIdleAnimState = "zombie idle";
-        public const string ZombieChaseIdleAnimState = "zombie chase idle";
-        public const string ZombieWalkingAnimState = "zombie walking";
-        public const string ZombieRunningAnimState = "zombie running";
-        public const string ZombieReactionHitAnimState = "zombie reaction hit";
-        public const string ZombieDyingAnimState = "zombie dying";
-        public const string ZombieDeadAnimState = "zombie dead";
-        public const string ZombieAttackAnimState = "zombie attack";
+        public Image icon;
+        public TMP_Text killer;
+        public TMP_Text killed;
+
+        public void UpdateText(string killerName, string killedName)
+        {
+            killer.text = killerName;
+            killed.text = killedName;
+        }
+
+        public void UpdateIcon(Sprite sprite)
+        {
+            icon.sprite = sprite;
+        }
     }
 }

@@ -16,16 +16,15 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
 using nickmaltbie.StateMachineUnity.Event;
 using nickmaltbie.StateMachineUnity.netcode;
-using nickmaltbie.StateMachineUnity.Utils;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -36,7 +35,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(IDamageable))]
-    public class ZombieEnemy : NetworkSMAnim
+    public class ZombieEnemy : NetworkSMAnim, IDamageSource
     {
         /// <summary>
         /// Tag for what the zombie will target.
@@ -155,20 +154,20 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         private IDamageable damageable;
 
         /// <summary>
-        /// Selected zombie avatar.
-        /// </summary>
-        private NetworkVariable<int> SelectedAvatar = new NetworkVariable<int>(value: -1);
-
-        /// <summary>
-        /// Spawned avatar for this zombie.
-        /// </summary>
-        private GameObject spawnedAvatar;
-
-        /// <summary>
         /// Animation state when chasing someone
         /// </summary>
         /// <value></value>
-        private string ChaseAnimationState { get; set; } = ZombieRunningAnimState;
+        public string ChaseAnimationState { get; private set; } = ZombieRunningAnimState;
+
+        /// <summary>
+        /// Source of damage for this game object.
+        /// </summary>
+        public GameObject Source => gameObject;
+
+        /// <summary>
+        /// Damage source for zombie.
+        /// </summary>
+        private Lazy<DamageSource> damageSource;
 
         /// <summary>
         /// Zombie standing still and doing nothing.
@@ -194,7 +193,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie has a target and is chasing after them.
         /// </summary>
-        [DynamicAnimation(nameof(ChaseAnimationState), 0.1f, true)]
+        [DynamicAnimation(nameof(ChaseAnimationState), 0.25f, true)]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
         [Transition(typeof(TargetLostEvent), typeof(IdleState))]
         [OnEnterState(nameof(OnStartChase))]
@@ -205,7 +204,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// <summary>
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
-        [Animation(ZombieAttackAnimState, 0.1f, true)]
+        [Animation(ZombieAttackAnimState, 0.25f, true)]
         [TransitionFromAnyState(typeof(ZombieAttackEvent))]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [OnUpdate(nameof(ZombieAttackAction))]
@@ -241,6 +240,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             navMeshAgent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<IDamageable>();
             attackBase = AttachedAnimator.GetBoneTransform(HumanBodyBones.Head);
+            damageSource = new Lazy<DamageSource>(() => new DamageSource(gameObject));
         }
 
         public override void OnNetworkSpawn()
@@ -275,6 +275,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ChaseTarget()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             if (zombieTarget == null)
             {
                 RaiseEvent(new TargetLostEvent());
@@ -296,7 +301,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             if (dist <= attackRange)
             {
                 // set animation to just idle
-                ChaseAnimationState = ZombieWalkingAnimState;
+                ChaseAnimationState = ZombieChaseIdleAnimState;
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
@@ -351,6 +356,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void ZombieAttackAction()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Rotate towards target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -376,6 +386,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 if (didHit && hitbox != null && playerTarget)
                 {
                     DamageEvent damageEvent = IHitbox.DamageEventFromHit(hit, hitbox, attackDamage, -attackDir, DamageType.Slashing);
+                    damageEvent.damageSource = this;
                     NetworkDamageEvent.ProcessEvent(damageEvent);
                 }
             }
@@ -386,6 +397,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void RoamingMovement()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // Have the nav mesh agent move towards the target
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -411,8 +427,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         public void IdleZombieAction()
         {
-            CheckForTargets();
-            CheckRoaming();
+            if (IsServer)
+            {
+                CheckForTargets();
+                CheckRoaming();
+            }
         }
 
         /// <summary>
@@ -462,7 +481,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             CheckPersistedTarget();
 
             // Setup time to next roam
-            timeToNextRoam = Random.Range(0.0f, timeBetweenRoaming);
+            timeToNextRoam = UnityEngine.Random.Range(0.0f, timeBetweenRoaming);
         }
 
         /// <summary>

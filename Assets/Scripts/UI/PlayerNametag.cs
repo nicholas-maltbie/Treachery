@@ -16,17 +16,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace nickmaltbie.Treachery.Enemy.Zombie
+namespace nickmaltbie.Treachery.UI
 {
-    public static class ZombieAnimations
+    public class PlayerNametag : Nametag
     {
-        public const string ZombieIdleAnimState = "zombie idle";
-        public const string ZombieChaseIdleAnimState = "zombie chase idle";
-        public const string ZombieWalkingAnimState = "zombie walking";
-        public const string ZombieRunningAnimState = "zombie running";
-        public const string ZombieReactionHitAnimState = "zombie reaction hit";
-        public const string ZombieDyingAnimState = "zombie dying";
-        public const string ZombieDeadAnimState = "zombie dead";
-        public const string ZombieAttackAnimState = "zombie attack";
+        public static string PlayerName { get; set; }
+
+        public void Start()
+        {
+            if (IsOwner)
+            {
+                nametagText.Value = PlayerName;
+                text.text = PlayerName;
+            }
+        }
     }
 }

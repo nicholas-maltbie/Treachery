@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 385868950975800904}
   - component: {fileID: 8069698566617508593}
   - component: {fileID: 5333040769718892987}
+  - component: {fileID: 806280368}
   m_Layer: 7
   m_Name: TargetDummy
   m_TagString: Untagged
@@ -183,6 +184,22 @@ MonoBehaviour:
     _json: '{"nest":{"source":"Macro","macro":0,"embed":null}}'
     _objectReferences:
     - {fileID: 11400000, guid: a83e6b268c4905e4da98bd2dc7b82fb7, type: 2}
+--- !u!114 &806280368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385868950501213390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2660bb5ff097dea47929afcf67c128c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultName: Target Dummy
+  nametagPrefab: {fileID: 4015307637982759229, guid: 6e7a1ab96a4f19246a714195acfb05b8, type: 3}
+  displayWhenOwned: 1
+  nametagOffset: {x: 0, y: 2, z: 0}
 --- !u!1001 &6105023398458789439
 PrefabInstance:
   m_ObjectHideFlags: 0
