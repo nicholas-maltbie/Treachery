@@ -285,7 +285,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
                 if (navMeshAgent.enabled && navMeshAgent.isOnOffMeshLink)
                 {
-                    this.RaiseEvent(new JumpStartEvent(navMeshAgent.currentOffMeshLinkData));
+                    RaiseEvent(new JumpStartEvent(navMeshAgent.currentOffMeshLinkData));
                 }
             }
 
@@ -295,16 +295,16 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public void OnStartJump(IEvent jmp)
         {
             var jumpEvent = jmp as JumpStartEvent;
-            this.jumpLink = jumpEvent.linkData;
+            jumpLink = jumpEvent.linkData;
 
-            this.deltaTimeInCurrentState = 0.0f;
-            this.jumpLength = Vector3.Distance(this.jumpLink.startPos, this.jumpLink.endPos) / 2.0f;
+            deltaTimeInCurrentState = 0.0f;
+            jumpLength = Vector3.Distance(jumpLink.startPos, jumpLink.endPos) / 2.0f;
         }
 
         public void OnJump()
         {
             // lerp from link start to link end in time to animation
-            var tlerp = MathUtils.SmoothValue(Mathf.Clamp(this.deltaTimeInCurrentState / jumpLength, 0, 1.0f));
+            float tlerp = MathUtils.SmoothValue(Mathf.Clamp(deltaTimeInCurrentState / jumpLength, 0, 1.0f));
 
             // straight line from startlink to endlink
             var newPos = Vector3.Lerp(jumpLink.startPos, jumpLink.endPos, tlerp);
@@ -361,7 +361,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 // set animation to just idle
                 ChaseAnimationState = ZombieChaseIdleAnimState;
-                
+
                 // Rotate towards target
                 transform.rotation = Quaternion.RotateTowards(
                     transform.rotation,
