@@ -136,8 +136,8 @@ MonoBehaviour:
   aggroDistance: 5
   loseAggroDistance: 20
   timeBetweenRoaming: 3
-  chaseSpeed: 12
-  attackSpeed: 8.5
+  chaseSpeed: 8.5
+  attackSpeed: 6.5
   roamSpeed: 1
   minRoamTime: 0.5
   maxRoamTime: 3
