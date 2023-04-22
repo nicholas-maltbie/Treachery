@@ -507,6 +507,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         private void RotateTowardsTarget()
         {
+            if (zombieTarget == null)
+            {
+                return;
+            }
+
             Vector3 look = Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up).normalized;
             if (look.magnitude >= 0.001f)
             {
@@ -581,7 +586,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 // Have the nav mesh agent move towards the target
                 RotateTowardsTarget();
-                navMeshAgent.Move(transform.forward * roamSpeed * Time.deltaTime);
+                navMeshAgent.Move(roamHeading * Vector3.forward * roamSpeed * Time.deltaTime);
             }
 
             // Reduce time roaming
@@ -590,6 +595,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             // If time is less than zero, return to idle state
             if (roamRemainingTime <= 0)
             {
+                zombieTarget = null;
                 RaiseEvent(new StopRoamEvent());
             }
 
@@ -657,7 +663,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             CheckPersistedTarget();
 
             // Setup time to next roam
-            timeToNextRoam = UnityEngine.Random.Range(0.0f, timeBetweenRoaming);
+            timeToNextRoam = UnityEngine.Random.Range(timeBetweenRoaming, timeBetweenRoaming * 2.0f);
         }
 
         /// <summary>
@@ -691,7 +697,14 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 roamHeading = startRoam.heading;
                 roamRemainingTime = startRoam.roamTime;
                 roamingTowardsPlayer = Random.Range(0.0f, 1.0f) < probabilityRoamTowardsPlayer;
-                zombieTarget = FindTarget(Mathf.Infinity);
+                if (roamingTowardsPlayer)
+                {
+                    zombieTarget = FindTarget(Mathf.Infinity);
+                }
+                else
+                {
+                    zombieTarget = null;
+                }
             }
         }
 

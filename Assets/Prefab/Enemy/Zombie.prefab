@@ -136,11 +136,11 @@ MonoBehaviour:
   aggroDistance: 4
   loseAggroDistance: 10
   notifyRange: 5
-  probabilityRoamTowardsPlayer: 0.15
+  probabilityRoamTowardsPlayer: 0.1
   timeBetweenRoaming: 3
   chaseSpeed: 9
   attackSpeed: 6.5
-  roamSpeed: 0.75
+  roamSpeed: 1
   minRoamTime: 0.5
   maxRoamTime: 2.25
   timeToAttack: 0.25
