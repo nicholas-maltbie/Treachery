@@ -133,15 +133,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attachedAnimator: {fileID: 0}
-  aggroDistance: 5
-  loseAggroDistance: 20
+  aggroDistance: 4
+  loseAggroDistance: 10
   notifyRange: 5
+  probabilityRoamTowardsPlayer: 0.15
   timeBetweenRoaming: 3
-  chaseSpeed: 8.5
+  chaseSpeed: 9
   attackSpeed: 6.5
-  roamSpeed: 1
+  roamSpeed: 0.75
   minRoamTime: 0.5
-  maxRoamTime: 3
+  maxRoamTime: 2.25
   timeToAttack: 0.25
   attackRange: 1
   attackDamage: 5

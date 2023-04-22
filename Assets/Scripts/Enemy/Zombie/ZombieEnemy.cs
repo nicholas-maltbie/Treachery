@@ -78,6 +78,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public float notifyRange = 10.0f;
 
         /// <summary>
+        /// Chance a zombie will stumble towards players.
+        /// </summary>
+        public float probabilityRoamTowardsPlayer = 0.85f;
+
+        /// <summary>
         /// Average time between when the zombie will start roaming.
         /// </summary>
         public float timeBetweenRoaming = 3.0f;
@@ -142,6 +147,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// What the zombie is chasing.
         /// </summary>
         private GameObject zombieTarget;
+
+        /// <summary>
+        /// Is the zombie roaming towards a player.
+        /// </summary>
+        private bool roamingTowardsPlayer;
 
         /// <summary>
         /// NavMeshAgent for controlling zombie movement.
@@ -406,10 +416,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 ChaseAnimationState = ZombieChaseIdleAnimState;
 
                 // Rotate towards target
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    Quaternion.LookRotation(Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up), Vector3.up),
-                    navMeshAgent.angularSpeed * Time.deltaTime);
+                RotateTowardsTarget();
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
@@ -492,6 +499,18 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             lastAttackTime = Time.time;
         }
 
+        private void RotateTowardsTarget()
+        {
+            Vector3 look = Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up).normalized;
+            if (look.magnitude >= 0.001f)
+            {
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(look, Vector3.up),
+                    navMeshAgent.angularSpeed * Time.deltaTime);
+            }
+        }
+
         /// <summary>
         /// Action to run while in the attack state.
         /// </summary>
@@ -503,10 +522,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             }
 
             // Rotate towards target
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                Quaternion.LookRotation(Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up), Vector3.up),
-                navMeshAgent.angularSpeed * Time.deltaTime);
+            RotateTowardsTarget();
 
             // Still chase the target
             _ = Vector3.Distance(transform.position, zombieTarget.transform.position);
@@ -550,12 +566,17 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 return;
             }
 
-            // Have the nav mesh agent move towards the target
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                roamHeading,
-                navMeshAgent.angularSpeed * Time.deltaTime);
-            navMeshAgent.Move(transform.forward * roamSpeed * Time.deltaTime);
+            if (roamingTowardsPlayer && zombieTarget != null)
+            {
+                navMeshAgent.speed = roamSpeed;
+                navMeshAgent.SetDestination(zombieTarget.transform.position);
+            }
+            else
+            {
+                // Have the nav mesh agent move towards the target
+                RotateTowardsTarget();
+                navMeshAgent.Move(transform.forward * roamSpeed * Time.deltaTime);
+            }
 
             // Reduce time roaming
             roamRemainingTime -= Time.deltaTime;
@@ -663,6 +684,8 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 roamHeading = startRoam.heading;
                 roamRemainingTime = startRoam.roamTime;
+                roamingTowardsPlayer = Random.Range(0.0f, 1.0f) < probabilityRoamTowardsPlayer;
+                zombieTarget = FindTarget(Mathf.Infinity);
             }
         }
 
