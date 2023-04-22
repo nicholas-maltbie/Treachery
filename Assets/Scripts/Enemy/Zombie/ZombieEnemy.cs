@@ -303,6 +303,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         public void OnJump()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             // lerp from link start to link end in time to animation
             float tlerp = MathUtils.SmoothValue(Mathf.Clamp(deltaTimeInCurrentState / jumpLength, 0, 1.0f));
 
