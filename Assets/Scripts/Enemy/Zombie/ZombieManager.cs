@@ -83,14 +83,13 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             GameObject spawned = GameObject.Instantiate(config.zombiePrefab, config.spawnPos, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0));
             spawned.transform.localScale = Vector3.one * config.scale;
 
-            UnityEngine.Debug.Log($"Zombie spawned at: {config.spawnPos}");
-
             NetworkObject netObj = spawned.GetComponent<NetworkObject>();
             netObj.Spawn(true);
 
             ZombieEnemy zombie = spawned.GetComponent<ZombieEnemy>();
             zombie.attackDamage = config.attackDamage;
             zombie.attackCooldown = config.attackCooldown;
+            zombie.attackRange = 1.5f * config.scale;
 
             var agent = spawned.GetComponent<NavMeshAgent>();
 
