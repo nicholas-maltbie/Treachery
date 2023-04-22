@@ -406,8 +406,8 @@ MonoBehaviour:
   cooldown: 0.1
   viewSource: {fileID: 1928389238472999755}
   viewOffset: {x: 0, y: 1.7, z: 0}
-  interactRange: 2
-  interactRadius: 0.1
+  interactRange: 3
+  interactRadius: 0.25
 --- !u!114 &386502574218454059
 MonoBehaviour:
   m_ObjectHideFlags: 0

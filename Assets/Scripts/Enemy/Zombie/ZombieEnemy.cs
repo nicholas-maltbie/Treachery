@@ -24,6 +24,7 @@ using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
+using nickmaltbie.Treachery.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -295,18 +296,21 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         {
             var jumpEvent = jmp as JumpStartEvent;
             this.jumpLink = jumpEvent.linkData;
+
+            this.deltaTimeInCurrentState = 0.0f;
+            this.jumpLength = Vector3.Distance(this.jumpLink.startPos, this.jumpLink.endPos) / 2.0f;
         }
 
         public void OnJump()
         {
             // lerp from link start to link end in time to animation
-            var tlerp = Mathf.Clamp(this.deltaTimeInCurrentState / jumpLength, 0, 1.0f);
+            var tlerp = MathUtils.SmoothValue(Mathf.Clamp(this.deltaTimeInCurrentState / jumpLength, 0, 1.0f));
 
             // straight line from startlink to endlink
             var newPos = Vector3.Lerp(jumpLink.startPos, jumpLink.endPos, tlerp);
 
             // add the 'hop'
-            newPos.y += 2f * Mathf.Sin(Mathf.PI * tlerp);
+            newPos.y += 1.0f * Mathf.Sin(Mathf.PI * tlerp);
 
             // Update transform position
             transform.position = newPos;
