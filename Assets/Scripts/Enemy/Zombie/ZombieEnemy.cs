@@ -377,6 +377,8 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public void ClearTarget()
         {
             zombieTarget = null;
+            navMeshAgent.ResetPath();
+            navMeshAgent.speed = 0.0f;
         }
 
         /// <summary>
@@ -585,7 +587,10 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             else
             {
                 // Have the nav mesh agent move towards the target
-                RotateTowardsTarget();
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    roamHeading,
+                    navMeshAgent.angularSpeed * Time.deltaTime);
                 navMeshAgent.Move(roamHeading * Vector3.forward * roamSpeed * Time.deltaTime);
             }
 
