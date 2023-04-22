@@ -3052,8 +3052,7 @@ MonoBehaviour:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 0}
     PlayerPrefab: {fileID: 454342533935566747, guid: a4d9e0ebcf716014db17f571f9ce92cf, type: 3}
-    Prefabs:
-      NetworkPrefabsLists: []
+    NetworkPrefabs: []
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -3069,27 +3068,6 @@ MonoBehaviour:
     LoadSceneTimeOut: 120
     SpawnTimeout: 1
     EnableNetworkLogs: 1
-    OldPrefabList:
-    - Override: 0
-      Prefab: {fileID: 542210302449983826, guid: 6daf1726da80a2c408666a2cf341ad5b, type: 3}
-      SourcePrefabToOverride: {fileID: 542210302449983826, guid: 6daf1726da80a2c408666a2cf341ad5b, type: 3}
-      SourceHashToOverride: 0
-      OverridingTargetPrefab: {fileID: 0}
-    - Override: 0
-      Prefab: {fileID: 8443388875160575772, guid: ae63e45ee8bea064d926c6a69320f91a, type: 3}
-      SourcePrefabToOverride: {fileID: 542210302449983826, guid: 6daf1726da80a2c408666a2cf341ad5b, type: 3}
-      SourceHashToOverride: 0
-      OverridingTargetPrefab: {fileID: 0}
-    - Override: 0
-      Prefab: {fileID: 5959098636586586155, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
-      SourcePrefabToOverride: {fileID: 0}
-      SourceHashToOverride: 0
-      OverridingTargetPrefab: {fileID: 0}
-    - Override: 0
-      Prefab: {fileID: 5959098636586586155, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
-      SourcePrefabToOverride: {fileID: 0}
-      SourceHashToOverride: 0
-      OverridingTargetPrefab: {fileID: 0}
 --- !u!4 &1027880976
 Transform:
   m_ObjectHideFlags: 0
@@ -6452,6 +6430,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TargetDummy (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 385868950501213390, guid: 9c129bdcfbcf49c4482f175aad20ba5b, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 385868950501213391, guid: 9c129bdcfbcf49c4482f175aad20ba5b, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -7314,6 +7296,10 @@ PrefabInstance:
     - target: {fileID: 385868950501213390, guid: 9c129bdcfbcf49c4482f175aad20ba5b, type: 3}
       propertyPath: m_Name
       value: TargetDummy
+      objectReference: {fileID: 0}
+    - target: {fileID: 385868950501213390, guid: 9c129bdcfbcf49c4482f175aad20ba5b, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 385868950501213391, guid: 9c129bdcfbcf49c4482f175aad20ba5b, type: 3}
       propertyPath: m_RootOrder

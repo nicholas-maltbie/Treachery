@@ -38,6 +38,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
     public class ZombieEnemy : NetworkSMAnim, IDamageSource
     {
         /// <summary>
+        /// Cooldown between notifications of nearby zombies in seconds.
+        /// </summary>
+        public const float notifyCooldown = 1.0f;
+
+        /// <summary>
         /// Tag for what the zombie will target.
         /// </summary>
         public const string ZombieTargetTag = "Player";
@@ -48,6 +53,16 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public static int EnemyLayerMask => 1 << LayerMask.NameToLayer("Enemy");
 
         /// <summary>
+        /// All zombies spawned in game right now.
+        /// </summary>
+        public static LinkedList<ZombieEnemy> AllZombies = new LinkedList<ZombieEnemy>();
+
+        /// <summary>
+        /// Node for this zombie in the list of all zombies.
+        /// </summary>
+        private LinkedListNode<ZombieEnemy> myNode;
+
+        /// <summary>
         /// Distance at which the zombie will start chasing the player.
         /// </summary>
         public float aggroDistance = 5.0f;
@@ -56,6 +71,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// Distance at which the zombie will forget about the player.
         /// </summary>
         public float loseAggroDistance = 20.0f;
+
+        /// <summary>
+        /// Notify zombies within this range when chasing an enemy.
+        /// </summary>
+        public float notifyRange = 10.0f;
 
         /// <summary>
         /// Average time between when the zombie will start roaming.
@@ -168,6 +188,11 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// Time it takes the zombie to jump over a gap.
         /// </summary>
         private float jumpLength = 1.0f;
+
+        /// <summary>
+        /// Time until the next notification
+        /// </summary>
+        private float timeToNotify = notifyCooldown;
 
         /// <summary>
         /// Zombie standing still and doing nothing.
@@ -298,7 +323,19 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             jumpLink = jumpEvent.linkData;
 
             deltaTimeInCurrentState = 0.0f;
-            jumpLength = Vector3.Distance(jumpLink.startPos, jumpLink.endPos) / 2.0f;
+            jumpLength = Mathf.Min(1.0f, Vector3.Distance(jumpLink.startPos, jumpLink.endPos) / 2.0f);
+        }
+
+        public override void OnEnable()
+        {
+            base.OnEnable();
+            myNode = AllZombies.AddFirst(this);
+        }
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            AllZombies.Remove(myNode);
         }
 
         public void OnJump()
@@ -347,6 +384,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             if (zombieTarget == null)
             {
                 RaiseEvent(new TargetLostEvent());
+                return;
             }
 
             navMeshAgent.SetDestination(zombieTarget.transform.position);
@@ -383,6 +421,39 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 // maintain chase animation
                 ChaseAnimationState = ZombieRunningAnimState;
+            }
+
+            // Notify other zombies within a notify radius that there
+            // is fresh meat nearby
+            timeToNotify -= Time.deltaTime;
+            if (timeToNotify <= 0 && zombieTarget != null)
+            {
+                NotifyNearbyZombies();
+                timeToNotify = UnityEngine.Random.Range(notifyCooldown, 2 * notifyCooldown);
+            }
+
+            // Check if there is a closer target
+            GameObject closest = FindTarget(loseAggroDistance);
+            if (closest != zombieTarget)
+            {
+                RaiseEvent(new TargetIdentifiedEvent(closest));
+            }
+        }
+
+        /// <summary>
+        /// Notify zombies within a notify radius.
+        /// </summary>
+        public void NotifyNearbyZombies()
+        {
+            foreach (ZombieEnemy zom in AllZombies)
+            {
+                if (Vector3.Distance(zom.transform.position, transform.position) <= notifyRange)
+                {
+                    if (zom.CurrentState == typeof(IdleState) || zom.CurrentState == typeof(RoamingState))
+                    {
+                        zom.RaiseEvent(new TargetIdentifiedEvent(zombieTarget));
+                    }
+                }
             }
         }
 
@@ -519,6 +590,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             if (evt is TargetIdentifiedEvent targetIdentifiedEvent)
             {
                 zombieTarget = targetIdentifiedEvent.target;
+                timeToNotify = Random.Range(0.1f, 0.25f);
             }
         }
 

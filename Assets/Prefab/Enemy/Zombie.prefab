@@ -135,6 +135,7 @@ MonoBehaviour:
   _attachedAnimator: {fileID: 0}
   aggroDistance: 5
   loseAggroDistance: 20
+  notifyRange: 5
   timeBetweenRoaming: 3
   chaseSpeed: 8.5
   attackSpeed: 6.5
