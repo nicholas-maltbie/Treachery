@@ -50,7 +50,7 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         private Dictionary<string, ParticleCache> particleCaches = new Dictionary<string, ParticleCache>();
         private DamageParticleLibrary library;
 
-        public ParticleCacheSet(DamageParticleLibrary library, int maxCount = 10)
+        public ParticleCacheSet(DamageParticleLibrary library, int maxCount = 100)
         {
             this.library = library;
             foreach (DamageType damageType in Enum.GetValues(typeof(DamageType)))
@@ -83,23 +83,22 @@ namespace nickmaltbie.Treachery.Interactive.Particles
     public class ParticleCache
     {
         private ParticleSystem particlePrefab;
-        private int maxCount = 10;
-        private List<ParticleSystem> cache = new List<ParticleSystem>();
+        private ParticleSystem[] cache;
         private int current = 0;
 
         public ParticleCache(ParticleSystem prefab, int maxCount)
         {
             particlePrefab = prefab;
-            this.maxCount = maxCount;
+            cache = new ParticleSystem[maxCount];
         }
 
-        public ParticleSystem CurrentParticleSystem()
+        private ParticleSystem CurrentParticleSystem()
         {
-            while (cache.Count <= current)
+            while (cache[current] == null)
             {
                 ParticleSystem instantiated = GameObject.Instantiate(particlePrefab);
                 instantiated.hideFlags = HideFlags.HideAndDontSave;
-                cache.Add(instantiated);
+                cache[current] = instantiated;
             }
 
             return cache[current];
@@ -108,9 +107,10 @@ namespace nickmaltbie.Treachery.Interactive.Particles
         public ParticleSystem NextParticleSystem()
         {
             ParticleSystem system = CurrentParticleSystem();
+
             if (system.isPlaying)
             {
-                current = (current + 1) % cache.Count;
+                current = (current + 1) % cache.Length;
             }
 
             system = CurrentParticleSystem();

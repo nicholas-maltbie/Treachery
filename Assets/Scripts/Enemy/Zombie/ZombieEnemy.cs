@@ -16,7 +16,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using nickmaltbie.StateMachineUnity;
 using nickmaltbie.StateMachineUnity.Attributes;
@@ -25,6 +24,7 @@ using nickmaltbie.StateMachineUnity.netcode;
 using nickmaltbie.Treachery.Interactive.Health;
 using nickmaltbie.Treachery.Interactive.Hitbox;
 using nickmaltbie.Treachery.Player;
+using nickmaltbie.Treachery.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -165,9 +165,9 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public GameObject Source => gameObject;
 
         /// <summary>
-        /// Damage source for zombie.
+        /// Time it takes the zombie to jump over a gap.
         /// </summary>
-        private Lazy<DamageSource> damageSource;
+        private float jumpLength = 1.0f;
 
         /// <summary>
         /// Zombie standing still and doing nothing.
@@ -178,16 +178,20 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [OnUpdate(nameof(IdleZombieAction))]
         [Transition(typeof(StartRoamEvent), typeof(RoamingState))]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
+        [Transition(typeof(OnHitEvent), typeof(HitStunState))]
         public class IdleState : State { }
 
         /// <summary>
         /// Zombie will randomly meander about and look for something to eat.
         /// </summary>
         [Animation(ZombieWalkingAnimState, 0.35f, true)]
+        [Transition(typeof(ZombieAttackEvent), typeof(AttackState))]
+        [Transition(typeof(JumpStartEvent), typeof(JumpingState))]
         [OnEnterState(nameof(StartRoaming))]
         [OnUpdate(nameof(RoamingMovement))]
         [Transition(typeof(StopRoamEvent), typeof(IdleState))]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
+        [Transition(typeof(OnHitEvent), typeof(HitStunState))]
         public class RoamingState : State { }
 
         /// <summary>
@@ -195,28 +199,36 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         /// </summary>
         [DynamicAnimation(nameof(ChaseAnimationState), 0.25f, true)]
         [Transition(typeof(TargetIdentifiedEvent), typeof(ChaseState))]
+        [Transition(typeof(ZombieAttackEvent), typeof(AttackState))]
         [Transition(typeof(TargetLostEvent), typeof(IdleState))]
+        [Transition(typeof(JumpStartEvent), typeof(JumpingState))]
         [OnEnterState(nameof(OnStartChase))]
         [OnExitState(nameof(StopMovement))]
         [OnUpdate(nameof(ChaseTarget))]
+        [Transition(typeof(OnHitEvent), typeof(HitStunState))]
         public class ChaseState : State { }
 
         /// <summary>
         /// Zombie is on top of their target and attempting to attack them.
         /// </summary>
         [Animation(ZombieAttackAnimState, 0.25f, true)]
-        [TransitionFromAnyState(typeof(ZombieAttackEvent))]
+        [Transition(typeof(OnHitEvent), typeof(HitStunState))]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         [OnUpdate(nameof(ZombieAttackAction))]
         [OnEnterState(nameof(OnEnterAttackState))]
         [OnExitState(nameof(OnFinishAttack))]
         public class AttackState : State { }
 
+        [Animation(ZombieJumpAnimState, 0.25f, true)]
+        [Transition(typeof(JumpEndEvent), typeof(IdleState))]
+        [OnUpdate(nameof(OnJump))]
+        [OnEnterState(nameof(OnStartJump))]
+        public class JumpingState : State { }
+
         /// <summary>
         /// Zombie is stunned after being hit
         /// </summary>
         [Animation(ZombieReactionHitAnimState, 0.05f, true, 0.1f)]
-        [TransitionFromAnyState(typeof(OnHitEvent))]
         [TransitionOnAnimationComplete(typeof(IdleState), 0.35f, true)]
         public class HitStunState : State { }
 
@@ -234,13 +246,14 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         [Animation(ZombieDeadAnimState, 0.35f, true)]
         public class DeadState : State { }
 
+        private OffMeshLinkData jumpLink;
+
         public void Awake()
         {
             AttachedAnimator = GetComponentInChildren<Animator>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<IDamageable>();
-            attackBase = AttachedAnimator.GetBoneTransform(HumanBodyBones.Head);
-            damageSource = new Lazy<DamageSource>(() => new DamageSource(gameObject));
+            attackBase = AttachedAnimator.GetBoneTransform(HumanBodyBones.Chest);
         }
 
         public override void OnNetworkSpawn()
@@ -258,8 +271,59 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         public override void Update()
         {
-            navMeshAgent.enabled = damageable.IsAlive();
+            if (IsServer)
+            {
+                navMeshAgent.enabled = damageable.IsAlive();
+                navMeshAgent.stoppingDistance = Mathf.Max(0.5f, attackRange / 2);
+
+                if (!damageable.IsAlive() &&
+                    (CurrentState != typeof(DyingState) ||
+                    CurrentState != typeof(DeadState)))
+                {
+                    RaiseEvent(PlayerDeathEvent.Instance);
+                }
+
+                if (navMeshAgent.enabled && navMeshAgent.isOnOffMeshLink)
+                {
+                    RaiseEvent(new JumpStartEvent(navMeshAgent.currentOffMeshLinkData));
+                }
+            }
+
             base.Update();
+        }
+
+        public void OnStartJump(IEvent jmp)
+        {
+            var jumpEvent = jmp as JumpStartEvent;
+            jumpLink = jumpEvent.linkData;
+
+            deltaTimeInCurrentState = 0.0f;
+            jumpLength = Vector3.Distance(jumpLink.startPos, jumpLink.endPos) / 2.0f;
+        }
+
+        public void OnJump()
+        {
+            if (!IsServer)
+            {
+                return;
+            }
+
+            // lerp from link start to link end in time to animation
+            float tlerp = MathUtils.SmoothValue(Mathf.Clamp(deltaTimeInCurrentState / jumpLength, 0, 1.0f));
+
+            // straight line from startlink to endlink
+            var newPos = Vector3.Lerp(jumpLink.startPos, jumpLink.endPos, tlerp);
+
+            // add the 'hop'
+            newPos.y += 1.0f * Mathf.Sin(Mathf.PI * tlerp);
+
+            // Update transform position
+            transform.position = newPos;
+
+            if (tlerp >= 1.0f)
+            {
+                RaiseEvent(new JumpEndEvent());
+            }
         }
 
         /// <summary>
@@ -302,6 +366,12 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
             {
                 // set animation to just idle
                 ChaseAnimationState = ZombieChaseIdleAnimState;
+
+                // Rotate towards target
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(Vector3.ProjectOnPlane(zombieTarget.transform.position - transform.position, Vector3.up), Vector3.up),
+                    navMeshAgent.angularSpeed * Time.deltaTime);
 
                 // Only allow the attack if it has been at least cooldown since previous attack
                 if (Time.time >= lastAttackTime + attackCooldown)
@@ -379,10 +449,17 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 // Attack forward towards the target
                 Vector3 attackStart = attackBase.transform.position;
                 Vector3 attackTarget = zombieTarget.transform.position;
-                Vector3 attackDir = Vector3.ProjectOnPlane(attackTarget - attackStart, Vector3.up).normalized;
-                IEnumerable<RaycastHit> hits = Physics.RaycastAll(attackStart, attackDir, attackRange * 2, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
+
+                if (zombieTarget.GetComponentInChildren<Animator>() is Animator anim)
+                {
+                    attackTarget = anim.GetBoneTransform(HumanBodyBones.Chest).transform.position;
+                }
+
+                Vector3 attackDir = (attackTarget - attackStart).normalized;
+                IEnumerable<RaycastHit> hits = Physics.RaycastAll(attackStart, attackDir, attackRange * 3.0f, IHitbox.HitLayerMaskComputation, QueryTriggerInteraction.Collide);
+
                 var hitbox = IHitbox.GetFirstValidHit(hits, damageable, out RaycastHit hit, out bool didHit, layerMaskIgnore: EnemyLayerMask);
-                bool playerTarget = didHit && (hitbox.Source as Component).CompareTag(ZombieTargetTag);
+                bool playerTarget = didHit && ((hitbox?.Source as Component)?.CompareTag(ZombieTargetTag) ?? false);
                 if (didHit && hitbox != null && playerTarget)
                 {
                     DamageEvent damageEvent = IHitbox.DamageEventFromHit(hit, hitbox, attackDamage, -attackDir, DamageType.Slashing);

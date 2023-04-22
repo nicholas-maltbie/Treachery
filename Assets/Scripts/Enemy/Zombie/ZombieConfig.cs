@@ -16,18 +16,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using UnityEngine;
+
 namespace nickmaltbie.Treachery.Enemy.Zombie
 {
-    public static class ZombieAnimations
+    public struct ZombieConfig
     {
-        public const string ZombieIdleAnimState = "zombie idle";
-        public const string ZombieJumpAnimState = "zombie jump";
-        public const string ZombieChaseIdleAnimState = "zombie chase idle";
-        public const string ZombieWalkingAnimState = "zombie walking";
-        public const string ZombieRunningAnimState = "zombie running";
-        public const string ZombieReactionHitAnimState = "zombie reaction hit";
-        public const string ZombieDyingAnimState = "zombie dying";
-        public const string ZombieDeadAnimState = "zombie dead";
-        public const string ZombieAttackAnimState = "zombie attack";
+        public string name;
+        public float health;
+        public float attackCooldown;
+        public float attackDamage;
+        public float scale;
+        public GameObject zombiePrefab;
+        public Vector3 spawnPos;
+
+        public ZombieConfig(
+            string name = "Zombie",
+            float health = 20,
+            float attackCooldown = 1.0f,
+            float attackDamage = 5.0f,
+            float scale = 1.0f,
+            GameObject zombiePrefab = null,
+            Vector3 spawnPos = default)
+        {
+            this.name = name;
+            this.health = health;
+            this.attackCooldown = attackCooldown;
+            this.attackDamage = attackDamage;
+            this.scale = scale;
+            this.zombiePrefab = zombiePrefab;
+            this.spawnPos = spawnPos;
+        }
     }
 }

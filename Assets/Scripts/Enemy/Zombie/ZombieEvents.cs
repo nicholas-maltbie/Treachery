@@ -18,6 +18,7 @@
 
 using nickmaltbie.StateMachineUnity.Event;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace nickmaltbie.Treachery.Enemy.Zombie
 {
@@ -35,6 +36,16 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
 
         public class TargetLostEvent : IEvent { }
         public class StopRoamEvent : IEvent { }
+        public class JumpEndEvent : IEvent { }
+        public class JumpStartEvent : IEvent
+        {
+            public OffMeshLinkData linkData;
+
+            public JumpStartEvent(OffMeshLinkData linkData)
+            {
+                this.linkData = linkData;
+            }
+        }
 
         public class StartRoamEvent : IEvent
         {
