@@ -277,8 +277,8 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
                 navMeshAgent.stoppingDistance = Mathf.Max(0.5f, attackRange / 2);
 
                 if (!damageable.IsAlive() &&
-                    (CurrentState != typeof(DyingState) ||
-                    CurrentState != typeof(DeadState)))
+                    (CurrentState != typeof(DyingState) &&
+                     CurrentState != typeof(DeadState)))
                 {
                     RaiseEvent(PlayerDeathEvent.Instance);
                 }
