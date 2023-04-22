@@ -17,6 +17,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using nickmaltbie.Treachery.Interactive.Health;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.UI
@@ -30,8 +31,6 @@ namespace nickmaltbie.Treachery.UI
 
     public class DeathFeed : MonoBehaviour
     {
-        public static DeathFeed Singleton;
-
         public DeathEvent eventPrefab;
 
         public float scrollSpeed = 80.0f;
@@ -93,21 +92,29 @@ namespace nickmaltbie.Treachery.UI
 
         public void Awake()
         {
-            if (Singleton != null)
-            {
-                GameObject.Destroy(gameObject);
-                return;
-            }
-
-            Singleton = this;
             ResetFeed();
         }
 
-        public void OnDestroy()
+        public void OnEnable()
         {
-            if (Singleton == this)
+            Damageable.OnAnyDeath += OnDeath;
+        }
+
+        public void OnDisable()
+        {
+            Damageable.OnAnyDeath -= OnDeath;
+        }
+
+        public void OnDeath(object source, DamageEvent damageEvent)
+        {
+            Nametag sourceNametag = (damageEvent.damageSource as Component)?.GetComponent<Nametag>();
+            Nametag targetNametag = (source as Component)?.GetComponent<Nametag>();
+
+            if (sourceNametag != null && targetNametag != null)
             {
-                Singleton = null;
+                this.AddEvent(
+                    sourceNametag.EntityName,
+                    targetNametag.EntityName);
             }
         }
 

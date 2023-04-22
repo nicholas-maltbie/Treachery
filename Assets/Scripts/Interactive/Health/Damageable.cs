@@ -41,6 +41,8 @@ namespace nickmaltbie.Treachery.Interactive.Health
             writePerm: NetworkVariableWritePermission.Owner,
             readPerm: NetworkVariableReadPermission.Everyone);
 
+        public static EventHandler<DamageEvent> OnAnyDeath;
+
         public event EventHandler<OnDamagedEvent> OnDamageEvent;
         public event EventHandler OnDeath;
         public event EventHandler OnResetHealth;
@@ -52,6 +54,12 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public float CurrentHealth => currentHealth.Value;
         public bool Invulnerable { get; set; } = false;
         public bool Passthrough { get; set; } = false;
+
+        public void AdjustMaxHealth(float maxHealth)
+        {
+            this.maxHealth.Value = maxHealth;
+            this.currentHealth.Value = maxHealth;
+        }
 
         private float GetAdjustedHealth(float change)
         {
@@ -110,16 +118,7 @@ namespace nickmaltbie.Treachery.Interactive.Health
         public void OnDeathClientRpc(NetworkDamageEvent networkDamageEvent)
         {
             OnDeath?.Invoke(this, EventArgs.Empty);
-
-            Nametag sourceNametag = (networkDamageEvent.source as Component)?.GetComponent<Nametag>();
-            Nametag targetNametag = GetComponent<Nametag>();
-
-            if (sourceNametag != null && targetNametag != null)
-            {
-                DeathFeed.Singleton.AddEvent(
-                    sourceNametag.EntityName,
-                    targetNametag.EntityName);
-            }
+            OnAnyDeath?.Invoke(this, networkDamageEvent);
         }
 
         [ClientRpc]
