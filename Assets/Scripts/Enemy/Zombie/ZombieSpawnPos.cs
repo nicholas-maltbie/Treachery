@@ -16,13 +16,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using nickmaltbie.Treachery.Interactive.Health;
-using nickmaltbie.Treachery.UI;
-using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace nickmaltbie.Treachery.Enemy.Zombie
 {

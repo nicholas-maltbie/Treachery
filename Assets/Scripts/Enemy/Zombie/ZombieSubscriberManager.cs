@@ -18,7 +18,6 @@
 
 using System.Collections.Generic;
 using nickmaltbie.Treachery.Enemy.Subs;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace nickmaltbie.Treachery.Enemy.Zombie
@@ -32,7 +31,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         public int maxZombiePackSize = 10;
 
         private LinkedList<(Subscriber, float)> drawPool = new LinkedList<(Subscriber, float)>();
-        float totalWeight = 0.0f;
+        private float totalWeight = 0.0f;
 
         private float timeToNextGroupSpawn;
 
@@ -91,7 +90,7 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         private void SpawnZombieGroup()
         {
             int groupSize = Mathf.Min(drawPool.Count, UnityEngine.Random.Range(minZombiePackSize, maxZombiePackSize + 1));
-            var groupSpawn = spawnPositions[UnityEngine.Random.Range(0, spawnPositions.Length)];
+            ZombieSpawnPos groupSpawn = spawnPositions[UnityEngine.Random.Range(0, spawnPositions.Length)];
 
             for (int i = 0; i < groupSize; i++)
             {
