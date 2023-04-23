@@ -1201,7 +1201,7 @@ MonoBehaviour:
   zombiePrefabs:
   - {fileID: 5959098636586586129, guid: c0dad7db0768de742b9f7660bacc8bac, type: 3}
   - {fileID: 5959098636586586129, guid: fd7215bebe5bc8d42beb4dc08b1594b6, type: 3}
-  targetZombieCount: 10
+  targetZombieCount: 40
   SpawnCooldown: 3
   minZombiePackSize: 5
   maxZombiePackSize: 10
@@ -2884,7 +2884,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh114242
+  m_Name: pb_Mesh44966
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -5668,7 +5668,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh114022
+  m_Name: pb_Mesh44730
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -5833,7 +5833,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh114220
+  m_Name: pb_Mesh44942
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -6291,7 +6291,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh114110
+  m_Name: pb_Mesh44824
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -6763,7 +6763,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh114042
+  m_Name: pb_Mesh44752
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
