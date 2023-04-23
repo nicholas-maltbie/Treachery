@@ -77,6 +77,15 @@ public class ScriptBatch : IPostprocessBuildWithReport, IPreprocessBuildWithRepo
     /// <param name="report">Report of the build results and configuration.</param>
     public void OnPostprocessBuild(BuildReport report)
     {
+        if (report.summary.platform == BuildTarget.WebGL)
+        {
+            // Copy the web.config to the output path
+            File.Copy(
+                System.IO.Path.Combine(Application.dataPath, "Config", "web.config"),
+                System.IO.Path.Combine(report.summary.outputPath, "Build", "web.config"),
+                true);
+        }
+
         // Restore default settings
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
     }
