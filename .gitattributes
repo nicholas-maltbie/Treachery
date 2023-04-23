@@ -56,6 +56,8 @@
 *.reason filter=lfs diff=lfs merge=lfs -text
 *.lxo filter=lfs diff=lfs merge=lfs -text
 
+Assets/Subscribers/subscribers.json filter=lfs diff=lfs merge=lfs -text
+
 # Some files to ignore
 Demo/project_demo.png -filter=lfs -diff=lfs -merge=lfs -text
 Documentation/resources/rename_panel.png -filter=lfs -diff=lfs -merge=lfs -text

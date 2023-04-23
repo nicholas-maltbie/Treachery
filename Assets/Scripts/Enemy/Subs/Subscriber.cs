@@ -5,7 +5,7 @@ namespace nickmaltbie.Treachery.Enemy.Subs
     public class Subscriber
     {
         public string name;
-        public int months;
+        public float months;
         public float strength;
     }
 }
