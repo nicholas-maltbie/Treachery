@@ -58,9 +58,12 @@ namespace nickmaltbie.Treachery.Enemy.Zombie
         {
             base.OnNetworkSpawn();
 
-            while (SpawnedZombies <= targetZombieCount && drawPool.Count > 0)
+            if (IsServer)
             {
-                SpawnZombieGroup();
+                while (SpawnedZombies <= targetZombieCount && drawPool.Count > 0)
+                {
+                    SpawnZombieGroup();
+                }
             }
         }
 
