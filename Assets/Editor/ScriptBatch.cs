@@ -60,6 +60,7 @@ public class ScriptBatch : IPostprocessBuildWithReport, IPreprocessBuildWithRepo
     /// <returns></returns>
     public static string[] GameScenes => new[]
     {
+        System.IO.Path.Combine(ScriptBatch.AssetDirectory, "Scenes", "jkdenny test scene.unity"),
         System.IO.Path.Combine(ScriptBatch.AssetDirectory, "Scenes", "SampleScene.unity")
     };
 
